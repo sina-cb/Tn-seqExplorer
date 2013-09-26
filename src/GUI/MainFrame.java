@@ -50,7 +50,6 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartPanel;
 
-import quicktime.app.image.Redrawable;
 import essgenes.AddColumns;
 import essgenes.Messages;
 import essgenes.PlotData;
