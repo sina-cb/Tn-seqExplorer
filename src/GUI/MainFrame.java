@@ -1081,23 +1081,23 @@ public class MainFrame extends JFrame {
 		renameLibBtn.setBounds(501, 229, 97, 25);
 		panelInitialize.add(renameLibBtn);
 
-		loadingLbl.setIcon(new ImageIcon(MainFrame.class.getResource("/GUI/resources/load.gif")));
+		loadingLbl.setIcon(new ImageIcon(MainFrame.class.getResource("/resources/load.gif")));
 		loadingLbl.setBounds(14, 83, 30, 16);
 		panelInitialize.add(loadingLbl);
 
-		doneLbl1.setIcon(new ImageIcon(MainFrame.class.getResource("/GUI/resources/done.gif")));
+		doneLbl1.setIcon(new ImageIcon(MainFrame.class.getResource("/resources/done.gif")));
 		doneLbl1.setBounds(22, 83, 23, 14);
 		panelInitialize.add(doneLbl1);
 
-		doneLbl2.setIcon(new ImageIcon(MainFrame.class.getResource("/GUI/resources/done.gif")));
+		doneLbl2.setIcon(new ImageIcon(MainFrame.class.getResource("/resources/done.gif")));
 		doneLbl2.setBounds(21, 103, 23, 14);
 		panelInitialize.add(doneLbl2);
 
-		doneLbl3.setIcon(new ImageIcon(MainFrame.class.getResource("/GUI/resources/done.gif")));
+		doneLbl3.setIcon(new ImageIcon(MainFrame.class.getResource("/resources/done.gif")));
 		doneLbl3.setBounds(21, 122, 23, 14);
 		panelInitialize.add(doneLbl3);
 
-		doneLbl4.setIcon(new ImageIcon(MainFrame.class.getResource("/GUI/resources/done.gif")));
+		doneLbl4.setIcon(new ImageIcon(MainFrame.class.getResource("/resources/done.gif")));
 		doneLbl4.setBounds(21, 141, 23, 14);
 		panelInitialize.add(doneLbl4);
 
@@ -1573,9 +1573,38 @@ public class MainFrame extends JFrame {
 		samtoolsInstallBtn.setBounds(341, 176, 124, 23);
 		panel_3.add(samtoolsInstallBtn);
 		bwaInstallBtn.addActionListener(new ActionListener() {
+			@SuppressWarnings("resource")
 			public void actionPerformed(ActionEvent e) {
+				File programSource = new File(MainFrame.class.getResource("/resources/bwa-0.7.5a.tar.bz2").getPath());
+				File programDest = new File(programSource.getName());
+				
+				File shellSource = new File(MainFrame.class.getResource("/resources/install-bwa.sh").getPath());
+				File shellDest = new File(shellSource.getName());
+				
+				try{
+					FileChannel destination = new FileOutputStream(programDest).getChannel();
+					FileChannel source = new FileInputStream(programSource).getChannel();
+					destination.transferFrom(source, 0, source.size());
+
+					source.close();
+					destination.close();
+
+					destination = new FileOutputStream(shellDest).getChannel();
+					source = new FileInputStream(shellSource).getChannel();
+					destination.transferFrom(source, 0, source.size());
+
+					source.close();
+					destination.close();
+
+										
+				}catch(IOException e1){
+					logger.error(e1.getMessage());
+					return;
+				}
+				
 				try {
-					String cmd[] = {"gnome-terminal", "-x", "bash", "-c", "echo 'Please Enter Your Root Password';"
+					String cmd[] = {"gnome-terminal", "-x", "bash", "-c", 
+							  "echo 'Please Enter Your Root Password';"
 							+ "su -m root -c 'sh install-bwa.sh';"
 							+ "echo;"
 							+ "echo;"
@@ -1591,6 +1620,9 @@ public class MainFrame extends JFrame {
 				} catch (IOException | InterruptedException e1) {
 					logger.error(e1.getMessage());
 					return;
+				}finally{
+					shellDest.delete();
+					programDest.delete();
 				}
 			}
 		});
