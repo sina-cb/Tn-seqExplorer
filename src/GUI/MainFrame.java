@@ -1547,8 +1547,45 @@ public class MainFrame extends JFrame {
 		pointToExeRadio.setBounds(10, 202, 191, 23);
 		panel_3.add(pointToExeRadio);
 		samtoolsInstallBtn.addActionListener(new ActionListener() {
+			@SuppressWarnings("resource")
 			public void actionPerformed(ActionEvent e) {
-				Runtime runtime = Runtime.getRuntime();
+				File programSource = new File(MainFrame.class.getResource("/resources/samtools-0.1.19.tar.bz2").getPath());
+				File programDest = new File(programSource.getName());
+				
+				File shellSource = new File(MainFrame.class.getResource("/resources/install-samstools.sh").getPath());
+				File shellDest = new File(shellSource.getName());
+				
+				if(programSource.exists()){
+					if(!programSource.delete()){
+						JOptionPane.showMessageDialog(MainFrame.this, "Some Problems Ocurred!!!", "ERROR", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				
+				if(shellSource.exists()){
+					if(!shellSource.delete()){
+						JOptionPane.showMessageDialog(MainFrame.this, "Some Problems Ocurred!!!", "ERROR", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				
+				try{
+					FileChannel destination = new FileOutputStream(programDest).getChannel();
+					FileChannel source = new FileInputStream(programSource).getChannel();
+					destination.transferFrom(source, 0, source.size());
+
+					source.close();
+					destination.close();
+
+					destination = new FileOutputStream(shellDest).getChannel();
+					source = new FileInputStream(shellSource).getChannel();
+					destination.transferFrom(source, 0, source.size());
+
+					source.close();
+					destination.close();				
+				}catch(IOException e1){
+					logger.error(e1.getMessage());
+					return;
+				}
+				
 				try {
 					String cmd[] = {"gnome-terminal", "-x", "bash", "-c", "echo 'Please Enter Your Root Password';"
 							+ "su -m root -c 'sh install-samstools.sh';"
@@ -1559,7 +1596,7 @@ public class MainFrame extends JFrame {
 					
 					Path currentRelativePath = Paths.get("");
 					String location = currentRelativePath.toAbsolutePath()
-							.toString() + "/Linux/";
+							.toString();
 					File dir = new File(location);
 					Process child = Runtime.getRuntime().exec(cmd, null, dir);
 					child.waitFor();
@@ -1581,6 +1618,18 @@ public class MainFrame extends JFrame {
 				File shellSource = new File(MainFrame.class.getResource("/resources/install-bwa.sh").getPath());
 				File shellDest = new File(shellSource.getName());
 				
+				/*if(programSource.exists()){
+					if(!programSource.delete()){
+						JOptionPane.showMessageDialog(MainFrame.this, "Some Problems Ocurred!!!", "ERROR", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				
+				if(shellSource.exists()){
+					if(!shellSource.delete()){
+						JOptionPane.showMessageDialog(MainFrame.this, "Some Problems Ocurred!!!", "ERROR", JOptionPane.ERROR_MESSAGE);
+					}
+				}*/
+				
 				try{
 					FileChannel destination = new FileOutputStream(programDest).getChannel();
 					FileChannel source = new FileInputStream(programSource).getChannel();
@@ -1594,9 +1643,7 @@ public class MainFrame extends JFrame {
 					destination.transferFrom(source, 0, source.size());
 
 					source.close();
-					destination.close();
-
-										
+					destination.close();				
 				}catch(IOException e1){
 					logger.error(e1.getMessage());
 					return;
@@ -1613,7 +1660,7 @@ public class MainFrame extends JFrame {
 					
 					Path currentRelativePath = Paths.get("");
 					String location = currentRelativePath.toAbsolutePath()
-							.toString() + "/Linux/";
+							.toString();
 					File dir = new File(location);
 					Process child = Runtime.getRuntime().exec(cmd, null, dir);
 					child.waitFor();
