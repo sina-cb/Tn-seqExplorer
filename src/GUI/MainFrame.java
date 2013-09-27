@@ -116,16 +116,22 @@ public class MainFrame extends JFrame {
 	private JTextField imgFileTxt;
 	private JButton imgBrowseBtn = new JButton("Browse");
 	private JComboBox<String> scaffoldCombo = new JComboBox<String>();
+	private JTextField bwaExeTxt;
+	private JTextField samtoolsExeTxt;
+	private JButton bwaBrowseBtn = new JButton("Browse");
+	private JRadioButton alreadyInstalledRadio = new JRadioButton("Already installed");
+	private JRadioButton useScriptsRadio = new JRadioButton("Use the shell scripts");
+	private JRadioButton pointToExeRadio = new JRadioButton("Point to executables");
+	private JButton samtoolsInstallBtn = new JButton("Install SamTools");		
+	private JButton bwaInstallBtn = new JButton("Install BWA");		
+	private JButton samtoolsBrowseBtn = new JButton("Browse");
 
 	protected ProjectInfo projectInfo = new ProjectInfo();
 	private Logger logger = Logger.getLogger(MainFrame.class.getName());
 	private boolean hasSeqNum = false;
 	private boolean hasGeneFile = false;
 	private boolean downloadOption = false;
-	private JTextField textField;
-	private final int panelHeigth = 610;
-	private final int frameHeigth = panelHeigth + 70;
-
+	
 	/**
 	 * Create the frame.
 	 */
@@ -1471,18 +1477,61 @@ public class MainFrame extends JFrame {
 		tabbedPane.addTab("BWA", null, panel_3, null);
 		panel_3.setLayout(null);
 		
-		textField = new JTextField();
-		textField.setBounds(10, 36, 363, 20);
-		panel_3.add(textField);
-		textField.setColumns(10);
+		bwaExeTxt = new JTextField();
+		bwaExeTxt.setBounds(139, 174, 423, 20);
+		panel_3.add(bwaExeTxt);
+		bwaExeTxt.setColumns(10);
 		
-		JLabel lblSelectBurrowsWheeler = new JLabel("Select Burrows Wheeler Aligner Executable Path:");
-		lblSelectBurrowsWheeler.setBounds(10, 11, 697, 14);
-		panel_3.add(lblSelectBurrowsWheeler);
+		bwaBrowseBtn.setBounds(572, 173, 89, 23);
+		panel_3.add(bwaBrowseBtn);
 		
-		JButton btnBrowse = new JButton("Browse");
-		btnBrowse.setBounds(383, 35, 89, 23);
-		panel_3.add(btnBrowse);
+		JLabel lblNewLabel = new JLabel("1. If you already have the 'bwa' and 'samtools' installed on your machine you can use this part.");
+		lblNewLabel.setBounds(10, 11, 697, 14);
+		panel_3.add(lblNewLabel);
+		
+		JLabel lblIfYouDont = new JLabel("2. If you don't have them, you can use the Shell Scripts below to autommatically install them on your machine .");
+		lblIfYouDont.setBounds(10, 36, 697, 14);
+		panel_3.add(lblIfYouDont);
+		
+		JLabel lblYouCanAlso = new JLabel("3. You can also, point to the 'bwa' and 'samtools' executable files on you machine using the browse buttons.");
+		lblYouCanAlso.setBounds(10, 61, 697, 14);
+		panel_3.add(lblYouCanAlso);
+		
+		alreadyInstalledRadio.setSelected(true);
+		alreadyInstalledRadio.setBounds(10, 95, 191, 23);
+		panel_3.add(alreadyInstalledRadio);
+	
+		useScriptsRadio.setBounds(10, 121, 191, 23);
+		panel_3.add(useScriptsRadio);
+	
+		pointToExeRadio.setBounds(10, 147, 191, 23);
+		panel_3.add(pointToExeRadio);
+
+		samtoolsInstallBtn.setBounds(341, 121, 124, 23);
+		panel_3.add(samtoolsInstallBtn);
+
+		bwaInstallBtn.setBounds(207, 121, 124, 23);
+		panel_3.add(bwaInstallBtn);
+		
+		JLabel lblBwaExecutable = new JLabel("BWA Executable:");
+		lblBwaExecutable.setBounds(20, 177, 109, 14);
+		panel_3.add(lblBwaExecutable);
+		
+		JLabel lblSamtoolsExecutable = new JLabel("SamTools Executable:");
+		lblSamtoolsExecutable.setBounds(20, 209, 158, 14);
+		panel_3.add(lblSamtoolsExecutable);
+		
+		samtoolsExeTxt = new JTextField();
+		samtoolsExeTxt.setColumns(10);
+		samtoolsExeTxt.setBounds(139, 206, 423, 20);
+		panel_3.add(samtoolsExeTxt);
+
+		samtoolsBrowseBtn.setBounds(572, 205, 89, 23);
+		panel_3.add(samtoolsBrowseBtn);
+		
+		JSeparator separator_8 = new JSeparator();
+		separator_8.setBounds(0, 249, 717, 5);
+		panel_3.add(separator_8);
 		reloadProjectFromFile();
 		hasGeneFile = findGeneFile();
 		if(!hasSeqNum  || !hasGeneFile){
@@ -1490,6 +1539,11 @@ public class MainFrame extends JFrame {
 				tabbedPane.setEnabledAt(i, false);
 			}
 		}
+		
+		ButtonGroup bwaGroup = new ButtonGroup();
+		bwaGroup.add(alreadyInstalledRadio);
+		bwaGroup.add(pointToExeRadio);
+		bwaGroup.add(useScriptsRadio);
 	}
 
 	@SuppressWarnings("resource")
@@ -1637,8 +1691,13 @@ public class MainFrame extends JFrame {
 			for (Component c : ((JPanel)tabbedPane.getSelectedComponent()).getComponents()){
 				c.setEnabled(false);
 			}
+			
+			JOptionPane.showMessageDialog(null, "This tab is only available when you are using Linux!!!");
+			
 		}else{
-			JOptionPane.showMessageDialog(null, "Linux");
+			JOptionPane.showMessageDialog(null, "On Linux");
+			
+			
 		}
 		
 	}
