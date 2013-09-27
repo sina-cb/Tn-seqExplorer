@@ -21,6 +21,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -45,10 +46,14 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartPanel;
+import org.jfree.io.FileUtilities;
+
+import com.sun.org.apache.xerces.internal.util.URI;
 
 import essgenes.AddColumns;
 import essgenes.Messages;
@@ -1549,46 +1554,18 @@ public class MainFrame extends JFrame {
 		samtoolsInstallBtn.addActionListener(new ActionListener() {
 			@SuppressWarnings("resource")
 			public void actionPerformed(ActionEvent e) {
-				File programSource = new File(MainFrame.class.getResource("/resources/samtools-0.1.19.tar.bz2").getPath());
-				File programDest = new File(programSource.getName());
+				URL programSource = MainFrame.class.getResource("/resources/samtools-0.1.19.tar.bz2");
+				File programDest = new File("samtools-0.1.19.tar.bz2");
 				
-				File shellSource = new File(MainFrame.class.getResource("/resources/install-samstools.sh").getPath());
-				File shellDest = new File(shellSource.getName());
-				
-				if(programSource.exists()){
-					if(!programSource.delete()){
-						JOptionPane.showMessageDialog(MainFrame.this, "Some Problems Ocurred!!!", "ERROR", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-				
-				if(shellSource.exists()){
-					if(!shellSource.delete()){
-						JOptionPane.showMessageDialog(MainFrame.this, "Some Problems Ocurred!!!", "ERROR", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-				
-				try{
-					FileChannel destination = new FileOutputStream(programDest).getChannel();
-					FileChannel source = new FileInputStream(programSource).getChannel();
-					destination.transferFrom(source, 0, source.size());
-
-					source.close();
-					destination.close();
-
-					destination = new FileOutputStream(shellDest).getChannel();
-					source = new FileInputStream(shellSource).getChannel();
-					destination.transferFrom(source, 0, source.size());
-
-					source.close();
-					destination.close();				
-				}catch(IOException e1){
-					logger.error(e1.getMessage());
-					return;
-				}
+				URL shellSource = MainFrame.class.getResource("/resources/install-samstools.sh");
+				File shellDest = new File("shell.sh");
 				
 				try {
+					FileUtils.copyURLToFile(programSource, programDest);
+					FileUtils.copyURLToFile(shellSource, shellDest);
+					
 					String cmd[] = {"gnome-terminal", "-x", "bash", "-c", "echo 'Please Enter Your Root Password';"
-							+ "su -m root -c 'sh install-samstools.sh';"
+							+ "su -m root -c 'sh shell.sh';"
 							+ "echo;"
 							+ "echo;"
 							+ "echo 'Press Any Key To Continue...';"
@@ -1603,6 +1580,9 @@ public class MainFrame extends JFrame {
 				} catch (IOException | InterruptedException e1) {
 					logger.error(e1.getMessage());
 					return;
+				}finally{
+					shellDest.delete();
+					programDest.delete();
 				}
 			}
 		});
@@ -1612,47 +1592,18 @@ public class MainFrame extends JFrame {
 		bwaInstallBtn.addActionListener(new ActionListener() {
 			@SuppressWarnings("resource")
 			public void actionPerformed(ActionEvent e) {
-				File programSource = new File(MainFrame.class.getResource("/resources/bwa-0.7.5a.tar.bz2").getPath());
-				File programDest = new File(programSource.getName());
+				URL programSource = MainFrame.class.getResource("/resources/bwa-0.7.5a.tar.bz2");
+				File programDest = new File("bwa-0.7.5a.tar.bz2");
 				
-				File shellSource = new File(MainFrame.class.getResource("/resources/install-bwa.sh").getPath());
-				File shellDest = new File(shellSource.getName());
-				
-				/*if(programSource.exists()){
-					if(!programSource.delete()){
-						JOptionPane.showMessageDialog(MainFrame.this, "Some Problems Ocurred!!!", "ERROR", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-				
-				if(shellSource.exists()){
-					if(!shellSource.delete()){
-						JOptionPane.showMessageDialog(MainFrame.this, "Some Problems Ocurred!!!", "ERROR", JOptionPane.ERROR_MESSAGE);
-					}
-				}*/
-				
-				try{
-					FileChannel destination = new FileOutputStream(programDest).getChannel();
-					FileChannel source = new FileInputStream(programSource).getChannel();
-					destination.transferFrom(source, 0, source.size());
-
-					source.close();
-					destination.close();
-
-					destination = new FileOutputStream(shellDest).getChannel();
-					source = new FileInputStream(shellSource).getChannel();
-					destination.transferFrom(source, 0, source.size());
-
-					source.close();
-					destination.close();				
-				}catch(IOException e1){
-					logger.error(e1.getMessage());
-					return;
-				}
+				URL shellSource = MainFrame.class.getResource("/resources/install-bwa.sh");
+				File shellDest = new File("shell.sh");
 				
 				try {
+					FileUtils.copyURLToFile(programSource, programDest);
+					FileUtils.copyURLToFile(shellSource, shellDest);
 					String cmd[] = {"gnome-terminal", "-x", "bash", "-c", 
 							  "echo 'Please Enter Your Root Password';"
-							+ "su -m root -c 'sh install-bwa.sh';"
+							+ "su -m root -c 'sh shell.sh';"
 							+ "echo;"
 							+ "echo;"
 							+ "echo 'Press Any Key To Continue...';"
@@ -1863,7 +1814,7 @@ public class MainFrame extends JFrame {
 		
 		if(OSName.contains("Windows") || OSName.contains("windows")){
 			for (Component c : ((JPanel)tabbedPane.getSelectedComponent()).getComponents()){
-				c.setEnabled(false);
+				//c.setEnabled(false);
 			}
 			
 			JOptionPane.showMessageDialog(null, "This tab is only available when you are using Linux!!!");
