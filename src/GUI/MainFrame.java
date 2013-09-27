@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -303,7 +304,7 @@ public class MainFrame extends JFrame {
 		panelMain.add(lblLibrariesCount);
 
 		libraryCountLbl.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		libraryCountLbl.setBounds(150, 536, 71, 33);
+		libraryCountLbl.setBounds(157, 536, 51, 33);
 		panelMain.add(libraryCountLbl);
 
 		JLabel lblDataTablesCount = new JLabel("Data Tables Count:");
@@ -312,7 +313,7 @@ public class MainFrame extends JFrame {
 		panelMain.add(lblDataTablesCount);
 
 		dataTableCountLbl.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		dataTableCountLbl.setBounds(361, 536, 71, 33);
+		dataTableCountLbl.setBounds(371, 536, 51, 33);
 		panelMain.add(dataTableCountLbl);
 
 		ftpFirstLevelCombo.setBounds(12, 110, 588, 22);
@@ -698,7 +699,7 @@ public class MainFrame extends JFrame {
 		panelMain.add(lblGenesFileName);
 
 		geneFileNameLbl.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		geneFileNameLbl.setBounds(564, 536, 153, 33);
+		geneFileNameLbl.setBounds(582, 536, 123, 33);
 		panelMain.add(geneFileNameLbl);
 
 		JLabel label = new JLabel("Or");
@@ -1105,7 +1106,7 @@ public class MainFrame extends JFrame {
 		panel.setLayout(null);
 
 		JLabel lblAddNewData = new JLabel("Add New Data Table To Your Project:");
-		lblAddNewData.setBounds(10, 15, 239, 16);
+		lblAddNewData.setBounds(10, 15, 290, 16);
 		panel.add(lblAddNewData);
 
 		addNewDataTableBtn.addActionListener(new ActionListener() {
@@ -1160,7 +1161,7 @@ public class MainFrame extends JFrame {
 
 			}
 		});
-		addNewDataTableBtn.setBounds(259, 12, 89, 23);
+		addNewDataTableBtn.setBounds(318, 12, 113, 23);
 		panel.add(addNewDataTableBtn);
 
 		JSeparator separator_5 = new JSeparator();
@@ -1477,59 +1478,146 @@ public class MainFrame extends JFrame {
 		panel_3.setLayout(null);
 		
 		bwaExeTxt = new JTextField();
-		bwaExeTxt.setBounds(139, 174, 423, 20);
+		bwaExeTxt.setEnabled(false);
+		bwaExeTxt.setEditable(false);
+		bwaExeTxt.setBounds(207, 229, 399, 20);
 		panel_3.add(bwaExeTxt);
 		bwaExeTxt.setColumns(10);
 		
-		bwaBrowseBtn.setBounds(572, 173, 89, 23);
+		bwaBrowseBtn.setBounds(618, 227, 89, 23);
 		panel_3.add(bwaBrowseBtn);
 		
 		JLabel lblNewLabel = new JLabel("1. If you already have the 'bwa' and 'samtools' installed on your machine you can use this part.");
 		lblNewLabel.setBounds(10, 11, 697, 14);
 		panel_3.add(lblNewLabel);
 		
-		JLabel lblIfYouDont = new JLabel("2. If you don't have them, you can use the Shell Scripts below to autommatically install them on your machine .");
-		lblIfYouDont.setBounds(10, 36, 697, 14);
+		JLabel lblIfYouDont = new JLabel("2. If you don't have them, you can use the Shell Scripts below to autommatically install them");
+		lblIfYouDont.setBounds(10, 37, 745, 14);
 		panel_3.add(lblIfYouDont);
 		
-		JLabel lblYouCanAlso = new JLabel("3. You can also, point to the 'bwa' and 'samtools' executable files on you machine using the browse buttons.");
-		lblYouCanAlso.setBounds(10, 61, 697, 14);
+		JLabel lblYouCanAlso = new JLabel("3. You can also, point to the 'bwa' and 'samtools' executable files on you machine using the");
+		lblYouCanAlso.setBounds(10, 80, 745, 14);
 		panel_3.add(lblYouCanAlso);
+		alreadyInstalledRadio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				bwaInstallBtn.setEnabled(false);
+				samtoolsInstallBtn.setEnabled(false);
+				
+				bwaBrowseBtn.setEnabled(false);
+				samtoolsBrowseBtn.setEnabled(false);
+				
+				bwaExeTxt.setEnabled(false);
+				samtoolsExeTxt.setEnabled(false);
+				
+				alreadyInstalledRadio.setSelected(true);
+			}
+		});
 		
 		alreadyInstalledRadio.setSelected(true);
-		alreadyInstalledRadio.setBounds(10, 95, 191, 23);
+		alreadyInstalledRadio.setBounds(10, 150, 191, 23);
 		panel_3.add(alreadyInstalledRadio);
+		useScriptsRadio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				bwaInstallBtn.setEnabled(true);
+				samtoolsInstallBtn.setEnabled(true);
+				
+				bwaBrowseBtn.setEnabled(false);
+				samtoolsBrowseBtn.setEnabled(false);
+				
+				bwaExeTxt.setEnabled(false);
+				samtoolsExeTxt.setEnabled(false);
+			}
+		});
 	
-		useScriptsRadio.setBounds(10, 121, 191, 23);
+		useScriptsRadio.setBounds(10, 176, 191, 23);
 		panel_3.add(useScriptsRadio);
+		pointToExeRadio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				bwaInstallBtn.setEnabled(false);
+				samtoolsInstallBtn.setEnabled(false);
+				
+				bwaBrowseBtn.setEnabled(true);
+				samtoolsBrowseBtn.setEnabled(true);
+				
+				bwaExeTxt.setEnabled(true);
+				samtoolsExeTxt.setEnabled(true);
+			}
+		});
 	
-		pointToExeRadio.setBounds(10, 147, 191, 23);
+		pointToExeRadio.setBounds(10, 202, 191, 23);
 		panel_3.add(pointToExeRadio);
+		samtoolsInstallBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Runtime runtime = Runtime.getRuntime();
+				try {
+					String cmd[] = {"gnome-terminal", "-x", "bash", "-c", "echo 'Please Enter Your Root Password';"
+							+ "su -m root -c 'sh install-samstools.sh';"
+							+ "echo;"
+							+ "echo;"
+							+ "echo 'Press Any Key To Continue...';"
+							+ "read"};
+					
+					Path currentRelativePath = Paths.get("");
+					String location = currentRelativePath.toAbsolutePath()
+							.toString() + "/Linux/";
+					File dir = new File(location);
+					Process child = Runtime.getRuntime().exec(cmd, null, dir);
+					child.waitFor();
+				} catch (IOException | InterruptedException e1) {
+					logger.error(e1.getMessage());
+					return;
+				}
+			}
+		});
 
-		samtoolsInstallBtn.setBounds(341, 121, 124, 23);
+		samtoolsInstallBtn.setBounds(341, 176, 124, 23);
 		panel_3.add(samtoolsInstallBtn);
+		bwaInstallBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String cmd[] = {"gnome-terminal", "-x", "bash", "-c", "echo 'Please Enter Your Root Password';"
+							+ "su -m root -c 'sh install-bwa.sh';"
+							+ "echo;"
+							+ "echo;"
+							+ "echo 'Press Any Key To Continue...';"
+							+ "read"};
+					
+					Path currentRelativePath = Paths.get("");
+					String location = currentRelativePath.toAbsolutePath()
+							.toString() + "/Linux/";
+					File dir = new File(location);
+					Process child = Runtime.getRuntime().exec(cmd, null, dir);
+					child.waitFor();
+				} catch (IOException | InterruptedException e1) {
+					logger.error(e1.getMessage());
+					return;
+				}
+			}
+		});
 
-		bwaInstallBtn.setBounds(207, 121, 124, 23);
+		bwaInstallBtn.setBounds(207, 176, 124, 23);
 		panel_3.add(bwaInstallBtn);
 		
 		JLabel lblBwaExecutable = new JLabel("BWA Executable:");
-		lblBwaExecutable.setBounds(20, 177, 109, 14);
+		lblBwaExecutable.setBounds(20, 232, 109, 14);
 		panel_3.add(lblBwaExecutable);
 		
 		JLabel lblSamtoolsExecutable = new JLabel("SamTools Executable:");
-		lblSamtoolsExecutable.setBounds(20, 209, 158, 14);
+		lblSamtoolsExecutable.setBounds(20, 264, 158, 14);
 		panel_3.add(lblSamtoolsExecutable);
 		
 		samtoolsExeTxt = new JTextField();
+		samtoolsExeTxt.setEnabled(false);
+		samtoolsExeTxt.setEditable(false);
 		samtoolsExeTxt.setColumns(10);
-		samtoolsExeTxt.setBounds(139, 206, 423, 20);
+		samtoolsExeTxt.setBounds(207, 261, 399, 20);
 		panel_3.add(samtoolsExeTxt);
 
-		samtoolsBrowseBtn.setBounds(572, 205, 89, 23);
+		samtoolsBrowseBtn.setBounds(618, 260, 89, 23);
 		panel_3.add(samtoolsBrowseBtn);
 		
 		JSeparator separator_8 = new JSeparator();
-		separator_8.setBounds(0, 249, 717, 5);
+		separator_8.setBounds(0, 304, 717, 5);
 		panel_3.add(separator_8);
 		reloadProjectFromFile();
 		hasGeneFile = findGeneFile();
@@ -1543,6 +1631,14 @@ public class MainFrame extends JFrame {
 		bwaGroup.add(alreadyInstalledRadio);
 		bwaGroup.add(pointToExeRadio);
 		bwaGroup.add(useScriptsRadio);
+		
+		JLabel lblNewLabel_1 = new JLabel(" on your machine .");
+		lblNewLabel_1.setBounds(20, 58, 246, 15);
+		panel_3.add(lblNewLabel_1);
+		
+		JLabel lblNewLabel_2 = new JLabel(" browse buttons.");
+		lblNewLabel_2.setBounds(20, 101, 532, 15);
+		panel_3.add(lblNewLabel_2);
 	}
 
 	@SuppressWarnings("resource")
@@ -1694,9 +1790,16 @@ public class MainFrame extends JFrame {
 			JOptionPane.showMessageDialog(null, "This tab is only available when you are using Linux!!!");
 			
 		}else{
-			JOptionPane.showMessageDialog(null, "On Linux");
+			bwaInstallBtn.setEnabled(false);
+			samtoolsInstallBtn.setEnabled(false);
 			
+			bwaBrowseBtn.setEnabled(false);
+			samtoolsBrowseBtn.setEnabled(false);
 			
+			bwaExeTxt.setEnabled(false);
+			samtoolsExeTxt.setEnabled(false);
+			
+			alreadyInstalledRadio.setSelected(true);
 		}
 		
 	}
