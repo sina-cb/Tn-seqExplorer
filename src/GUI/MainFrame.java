@@ -121,15 +121,10 @@ public class MainFrame extends JFrame {
 	private JTextField imgFileTxt;
 	private JButton imgBrowseBtn = new JButton("Browse");
 	private JComboBox<String> scaffoldCombo = new JComboBox<String>();
-	private JTextField bwaExeTxt;
-	private JTextField samtoolsExeTxt;
-	private JButton bwaBrowseBtn = new JButton("Browse");
 	private JRadioButton alreadyInstalledRadio = new JRadioButton("Already installed");
-	private JRadioButton useScriptsRadio = new JRadioButton("Use the shell scripts");
-	private JRadioButton pointToExeRadio = new JRadioButton("Point to executables");
+	private JRadioButton useScriptsRadio = new JRadioButton("Use the shell scripts to install them");
 	private JButton samtoolsInstallBtn = new JButton("Install SamTools");		
 	private JButton bwaInstallBtn = new JButton("Install BWA");		
-	private JButton samtoolsBrowseBtn = new JButton("Browse");
 
 	protected ProjectInfo projectInfo = new ProjectInfo();
 	private Logger logger = Logger.getLogger(MainFrame.class.getName());
@@ -1482,16 +1477,6 @@ public class MainFrame extends JFrame {
 		tabbedPane.addTab("BWA", null, panel_3, null);
 		panel_3.setLayout(null);
 		
-		bwaExeTxt = new JTextField();
-		bwaExeTxt.setEnabled(false);
-		bwaExeTxt.setEditable(false);
-		bwaExeTxt.setBounds(207, 229, 399, 20);
-		panel_3.add(bwaExeTxt);
-		bwaExeTxt.setColumns(10);
-		
-		bwaBrowseBtn.setBounds(618, 227, 89, 23);
-		panel_3.add(bwaBrowseBtn);
-		
 		JLabel lblNewLabel = new JLabel("1. If you already have the 'bwa' and 'samtools' installed on your machine you can use this part.");
 		lblNewLabel.setBounds(10, 11, 697, 14);
 		panel_3.add(lblNewLabel);
@@ -1499,58 +1484,27 @@ public class MainFrame extends JFrame {
 		JLabel lblIfYouDont = new JLabel("2. If you don't have them, you can use the Shell Scripts below to autommatically install them");
 		lblIfYouDont.setBounds(10, 37, 745, 14);
 		panel_3.add(lblIfYouDont);
-		
-		JLabel lblYouCanAlso = new JLabel("3. You can also, point to the 'bwa' and 'samtools' executable files on you machine using the");
-		lblYouCanAlso.setBounds(10, 80, 745, 14);
-		panel_3.add(lblYouCanAlso);
 		alreadyInstalledRadio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				bwaInstallBtn.setEnabled(false);
 				samtoolsInstallBtn.setEnabled(false);
-				
-				bwaBrowseBtn.setEnabled(false);
-				samtoolsBrowseBtn.setEnabled(false);
-				
-				bwaExeTxt.setEnabled(false);
-				samtoolsExeTxt.setEnabled(false);
 				
 				alreadyInstalledRadio.setSelected(true);
 			}
 		});
 		
 		alreadyInstalledRadio.setSelected(true);
-		alreadyInstalledRadio.setBounds(10, 150, 191, 23);
+		alreadyInstalledRadio.setBounds(10, 85, 191, 23);
 		panel_3.add(alreadyInstalledRadio);
 		useScriptsRadio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				bwaInstallBtn.setEnabled(true);
 				samtoolsInstallBtn.setEnabled(true);
-				
-				bwaBrowseBtn.setEnabled(false);
-				samtoolsBrowseBtn.setEnabled(false);
-				
-				bwaExeTxt.setEnabled(false);
-				samtoolsExeTxt.setEnabled(false);
 			}
 		});
 	
-		useScriptsRadio.setBounds(10, 176, 191, 23);
+		useScriptsRadio.setBounds(10, 111, 351, 23);
 		panel_3.add(useScriptsRadio);
-		pointToExeRadio.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				bwaInstallBtn.setEnabled(false);
-				samtoolsInstallBtn.setEnabled(false);
-				
-				bwaBrowseBtn.setEnabled(true);
-				samtoolsBrowseBtn.setEnabled(true);
-				
-				bwaExeTxt.setEnabled(true);
-				samtoolsExeTxt.setEnabled(true);
-			}
-		});
-	
-		pointToExeRadio.setBounds(10, 202, 191, 23);
-		panel_3.add(pointToExeRadio);
 		samtoolsInstallBtn.addActionListener(new ActionListener() {
 			@SuppressWarnings("resource")
 			public void actionPerformed(ActionEvent e) {
@@ -1587,7 +1541,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		samtoolsInstallBtn.setBounds(341, 176, 124, 23);
+		samtoolsInstallBtn.setBounds(503, 111, 138, 23);
 		panel_3.add(samtoolsInstallBtn);
 		bwaInstallBtn.addActionListener(new ActionListener() {
 			@SuppressWarnings("resource")
@@ -1625,29 +1579,11 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		bwaInstallBtn.setBounds(207, 176, 124, 23);
+		bwaInstallBtn.setBounds(369, 111, 124, 23);
 		panel_3.add(bwaInstallBtn);
 		
-		JLabel lblBwaExecutable = new JLabel("BWA Executable:");
-		lblBwaExecutable.setBounds(20, 232, 109, 14);
-		panel_3.add(lblBwaExecutable);
-		
-		JLabel lblSamtoolsExecutable = new JLabel("SamTools Executable:");
-		lblSamtoolsExecutable.setBounds(20, 264, 158, 14);
-		panel_3.add(lblSamtoolsExecutable);
-		
-		samtoolsExeTxt = new JTextField();
-		samtoolsExeTxt.setEnabled(false);
-		samtoolsExeTxt.setEditable(false);
-		samtoolsExeTxt.setColumns(10);
-		samtoolsExeTxt.setBounds(207, 261, 399, 20);
-		panel_3.add(samtoolsExeTxt);
-
-		samtoolsBrowseBtn.setBounds(618, 260, 89, 23);
-		panel_3.add(samtoolsBrowseBtn);
-		
 		JSeparator separator_8 = new JSeparator();
-		separator_8.setBounds(0, 304, 717, 5);
+		separator_8.setBounds(0, 160, 717, 5);
 		panel_3.add(separator_8);
 		reloadProjectFromFile();
 		hasGeneFile = findGeneFile();
@@ -1659,16 +1595,11 @@ public class MainFrame extends JFrame {
 		
 		ButtonGroup bwaGroup = new ButtonGroup();
 		bwaGroup.add(alreadyInstalledRadio);
-		bwaGroup.add(pointToExeRadio);
 		bwaGroup.add(useScriptsRadio);
 		
 		JLabel lblNewLabel_1 = new JLabel(" on your machine .");
 		lblNewLabel_1.setBounds(20, 58, 246, 15);
 		panel_3.add(lblNewLabel_1);
-		
-		JLabel lblNewLabel_2 = new JLabel(" browse buttons.");
-		lblNewLabel_2.setBounds(20, 101, 532, 15);
-		panel_3.add(lblNewLabel_2);
 	}
 
 	@SuppressWarnings("resource")
@@ -1822,12 +1753,6 @@ public class MainFrame extends JFrame {
 		}else{
 			bwaInstallBtn.setEnabled(false);
 			samtoolsInstallBtn.setEnabled(false);
-			
-			bwaBrowseBtn.setEnabled(false);
-			samtoolsBrowseBtn.setEnabled(false);
-			
-			bwaExeTxt.setEnabled(false);
-			samtoolsExeTxt.setEnabled(false);
 			
 			alreadyInstalledRadio.setSelected(true);
 		}
