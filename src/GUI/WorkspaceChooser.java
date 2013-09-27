@@ -27,7 +27,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.log4j.Logger;
 
-import essgenes.Messages;
+import essgenes.*;
 
 @SuppressWarnings("serial")
 public class WorkspaceChooser extends JFrame {

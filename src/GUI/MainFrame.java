@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Desktop;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -1081,23 +1080,23 @@ public class MainFrame extends JFrame {
 		renameLibBtn.setBounds(501, 229, 97, 25);
 		panelInitialize.add(renameLibBtn);
 
-		loadingLbl.setIcon(new ImageIcon("resources/load.gif"));
+		loadingLbl.setIcon(new ImageIcon(MainFrame.class.getResource("/GUI/resources/load.gif")));
 		loadingLbl.setBounds(14, 83, 30, 16);
 		panelInitialize.add(loadingLbl);
 
-		doneLbl1.setIcon(new ImageIcon("resources/done.gif"));
+		doneLbl1.setIcon(new ImageIcon(MainFrame.class.getResource("/GUI/resources/done.gif")));
 		doneLbl1.setBounds(22, 83, 23, 14);
 		panelInitialize.add(doneLbl1);
 
-		doneLbl2.setIcon(new ImageIcon("resources/done.gif"));
+		doneLbl2.setIcon(new ImageIcon(MainFrame.class.getResource("/GUI/resources/done.gif")));
 		doneLbl2.setBounds(21, 103, 23, 14);
 		panelInitialize.add(doneLbl2);
 
-		doneLbl3.setIcon(new ImageIcon("resources/done.gif"));
+		doneLbl3.setIcon(new ImageIcon(MainFrame.class.getResource("/GUI/resources/done.gif")));
 		doneLbl3.setBounds(21, 122, 23, 14);
 		panelInitialize.add(doneLbl3);
 
-		doneLbl4.setIcon(new ImageIcon("resources/done.gif"));
+		doneLbl4.setIcon(new ImageIcon(MainFrame.class.getResource("/GUI/resources/done.gif")));
 		doneLbl4.setBounds(21, 141, 23, 14);
 		panelInitialize.add(doneLbl4);
 
