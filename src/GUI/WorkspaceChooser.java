@@ -52,6 +52,7 @@ public class WorkspaceChooser extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		setLocationRelativeTo(null);
+		recentProjects.setToolTipText("Recently openned projects");
 
 		recentProjects.setBounds(12, 101, 299, 22);
 		contentPane.add(recentProjects);
@@ -63,7 +64,7 @@ public class WorkspaceChooser extends JFrame {
 			recentProjects.addItem(temp);
 		}
 
-		JLabel lblChooseOrCreate = new JLabel("Select your project:");
+		JLabel lblChooseOrCreate = new JLabel("Select a project:");
 		lblChooseOrCreate.setFont(new Font("Tahoma", Font.BOLD, 18));
 		lblChooseOrCreate.setBounds(12, 13, 455, 28);
 		contentPane.add(lblChooseOrCreate);
@@ -73,6 +74,7 @@ public class WorkspaceChooser extends JFrame {
 		contentPane.add(lblYouCanHave);
 
 		JButton browseBtn = new JButton("Browse");
+		browseBtn.setToolTipText("Select a folder which you have an existing project in it");
 		browseBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Path currentRelativePath = Paths.get("");
@@ -131,8 +133,11 @@ public class WorkspaceChooser extends JFrame {
 		contentPane.add(browseBtn);
 
 		JButton newBtn = new JButton("New");
+		newBtn.setToolTipText("Create new project by selecting a folder to store the new project in it");
 		newBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				JOptionPane.showMessageDialog(WorkspaceChooser.this, "Select a folder to store the new project in it");
+				
 				Path currentRelativePath = Paths.get("");
 				String location = currentRelativePath.toAbsolutePath().toString();
 				JFileChooser fileChooser = new JFileChooser(location);
@@ -155,20 +160,23 @@ public class WorkspaceChooser extends JFrame {
 						return;
 					}
 
+					String projectName = JOptionPane.showInputDialog(WorkspaceChooser.this, "Enter Project Name:", "Project Name", JOptionPane.CANCEL_OPTION);
+					if(projectName == null || projectName.compareTo("") == 0){
+						return;
+					}
+					
 					String projectPath = dir.getAbsolutePath();
 					String seperator = "\\";
 					if(projectPath.contains("/")){
 						seperator = "/";
 					}
-					projectPath = projectPath + seperator;
+					projectPath = projectPath + seperator + projectName + seperator;
 					
-					String projectName = JOptionPane.showInputDialog(WorkspaceChooser.this, "Enter Project Name:");
-					while(projectName == null || projectName.compareTo("") == 0){
-						projectName = JOptionPane.showInputDialog("Project Name:");
-					}
-
 					BufferedWriter bw = null;
 					try{
+						File projectDir = new File(projectPath);
+						projectDir.mkdirs();
+						
 						File projectFile = new File(projectPath + "project.pro");
 						boolean ifCreated = projectFile.createNewFile();
 
@@ -211,6 +219,7 @@ public class WorkspaceChooser extends JFrame {
 		contentPane.add(newBtn);
 
 		JButton cancelBtn = new JButton("Cancel");
+		cancelBtn.setToolTipText("Close the application");
 		cancelBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				System.exit(0);
@@ -220,6 +229,7 @@ public class WorkspaceChooser extends JFrame {
 		contentPane.add(cancelBtn);
 
 		JButton okBtn = new JButton("OK");
+		okBtn.setToolTipText("Load your project and continue");
 		okBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
@@ -240,7 +250,7 @@ public class WorkspaceChooser extends JFrame {
 		okBtn.setBounds(432, 153, 97, 25);
 		contentPane.add(okBtn);
 		
-		JLabel lblNowYouCan = new JLabel("Now you can choose an existing project or create a new one.");
+		JLabel lblNowYouCan = new JLabel("Choose an existing project or create a new one.");
 		lblNowYouCan.setBounds(12, 72, 497, 16);
 		contentPane.add(lblNowYouCan);
 		

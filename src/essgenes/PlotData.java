@@ -31,7 +31,7 @@ public class PlotData {
 
 	private static Logger logger = Logger.getLogger(PlotData.class.getName());
 	
-	public static JFreeChart plotData(String libName, int windowLen, int windowStep, ProjectInfo info){
+	public static JFreeChart plotData(String libName, int windowLen, int windowStep, String title, ProjectInfo info){
 		
 		BufferedReader br = null;
 		String line = "";
@@ -111,10 +111,10 @@ public class PlotData {
 		}
 		
 		XYDataset dataset = createDataset(xAxis, yAxis);
-		JFreeChart chart = createChart(dataset);
+		JFreeChart chart = createChart(dataset, title);
 		
 		try {
-			saveToXls(xAxis, yAxis, info, libName);
+			saveToXls(xAxis, yAxis, info, libName, windowLen, windowStep);
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
@@ -122,10 +122,11 @@ public class PlotData {
 		return chart;
 	}
 	
-	private static void saveToXls(Vector<Integer> xAxis, Vector<Integer> yAxis, ProjectInfo info, String libName) throws IOException{
+	private static void saveToXls(Vector<Integer> xAxis, Vector<Integer> yAxis, ProjectInfo info, String libName, int len, int step) throws IOException{
 		
 		Workbook wb = new HSSFWorkbook();
-		Sheet sheet = wb.createSheet(libName);
+		String fileName = libName + "_w" + len + "_s" + step;
+		Sheet sheet = wb.createSheet(fileName);
 
 		for(int i = 0; i < xAxis.size(); i++){
 			
@@ -138,7 +139,7 @@ public class PlotData {
 			cell2.setCellValue(yAxis.get(i));
 		}
 		
-		String xlsPath = info.getPath() + libName + ".xls";
+		String xlsPath = info.getPath() + fileName + ".xls";
 		File xlsFile = new File(xlsPath);
 		if(xlsFile.exists()){
 			xlsFile.delete();
@@ -166,16 +167,16 @@ public class PlotData {
 		return dataset;
 	}
 	
-	private static JFreeChart createChart(XYDataset dataset){
+	private static JFreeChart createChart(XYDataset dataset, String title){
 	
 		//		create the chart...
 		final JFreeChart chart = ChartFactory.createXYLineChart(
-				"Data",      // chart title
-				"Number of Insertions Within a Window",                      // x axis label
-				"Number of Windows Within a Window",                      // y axis label
+				title,      // chart title
+				"Number of insertions within a window",                      // x axis label
+				"Number of windows with the given number of insertions",                      // y axis label
 				dataset,                  // data
 				PlotOrientation.VERTICAL,
-				true,                     // include legend
+				false,                     // include legend
 				true,                     // tooltips
 				false                     // urls
 				);
