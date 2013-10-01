@@ -121,11 +121,17 @@ public class WorkspaceChooser extends JFrame {
 					WorkspaceChooser.this.recentProjects.addItem(projectName);
 					WorkspaceChooser.this.recentProjects.setSelectedIndex(WorkspaceChooser.this.recentProjects.getItemCount() - 1);
 
+					projectPath = fileChooser.getSelectedFile().getAbsolutePath();
+					String seperator = "\\";
+					if(projectPath.contains("/")){
+						seperator = "/";
+					}
+					projectPath = projectPath + seperator;
+					
 					addToRecentProjects(projectName, projectPath);
 
 					projectNames.add(projectName);
 					projectPaths.add(projectPath);
-
 				}
 			}
 		});

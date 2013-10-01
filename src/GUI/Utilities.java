@@ -11,6 +11,7 @@ public class Utilities {
 	private static JFrame frame;
 	private static JTabbedPane panel;
 	private static int newFrameHeight;
+	@SuppressWarnings("unused")
 	private static int newPanelHeigth;
 	private static int step;
 	private static int interval;

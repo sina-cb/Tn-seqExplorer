@@ -52,7 +52,6 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartPanel;
 
-import essgenes.AddColumns;
 import essgenes.Messages;
 import essgenes.PlotData;
 import essgenes.PrepareFiles;
@@ -95,14 +94,6 @@ public class MainFrame extends JFrame {
 	private JButton addNewDataTableBtn = new JButton("Add new");
 	private JButton replaceXlsBtn = new JButton("Replace");
 	private JLabel dataTableCountLbl = new JLabel("0");
-	private JComboBox<String> addLibraryCombo = new JComboBox<String>();
-	private JComboBox<String> addTableCombo = new JComboBox<String>();
-	private JButton addMoreColumnsBtn = new JButton("Add");
-	private JTextField addWinLenTxt;
-	private JTextField addStepTxt;
-	private JTextField adjustStartTxt;
-	private JTextField adjustEndTxt;
-	private JTextField addSeqLenTxt;
 	private JLabel doneLbl1 = new JLabel("");
 	private JLabel doneLbl2 = new JLabel("");
 	private JLabel doneLbl3 = new JLabel("");
@@ -177,11 +168,13 @@ public class MainFrame extends JFrame {
 		panelMain.add(lblSequenceLength);
 
 		sequenceLenTxt = new JTextField();
+		sequenceLenTxt.setToolTipText("Enter sequence length to be used in this project");
 		sequenceLenTxt.setBounds(157, 32, 150, 22);
 		panelMain.add(sequenceLenTxt);
 		sequenceLenTxt.setColumns(10);
 
 		JButton applySequenceBtn = new JButton("Apply");
+		applySequenceBtn.setToolTipText("Apply the entered sequence length");
 		applySequenceBtn.setFont(new Font("Tahoma", Font.BOLD, 13));
 		applySequenceBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -433,6 +426,7 @@ public class MainFrame extends JFrame {
 		lblOr.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblOr.setBounds(12, 168, 51, 35);
 		panelMain.add(lblOr);
+		btnPrepareGeneFile.setToolTipText("Process files and create the .gene file");
 		btnPrepareGeneFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {				
 
@@ -449,6 +443,7 @@ public class MainFrame extends JFrame {
 		panelMain.add(separator_3);
 
 		buttonGroup.add(databaseRadioBtn);
+		databaseRadioBtn.setToolTipText("Automatically download from the NCBI FTP Server");
 		databaseRadioBtn.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		databaseRadioBtn.setBounds(10, 76, 360, 25);
 		panelMain.add(databaseRadioBtn);	
@@ -576,6 +571,7 @@ public class MainFrame extends JFrame {
 		});
 
 		buttonGroup.add(ownRadioBtn);
+		ownRadioBtn.setToolTipText("Use existing files from NCBI FTP server");
 		ownRadioBtn.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		ownRadioBtn.setBounds(12, 201, 358, 25);
 		panelMain.add(ownRadioBtn);
@@ -633,6 +629,7 @@ public class MainFrame extends JFrame {
 		panelMain.add(separator_4);
 
 		buttonGroup.add(imgRadioBtn);
+		imgRadioBtn.setToolTipText("use existing files from IMG server");
 		imgRadioBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ftpFirstLevelCombo.setEnabled(false);
@@ -665,11 +662,13 @@ public class MainFrame extends JFrame {
 		panelMain.add(lblImgFile);
 
 		imgFileTxt = new JTextField();
+		imgFileTxt.setToolTipText("Path to the IMG file, use the browse button");
 		imgFileTxt.setEditable(false);
 		imgFileTxt.setEnabled(false);
 		imgFileTxt.setColumns(10);
 		imgFileTxt.setBounds(148, 379, 452, 22);
 		panelMain.add(imgFileTxt);
+		imgBrowseBtn.setToolTipText("Select the file downloaded from IMG server");
 		imgBrowseBtn.setEnabled(false);
 		imgBrowseBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -698,6 +697,7 @@ public class MainFrame extends JFrame {
 		JLabel lblSelectYourScaffold = new JLabel("Select a scaffold:");
 		lblSelectYourScaffold.setBounds(12, 412, 112, 16);
 		panelMain.add(lblSelectYourScaffold);
+		scaffoldCombo.setToolTipText("Select the scaffold within the IMG file");
 		scaffoldCombo.setEnabled(false);
 
 		scaffoldCombo.setBounds(148, 410, 452, 20);
@@ -725,9 +725,7 @@ public class MainFrame extends JFrame {
 						+ "(ftp://ftp.ncbi.nih.gov/genomes/)");
 			}
 		});
-		lblNeedHelp.setToolTipText("This will guide you to finding the protein-coding (.ptt file) and RNA-coding (.rnt file)\n"
-				+ "annotation at the FTP server of the National Center for Biotechnology Information\n"
-				+ "(ftp://ftp.ncbi.nih.gov/genomes/)");
+		lblNeedHelp.setToolTipText("Click me!");
 		lblNeedHelp.setForeground(Color.BLUE);
 		lblNeedHelp.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		lblNeedHelp.setBounds(371, 85, 88, 14);
@@ -742,11 +740,9 @@ public class MainFrame extends JFrame {
 						+ "follow the appropriate format of the file.");
 			}
 		});
-		lblhelp.setToolTipText("If you previously downloaded the .ppt and .rnt files from NCBI you can select them here.\n"
-				+ "You can also manually edit the .ptt and .rnt files before creating a new project as long as you\n"
-				+ "follow the appropriate format of the file.");
+		lblhelp.setToolTipText("Click me!");
 		lblhelp.setForeground(Color.BLUE);
-		lblhelp.setFont(new Font("Tahoma", Font.PLAIN, 9));
+		lblhelp.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		lblhelp.setBounds(371, 207, 88, 14);
 		panelMain.add(lblhelp);
 
@@ -759,11 +755,9 @@ public class MainFrame extends JFrame {
 						+ "select 'Export gene information' (near the bottom of the page), and save the .xls file from the follwoing page.");
 			}
 		});
-		label_2.setToolTipText( "Alternatively, you can use annotation downloaded from Integrated Microbial Genomes (http://img.jgi.doe.gov/).\n"
-				+ "To download the IMG annotation, find the desired genome in the IMG database (finished genomes only),\n"
-				+ "select 'Export gene information' (near the bottom of the page), and save the .xls file from the follwoing page.");
+		label_2.setToolTipText( "Click me!");
 		label_2.setForeground(Color.BLUE);
-		label_2.setFont(new Font("Tahoma", Font.PLAIN, 9));
+		label_2.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		label_2.setBounds(371, 329, 88, 14);
 		panelMain.add(label_2);
 
@@ -775,8 +769,7 @@ public class MainFrame extends JFrame {
 						+ "Select the one you wish to use.");
 			}
 		});
-		label_1.setToolTipText("The IMG annotation may include data for multiple scaffolds (e.g., chromosomes or plasmids)\n"
-				+ "Select the one you wish to use.");
+		label_1.setToolTipText("Click me!");
 		label_1.setForeground(Color.BLUE);
 		label_1.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		label_1.setBounds(104, 413, 88, 14);
@@ -791,9 +784,11 @@ public class MainFrame extends JFrame {
 		panelInitialize.add(lblBrowseFoThe);
 
 		samFilePathTxt = new JTextField();
+		samFilePathTxt.setToolTipText("Path to the SAM file");
 		samFilePathTxt.setBounds(14, 153, 477, 22);
 		panelInitialize.add(samFilePathTxt);
 		samFilePathTxt.setColumns(10);
+		browseForSamBtn.setToolTipText("Use this to browse for the SAM file");
 
 		browseForSamBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -818,6 +813,7 @@ public class MainFrame extends JFrame {
 		extractInsLbl.setForeground(Color.LIGHT_GRAY);
 		extractInsLbl.setBounds(56, 194, 411, 16);
 		panelInitialize.add(extractInsLbl);
+		extractInsBtn.setToolTipText("Process and extract the SAM file");
 		extractInsBtn.setEnabled(false);
 		extractInsBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -848,6 +844,7 @@ public class MainFrame extends JFrame {
 		sortUniLbl.setForeground(Color.LIGHT_GRAY);
 		sortUniLbl.setBounds(56, 251, 411, 16);
 		panelInitialize.add(sortUniLbl);
+		cancelLibSaveBtn.setToolTipText("Clear everything and start over");
 		cancelLibSaveBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
@@ -893,9 +890,11 @@ public class MainFrame extends JFrame {
 		JLabel lblRemoveExistingLibraries = new JLabel("Edit existing libraries:");
 		lblRemoveExistingLibraries.setBounds(12, 312, 313, 16);
 		panelInitialize.add(lblRemoveExistingLibraries);
+		libraryComboBox.setToolTipText("Select a library to edit");
 
 		libraryComboBox.setBounds(14, 341, 479, 22);
 		panelInitialize.add(libraryComboBox);
+		removeLibBtn.setToolTipText("Remove the selected library");
 
 		removeLibBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -979,6 +978,7 @@ public class MainFrame extends JFrame {
 		});
 		removeLibBtn.setBounds(612, 340, 97, 25);
 		panelInitialize.add(removeLibBtn);
+		renameLibBtn.setToolTipText("Rename the selected library");
 
 		renameLibBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -1114,9 +1114,11 @@ public class MainFrame extends JFrame {
 		JLabel lblChooseALibrary = new JLabel("Choose a library to plot:");
 		lblChooseALibrary.setBounds(14, 433, 286, 14);
 		panelInitialize.add(lblChooseALibrary);
+		plotLibraryCombo.setToolTipText("Select a libray to plot");
 		
 		plotLibraryCombo.setBounds(14, 458, 400, 20);
 		panelInitialize.add(plotLibraryCombo);
+		plotBtn.setToolTipText("Plot the selected library");
 		
 		plotBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1127,12 +1129,14 @@ public class MainFrame extends JFrame {
 		panelInitialize.add(plotBtn);
 		
 		winLenTxt = new JTextField();
+		winLenTxt.setToolTipText("Enter the window length");
 		winLenTxt.setText("1000");
 		winLenTxt.setColumns(10);
 		winLenTxt.setBounds(424, 458, 89, 20);
 		panelInitialize.add(winLenTxt);
 		
 		winStepTxt = new JTextField();
+		winStepTxt.setToolTipText("Enter window step size");
 		winStepTxt.setText("100");
 		winStepTxt.setColumns(10);
 		winStepTxt.setBounds(523, 458, 89, 20);
@@ -1159,6 +1163,7 @@ public class MainFrame extends JFrame {
 		panelInitialize.add(plotWaitLbl);
 		
 		JLabel label_3 = new JLabel("(?)");
+		label_3.setToolTipText("Click me!");
 		label_3.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -1169,7 +1174,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 		label_3.setForeground(Color.BLUE);
-		label_3.setFont(new Font("Tahoma", Font.PLAIN, 9));
+		label_3.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		label_3.setBounds(689, 461, 30, 14);
 		panelInitialize.add(label_3);
 
@@ -1180,6 +1185,7 @@ public class MainFrame extends JFrame {
 		JLabel lblAddNewData = new JLabel("Add new data table to your project:");
 		lblAddNewData.setBounds(10, 55, 290, 16);
 		panel.add(lblAddNewData);
+		addNewDataTableBtn.setToolTipText("Add new data table to the project, after clicking just enter the name of the table.");
 
 		addNewDataTableBtn.addActionListener(new ActionListener() {
 			@SuppressWarnings("resource")
@@ -1243,9 +1249,11 @@ public class MainFrame extends JFrame {
 		JLabel lblOldLibraries = new JLabel("Manage existing tables:");
 		lblOldLibraries.setBounds(10, 105, 311, 16);
 		panel.add(lblOldLibraries);
+		dataTableCombo.setToolTipText("Just select the data table you want to edit");
 
-		dataTableCombo.setBounds(20, 132, 328, 20);
+		dataTableCombo.setBounds(10, 132, 338, 20);
 		panel.add(dataTableCombo);
+		dataTableRenameBtn.setToolTipText("Rename the data table in the project");
 		dataTableRenameBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
@@ -1272,6 +1280,7 @@ public class MainFrame extends JFrame {
 
 		dataTableRenameBtn.setBounds(519, 131, 89, 23);
 		panel.add(dataTableRenameBtn);
+		dataTableRemoveBtn.setToolTipText("Remove the selected data table from the project");
 		dataTableRemoveBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				File table = new File(projectInfo.getPath() + dataTableCombo.getSelectedItem() + ".table");
@@ -1291,6 +1300,7 @@ public class MainFrame extends JFrame {
 
 		dataTableRemoveBtn.setBounds(618, 131, 89, 23);
 		panel.add(dataTableRemoveBtn);
+		openAsSpreadsheetBtn.setToolTipText("Open the data table in a seperate editor so that you can edit it on your own.");
 		openAsSpreadsheetBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -1306,6 +1316,7 @@ public class MainFrame extends JFrame {
 
 		openAsSpreadsheetBtn.setBounds(362, 131, 147, 23);
 		panel.add(openAsSpreadsheetBtn);
+		replaceXlsBtn.setToolTipText("Replace editted data table with the original one");
 
 		replaceXlsBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -1313,6 +1324,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 		replaceXlsBtn.setEnabled(false);
+		tableCancelChangeBtn.setToolTipText("Cancel editing and ignore the changes");
 		tableCancelChangeBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
@@ -1352,6 +1364,7 @@ public class MainFrame extends JFrame {
 		panel.add(lblNewLabel_3);
 		
 		JLabel label_6 = new JLabel("(?)");
+		label_6.setToolTipText("Click me!");
 		label_6.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -1363,13 +1376,14 @@ public class MainFrame extends JFrame {
 			}
 		});
 		label_6.setForeground(Color.BLUE);
-		label_6.setFont(new Font("Tahoma", Font.PLAIN, 9));
+		label_6.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		label_6.setBounds(318, 11, 30, 14);
 		panel.add(label_6);
 		
 		JSeparator separator_6 = new JSeparator();
 		separator_6.setBounds(0, 39, 717, 8);
 		panel.add(separator_6);
+		addNewIndicesBtn.setToolTipText("You can add extra data to your data tables in this subsection");
 		
 		addNewIndicesBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1418,99 +1432,6 @@ public class MainFrame extends JFrame {
 		});
 		mnMenu.add(mntmExit);
 
-		JPanel panel_2 = new JPanel();
-		tabbedPane.addTab("Add", null, panel_2, null);
-		panel_2.setLayout(null);
-
-		JLabel lblChooseYourLibrary = new JLabel("Choose your library:");
-		lblChooseYourLibrary.setBounds(10, 11, 137, 14);
-		panel_2.add(lblChooseYourLibrary);
-
-		addLibraryCombo.setBounds(157, 8, 451, 20);
-		panel_2.add(addLibraryCombo);
-
-		JLabel lblChooseYourTable = new JLabel("Choose your table:");
-		lblChooseYourTable.setBounds(10, 42, 137, 14);
-		panel_2.add(lblChooseYourTable);
-
-		addTableCombo.setBounds(157, 39, 451, 20);
-		panel_2.add(addTableCombo);
-
-		addWinLenTxt = new JTextField();
-		addWinLenTxt.setText("1000");
-		addWinLenTxt.setBounds(157, 70, 86, 20);
-		panel_2.add(addWinLenTxt);
-		addWinLenTxt.setColumns(10);
-
-		addStepTxt = new JTextField();
-		addStepTxt.setText("100");
-		addStepTxt.setBounds(400, 70, 86, 20);
-		panel_2.add(addStepTxt);
-		addStepTxt.setColumns(10);
-
-		JLabel lblWindowLength = new JLabel("Window Length:");
-		lblWindowLength.setBounds(10, 73, 137, 14);
-		panel_2.add(lblWindowLength);
-
-		JLabel lblStep_1 = new JLabel("Step:");
-		lblStep_1.setBounds(253, 73, 137, 14);
-		panel_2.add(lblStep_1);
-
-		adjustStartTxt = new JTextField();
-		adjustStartTxt.setText("%-20");
-		adjustStartTxt.setBounds(157, 101, 86, 20);
-		panel_2.add(adjustStartTxt);
-		adjustStartTxt.setColumns(10);
-
-		JLabel lblAdjustStart = new JLabel("Adjust Start:");
-		lblAdjustStart.setBounds(10, 104, 137, 14);
-		panel_2.add(lblAdjustStart);
-
-		adjustEndTxt = new JTextField();
-		adjustEndTxt.setText("%-20");
-		adjustEndTxt.setBounds(400, 101, 86, 20);
-		panel_2.add(adjustEndTxt);
-		adjustEndTxt.setColumns(10);
-
-		JLabel lblAdjustEnd = new JLabel("Adjust End:");
-		lblAdjustEnd.setBounds(253, 104, 137, 14);
-		panel_2.add(lblAdjustEnd);
-
-		addSeqLenTxt = new JTextField();
-		addSeqLenTxt.setEditable(false);
-		addSeqLenTxt.setBounds(157, 132, 86, 20);
-		panel_2.add(addSeqLenTxt);
-		addSeqLenTxt.setColumns(10);
-
-		JLabel lblSequenceLength_1 = new JLabel("Sequence Length:");
-		lblSequenceLength_1.setBounds(10, 135, 137, 14);
-		panel_2.add(lblSequenceLength_1);
-		addMoreColumnsBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				String libraryName = (String) addLibraryCombo.getSelectedItem();
-				String tableName = (String) addTableCombo.getSelectedItem();
-				int windowLen = Integer.parseInt(addWinLenTxt.getText());
-				int step = Integer.parseInt(addStepTxt.getText());
-				String adjStart = adjustStartTxt.getText();
-				String adjEnd = adjustEndTxt.getText();
-				int seqLen = projectInfo.getSequenceLen();
-
-				try {
-					if (AddColumns.add(libraryName, tableName, windowLen, step, adjStart, adjEnd, seqLen, projectInfo).compareTo(Messages.successMsg) == 0){
-						JOptionPane.showMessageDialog(MainFrame.this, "Data added");
-					}else{
-						JOptionPane.showMessageDialog(MainFrame.this, "There was some problem, data was not added!!!", "Error", JOptionPane.ERROR_MESSAGE);
-					}
-				} catch (IOException e) {
-					logger.error(e.getMessage());
-					return;
-				}
-			}
-		});
-
-		addMoreColumnsBtn.setBounds(618, 131, 89, 23);
-		panel_2.add(addMoreColumnsBtn);
-
 		JPanel panel_3 = new JPanel();
 		tabbedPane.addTab("BWA", null, panel_3, null);
 		panel_3.setLayout(null);
@@ -1544,7 +1465,6 @@ public class MainFrame extends JFrame {
 		useScriptsRadio.setBounds(10, 111, 351, 23);
 		panel_3.add(useScriptsRadio);
 		samtoolsInstallBtn.addActionListener(new ActionListener() {
-			@SuppressWarnings("resource")
 			public void actionPerformed(ActionEvent e) {
 				URL programSource = MainFrame.class.getResource("/resources/samtools-0.1.19.tar.bz2");
 				File programDest = new File("samtools-0.1.19.tar.bz2");
@@ -1582,7 +1502,6 @@ public class MainFrame extends JFrame {
 		samtoolsInstallBtn.setBounds(503, 111, 138, 23);
 		panel_3.add(samtoolsInstallBtn);
 		bwaInstallBtn.addActionListener(new ActionListener() {
-			@SuppressWarnings("resource")
 			public void actionPerformed(ActionEvent e) {
 				URL programSource = MainFrame.class.getResource("/resources/bwa-0.7.5a.tar.bz2");
 				File programDest = new File("bwa-0.7.5a.tar.bz2");
@@ -2076,8 +1995,9 @@ public class MainFrame extends JFrame {
 		initiatePlotLibraryComboBox();
 	}
 
-	private void reloadProjectFromFile(){		
-		projectInfo.createFile(projectInfo.getPath() + "project.pro");
+	private void reloadProjectFromFile(){
+		String pathTemp = projectInfo.getPath() + "project.pro";
+		projectInfo.createFile(pathTemp);
 		if(!projectInfo.getFile().exists()){
 			JOptionPane.showMessageDialog(MainFrame.this, "There was an error finding your project file!"
 					+ "\nIt may be deleted."
@@ -2095,7 +2015,7 @@ public class MainFrame extends JFrame {
 			setTitle("Essential Genes Finder - " + projectInfo.getName());
 
 			line = br.readLine();
-			projectInfo.setPath(line.substring(Messages.projectPath.length()));
+			//projectInfo.setPath(pathTemp);
 
 			line = br.readLine();
 			if (line == null){

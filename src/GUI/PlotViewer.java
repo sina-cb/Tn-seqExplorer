@@ -1,17 +1,16 @@
 package GUI;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 
 import org.jfree.chart.ChartPanel;
 
+@SuppressWarnings("serial")
 public class PlotViewer extends JFrame {
 
 	private JPanel contentPane;

@@ -21,17 +21,17 @@ public class AddColumns {
 		int adjustEnd;
 		double adjustEndPercent;
 		
-		if (adjustStartString.charAt(0) == '%'){
+		if (adjustStartString.contains("%")){
 			adjustStart = 0;
-			adjustStartPercent = Integer.parseInt(adjustStartString.substring(1)) / 100.0;
+			adjustStartPercent = Integer.parseInt(adjustStartString.substring(0, adjustStartString.length() - 1)) / 100.0;
 		}else{
 			adjustStart = Integer.parseInt(adjustStartString);
 			adjustStartPercent = 0.0;
 		}
 		
-		if (adjustEndString.charAt(0) == '%'){
+		if (adjustEndString.contains("%")){
 			adjustEnd = 0;
-			adjustEndPercent = Integer.parseInt(adjustEndString.substring(1)) / 100.0;
+			adjustEndPercent = Integer.parseInt(adjustEndString.substring(0, adjustEndString.length() - 1)) / 100.0;
 		}else{
 			adjustEnd = Integer.parseInt(adjustEndString);
 			adjustEndPercent = 0.0;
