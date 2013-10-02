@@ -14,8 +14,11 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
+
+import GUI.MainFrame;
 
 import com.google.code.externalsorting.ExternalSort;
 
@@ -79,6 +82,27 @@ public class PrepareFiles {
 			toBeWritten = String.format("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", start_coord, end_coord, strand, length, locus_type, locus_tag, gene_symbol, description);
 			bw.write(toBeWritten);
 			bw.flush();
+		}
+		
+		if (Integer.parseInt(end_coord) > info.getSequenceLen()){
+
+			JOptionPane.showMessageDialog(null, ""
+					+ "ERROR: insertions were found at positions above the provided sequence length. The library\n"
+					+ "was not created.\n"
+					+ "\n"
+					+ "Possible reasons and solutions:\n"
+					+ "- The sequence length is incorrect. Verify the sequence length and if necessary correct it in the\n"
+					+ "'Main' tab.\n"
+					+ "- You have used a wrong DNA sequence when running the Barrows-WheelerAligner to locate\n"
+					+ "the insertions and generate the .sam file. Run BWA with the correct sequence.\n"
+					+ "- Some of the input files are not formatted properly. Verify that all input files, including the\n"
+					+ "DNA sequence used for BWA, have the correct format.", "ERROR", JOptionPane.ERROR_MESSAGE);
+
+			bw.close();
+			
+			deleteAllOtherGenesFiles("", info);
+			info.setGeneFile(null);
+			return;
 		}
 		
 		bw.close();
@@ -175,7 +199,7 @@ public class PrepareFiles {
 		return wholeImgFile;
 	}
 	
-	public static String createGeneFile(String pttFilePath, String rntFilePath, String projectPath) {
+	public static String createGeneFile(String pttFilePath, String rntFilePath, String projectPath, ProjectInfo info) {
 
 		String geneFileName = prepareFileName(pttFilePath, ".genes");
 
@@ -226,6 +250,31 @@ public class PrepareFiles {
 			
 			//Then Write the Header to the File
 			writeGenesFileHeader(genesFile);
+			
+			ArrayList<String> lines = MyFileUtil.tailNLines(genesFile, 2);
+			String temp = lines.get(1);
+			temp = temp.substring(temp.indexOf("\t") + 1);
+			temp = temp.substring(0, temp.indexOf("\t"));
+
+			if(Integer.parseInt(temp) > info.getSequenceLen()){
+				JOptionPane.showMessageDialog(null, ""
+						+ "ERROR: insertions were found at positions above the provided sequence length. The library\n"
+						+ "was not created.\n"
+						+ "\n"
+						+ "Possible reasons and solutions:\n"
+						+ "- The sequence length is incorrect. Verify the sequence length and if necessary correct it in the\n"
+						+ "'Main' tab.\n"
+						+ "- You have used a wrong DNA sequence when running the Barrows-WheelerAligner to locate\n"
+						+ "the insertions and generate the .sam file. Run BWA with the correct sequence.\n"
+						+ "- Some of the input files are not formatted properly. Verify that all input files, including the\n"
+						+ "DNA sequence used for BWA, have the correct format.", "ERROR", JOptionPane.ERROR_MESSAGE);
+				
+				if(!genesFile.delete()){
+					logger.warn("Could not delete the incompatible gene file!");
+				}
+				
+				return Messages.failMsg;
+			}
 			
 		} catch (IOException e) {
 			logger.error(e.getMessage());

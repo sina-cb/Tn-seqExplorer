@@ -53,6 +53,7 @@ import org.apache.log4j.Logger;
 import org.jfree.chart.ChartPanel;
 
 import essgenes.Messages;
+import essgenes.MyFileUtil;
 import essgenes.PlotData;
 import essgenes.PrepareFiles;
 import essgenes.ProjectInfo;
@@ -66,7 +67,7 @@ public class MainFrame extends JFrame {
 	private JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 	private JButton browseForSamBtn = new JButton("Browse");
 	private JButton extractInsBtn = new JButton("Extract");
-	private JButton cancelLibSaveBtn = new JButton("New library");
+	private JButton cancelLibSaveBtn = new JButton("Clear the form");
 	private JLabel extractInsLbl = new JLabel("Extract insertion positions from the \"SAM\" file");
 	private JLabel sortUniLbl = new JLabel("Sort unique insertions by the number of reads");
 	private JLabel sortInsLbl = new JLabel("Sort the extracted insertion positions");
@@ -848,39 +849,12 @@ public class MainFrame extends JFrame {
 		cancelLibSaveBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
-				File tempFile = null;
-				if (samFilePathTxt.getText() != null && samFilePathTxt.getText().compareTo("") != 0){
-					tempFile = new File(samFilePathTxt.getText());
-				}
-
-				if(tempFile != null && tempFile.exists()){
-					tempFile = new File(PrepareFiles.prepareOutputFilePath(samFilePathTxt.getText(), projectInfo.getPath(), ".inspo"));
-					if(tempFile.exists()){
-						tempFile.delete();
-					}
-
-					tempFile = new File(PrepareFiles.prepareOutputFilePath(samFilePathTxt.getText(), projectInfo.getPath(), ".inspos"));
-					if(tempFile.exists()){
-						tempFile.delete();
-					}
-
-					tempFile = new File(PrepareFiles.prepareOutputFilePath(samFilePathTxt.getText(), projectInfo.getPath(), ".inspou"));
-					if(tempFile.exists()){
-						tempFile.delete();
-					}
-
-					tempFile = new File(PrepareFiles.prepareOutputFilePath(samFilePathTxt.getText(), projectInfo.getPath(), ".inspous"));
-					if(tempFile.exists()){
-						tempFile.delete();
-					}
-				}
-
-				setToDefaultState();
+				clearTheForm();
 
 			}
 		});
 
-		cancelLibSaveBtn.setBounds(587, 188, 122, 25);
+		cancelLibSaveBtn.setBounds(587, 261, 122, 25);
 		panelInitialize.add(cancelLibSaveBtn);
 
 		JSeparator separator_2 = new JSeparator();
@@ -1561,6 +1535,37 @@ public class MainFrame extends JFrame {
 		panel_3.add(lblNewLabel_1);
 	}
 
+	private void clearTheForm(){
+		File tempFile = null;
+		if (samFilePathTxt.getText() != null && samFilePathTxt.getText().compareTo("") != 0){
+			tempFile = new File(samFilePathTxt.getText());
+		}
+
+		if(tempFile != null && tempFile.exists()){
+			tempFile = new File(PrepareFiles.prepareOutputFilePath(samFilePathTxt.getText(), projectInfo.getPath(), ".inspo"));
+			if(tempFile.exists()){
+				tempFile.delete();
+			}
+
+			tempFile = new File(PrepareFiles.prepareOutputFilePath(samFilePathTxt.getText(), projectInfo.getPath(), ".inspos"));
+			if(tempFile.exists()){
+				tempFile.delete();
+			}
+
+			tempFile = new File(PrepareFiles.prepareOutputFilePath(samFilePathTxt.getText(), projectInfo.getPath(), ".inspou"));
+			if(tempFile.exists()){
+				tempFile.delete();
+			}
+
+			tempFile = new File(PrepareFiles.prepareOutputFilePath(samFilePathTxt.getText(), projectInfo.getPath(), ".inspous"));
+			if(tempFile.exists()){
+				tempFile.delete();
+			}
+		}
+
+		setToDefaultState();
+	}
+	
 	private void plotDataMethod(){
 		if(winLenTxt.getText() == null || winLenTxt.getText().compareTo("") == 0){
 			JOptionPane.showMessageDialog(MainFrame.this, "Please provide the window length", "Warning", JOptionPane.WARNING_MESSAGE);
@@ -1615,8 +1620,18 @@ public class MainFrame extends JFrame {
 
 				try {
 					PrepareFiles.processSelectedScaffold(imgFileTxt.getText(), (String) scaffoldCombo.getSelectedItem(), projectInfo);
-					JOptionPane.showMessageDialog(MainFrame.this, "Genes file was created successfully.");
-					geneFileNameLbl.setText(scaffoldCombo.getSelectedItem() + ".genes");
+					
+					if (projectInfo.getGeneFile() != null){
+						JOptionPane.showMessageDialog(MainFrame.this, "Genes file was created successfully.");
+						geneFileNameLbl.setText(scaffoldCombo.getSelectedItem() + ".genes");
+					}else{
+						geneFileNameLbl.setText("ERROR");
+						hasGeneFile = false;
+						
+						for (int i = 1; i < tabbedPane.getTabCount(); i++){
+							tabbedPane.setEnabledAt(i, false);
+						}
+					}
 				} catch (IOException e) {
 					geneFileNameLbl.setText("ERROR");
 					logger.error(e.getMessage());
@@ -1656,8 +1671,13 @@ public class MainFrame extends JFrame {
 									geneFileNameLbl.setText("Not Avail.");
 								}
 							}else{
-								JOptionPane.showMessageDialog(MainFrame.this, "There was an error craeting your Genes File.");
+								JOptionPane.showMessageDialog(MainFrame.this, "There was an error in creating your Genes File.");
 								geneFileNameLbl.setText("ERROR");
+								
+								for (int i = 1; i < tabbedPane.getTabCount(); i++){
+									tabbedPane.setEnabledAt(i, false);
+								}
+								hasGeneFile = false;
 							}
 						}else{
 							geneFileNameLbl.setText(projectInfo.getGeneFile().getName());
@@ -1934,7 +1954,7 @@ public class MainFrame extends JFrame {
 		String pttPath = pttFileTxt.getText();
 		String rntPath = rntFileTxt.getText();
 
-		String geneFilePath = PrepareFiles.createGeneFile(pttPath, rntPath, projectInfo.getPath()); 
+		String geneFilePath = PrepareFiles.createGeneFile(pttPath, rntPath, projectInfo.getPath(), projectInfo); 
 		if(geneFilePath.compareTo(Messages.failMsg) != 0){
 			hasGeneFile = true;
 			projectInfo.setGeneFile(new File(geneFilePath));
@@ -2079,6 +2099,7 @@ public class MainFrame extends JFrame {
 		doneLbl2.setVisible(false);
 		doneLbl3.setVisible(false);
 		doneLbl4.setVisible(false);
+		loadingLbl.setVisible(false);
 	}
 
 	// 1
@@ -2110,6 +2131,34 @@ public class MainFrame extends JFrame {
 		public void run() {
 			String result = PrepareFiles.sortTheLocationsFile(MainFrame.this.samFilePathTxt.getText(), projectInfo.getPath());
 			if(result.compareTo(Messages.successMsg) == 0){
+				String tailLine = MyFileUtil.tail(new File(PrepareFiles.prepareOutputFilePath(MainFrame.this.samFilePathTxt.getText(), projectInfo.getPath(), ".inspos")));
+				
+				if (Integer.parseInt(tailLine) > projectInfo.getSequenceLen()){
+					File inspos = new File(PrepareFiles.prepareOutputFilePath(MainFrame.this.samFilePathTxt.getText(), projectInfo.getPath(), ".inspos"));
+					File inspo = new File(PrepareFiles.prepareOutputFilePath(MainFrame.this.samFilePathTxt.getText(), projectInfo.getPath(), ".inspo"));
+					
+					if(inspo.delete()){
+						if(inspos.delete()){
+							JOptionPane.showMessageDialog(MainFrame.this, ""
+									+ "ERROR: insertions were found at positions above the provided sequence length. The library\n"
+									+ "was not created.\n"
+									+ "\n"
+									+ "Possible reasons and solutions:\n"
+									+ "- The sequence length is incorrect. Verify the sequence length and if necessary correct it in the\n"
+									+ "'Main' tab.\n"
+									+ "- You have used a wrong DNA sequence when running the Barrows-WheelerAligner to locate\n"
+									+ "the insertions and generate the .sam file. Run BWA with the correct sequence.\n"
+									+ "- Some of the input files are not formatted properly. Verify that all input files, including the\n"
+									+ "DNA sequence used for BWA, have the correct format.", "ERROR", JOptionPane.ERROR_MESSAGE);
+							
+							clearTheForm();
+							return;
+						}
+					}
+					
+					return;
+				}
+				
 				MainFrame.this.sortInsLbl.setForeground(Color.black);
 				MainFrame.this.countUniLbl.setForeground(Color.BLUE);
 
@@ -2131,6 +2180,7 @@ public class MainFrame extends JFrame {
 		public void run() {
 			String result = PrepareFiles.countUniqueLocations(MainFrame.this.samFilePathTxt.getText(), projectInfo.getPath());
 			if(result.compareTo(Messages.successMsg) == 0){
+				
 				MainFrame.this.sortUniLbl.setForeground(Color.BLUE);
 				MainFrame.this.countUniLbl.setForeground(Color.black);
 
