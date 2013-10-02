@@ -28,10 +28,10 @@ public class PrepareFiles {
 		File genesFile = new File(info.getPath() + scaffoldName + ".genes");	
 		BufferedWriter bw = new BufferedWriter(new FileWriter(genesFile));
 		
-		bw.write("\n");
-		bw.write("\n");
-		bw.write("\n");
-		bw.write("\n");
+		bw.write("\t\t\t\t\t\t\t\n");
+		bw.write("\t\t\t\t\t\t\t\n");
+		bw.write("\t\t\t\t\t\t\t\n");
+		bw.write("\t\t\t\t\t\t\t\n");
 		
 		String start_coord = "start_coord";
 		String end_coord = "end_coord";
@@ -254,10 +254,10 @@ public class PrepareFiles {
 			bw = new BufferedWriter(new FileWriter(tempFile));
 
 			//Leaving 4 Lines Blank For Later Added Details
-			bw.write("\n");
-			bw.write("\n");
-			bw.write("\n");
-			bw.write("\n");
+			bw.write("\t\t\t\t\t\t\t\n");
+			bw.write("\t\t\t\t\t\t\t\n");
+			bw.write("\t\t\t\t\t\t\t\n");
+			bw.write("\t\t\t\t\t\t\t\n");
 
 			//Table Columns
 			String start_coord = "start_coord";
