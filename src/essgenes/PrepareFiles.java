@@ -605,7 +605,11 @@ public class PrepareFiles {
 		}
 
 		String fileName = new String(inPath);
-		fileName = fileName.substring(0, fileName.length() - 4);
+		if(fileName.endsWith(".inspo")){
+			fileName = fileName.substring(0, fileName.length() - 6);
+		}else{
+			fileName = fileName.substring(0, fileName.length() - 4);			
+		}
 		if (windows){
 			while(fileName.contains("\\")){
 				tempIndex = fileName.indexOf("\\");
@@ -629,7 +633,12 @@ public class PrepareFiles {
 		}
 
 		String fileName = new String(inPath);
-		fileName = fileName.substring(0, fileName.length() - 4);
+		
+		if(fileName.endsWith(".inspo")){
+			fileName = fileName.substring(0, fileName.length() - 6);
+		}else{
+			fileName = fileName.substring(0, fileName.length() - 4);			
+		}
 		if (windows){
 			while(fileName.contains("\\")){
 				tempIndex = fileName.indexOf("\\");

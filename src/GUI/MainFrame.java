@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -797,7 +798,7 @@ public class MainFrame extends JFrame {
 				String location = currentRelativePath.toAbsolutePath().toString();
 				JFileChooser fileChooser = new JFileChooser(location);
 				fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-				fileChooser.setFileFilter(new FileNameExtensionFilter("SAM Files (.sam)", "sam"));
+				fileChooser.setFileFilter(new FileNameExtensionFilter("SAM Files (.sam) | Insertion Positions (.INSPO)", "sam", "inspo"));
 				int result = fileChooser.showOpenDialog(MainFrame.this);
 
 				if (result == JFileChooser.APPROVE_OPTION){
@@ -805,6 +806,12 @@ public class MainFrame extends JFrame {
 					MainFrame.this.extractInsBtn.setEnabled(true);
 					MainFrame.this.samFilePathTxt.setEnabled(false);
 					MainFrame.this.browseForSamBtn.setEnabled(false);
+					
+					if(fileChooser.getSelectedFile().getName().contains(".inspo")){
+						doneLbl1.setVisible(true);
+						loadingLbl.setBounds(22, 214, 30, 16);
+						extractInsLbl.setForeground(Color.BLACK);
+					}
 				}
 			}
 		});
@@ -818,16 +825,49 @@ public class MainFrame extends JFrame {
 		extractInsBtn.setEnabled(false);
 		extractInsBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				MainFrame.this.extractInsLbl.setForeground(Color.BLUE);
+				MainFrame.this.extractInsLbl.setForeground(Color.BLACK);
 				MainFrame.this.extractInsBtn.setEnabled(false);
 				MainFrame.this.extractInsBtn.setText("Wait");
 
-				loadingLbl.setBounds(22, 194, 30, 16);
-				loadingLbl.setVisible(true);
+				if(samFilePathTxt.getText().endsWith(".inspo")){
+					String newPath = projectInfo.getPath() + PrepareFiles.prepareFileName(samFilePathTxt.getText(), ".inspo");
+					
+					File oldFile = new File(samFilePathTxt.getText());
+					File newFile = new File(newPath);
+					
+					FileChannel destination;
+					FileChannel source;
+					try {
+						destination = new FileOutputStream(newFile).getChannel();
+						source = new FileInputStream(oldFile).getChannel();
+						
+						if(destination != null && source != null){
+							destination.transferFrom(source, 0, source.size());
+						}
 
-				ExtractInsertions run = new ExtractInsertions();
-				Thread runThread = new Thread(run);
-				runThread.start();
+						if(source != null){
+							source.close();
+						}
+
+						if(destination != null){
+							destination.close();
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					loadingLbl.setBounds(22, 214, 30, 16);
+					loadingLbl.setVisible(true);
+					samFilePathTxt.setText(newPath);
+					SortInsertions run = new SortInsertions();
+					Thread runThread = new Thread(run);
+					runThread.start();
+				}else{
+					loadingLbl.setBounds(22, 194, 30, 16);
+					loadingLbl.setVisible(true);
+					ExtractInsertions run = new ExtractInsertions();
+					Thread runThread = new Thread(run);
+					runThread.start();
+				}
 			}
 		});
 
@@ -1536,7 +1576,7 @@ public class MainFrame extends JFrame {
 	}
 
 	private void clearTheForm(){
-		File tempFile = null;
+		/*File tempFile = null;
 		if (samFilePathTxt.getText() != null && samFilePathTxt.getText().compareTo("") != 0){
 			tempFile = new File(samFilePathTxt.getText());
 		}
@@ -1562,7 +1602,7 @@ public class MainFrame extends JFrame {
 				tempFile.delete();
 			}
 		}
-
+*/
 		setToDefaultState();
 	}
 	
