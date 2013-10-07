@@ -114,7 +114,7 @@ public class MainFrame extends JFrame {
 	private JButton plotBtn = new JButton("Plot");
 	private JLabel plotWaitLbl = new JLabel("Please wait");
 	private JButton addNewIndicesBtn = new JButton("Add new essentiality indices to a data table");
-	private JButton remoteHelpBtn = new JButton("Help install remotely");
+	private JButton remoteHelpBtn = new JButton("Help do it manually");
 
 	protected ProjectInfo projectInfo = new ProjectInfo();
 	private Logger logger = Logger.getLogger(MainFrame.class.getName());
@@ -1564,7 +1564,9 @@ public class MainFrame extends JFrame {
 	}
 
 	private void remoteInstallHelp() {
-		
+		RemoteInstall remote = new RemoteInstall();
+		remote.setParentFrame(this);
+		remote.setVisible(true);
 	}
 	
 	private void clearTheForm(){
@@ -1870,8 +1872,12 @@ public class MainFrame extends JFrame {
 			for (Component c : ((JPanel)tabbedPane.getSelectedComponent()).getComponents()){
 				c.setEnabled(false);
 			}
+			
+			remoteHelpBtn.setEnabled(true);
 
-			JOptionPane.showMessageDialog(null, "This tab is only available when you are using Linux!!!");
+			JOptionPane.showMessageDialog(null, "Full functionality of this tab is only available when you are using Linux!!!\n"
+					+ "Now, you can only use the \"Help do it manually\" button to guide you install the BWA and do all other things\n"
+					+ "via SSH and SFTP!");
 
 		}else{
 			bwaInstallBtn.setEnabled(false);
