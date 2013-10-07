@@ -14,7 +14,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -107,8 +106,7 @@ public class MainFrame extends JFrame {
 	private JComboBox<String> scaffoldCombo = new JComboBox<String>();
 	private JRadioButton alreadyInstalledRadio = new JRadioButton("Already installed");
 	private JRadioButton useScriptsRadio = new JRadioButton("Use the shell scripts to install them");
-	private JButton samtoolsInstallBtn = new JButton("Install SamTools");		
-	private JButton bwaInstallBtn = new JButton("Install BWA");	
+	private JButton bwaInstallBtn = new JButton("Install BWA (v0.7.5a)");	
 	private JLabel infoLbl = new JLabel("* You have to provide the chromosome length and gene annotation to start a new project.");
 	private JComboBox<String> plotLibraryCombo = new JComboBox<String>();
 	private JTextField winLenTxt;
@@ -116,11 +114,13 @@ public class MainFrame extends JFrame {
 	private JButton plotBtn = new JButton("Plot");
 	private JLabel plotWaitLbl = new JLabel("Please wait");
 	private JButton addNewIndicesBtn = new JButton("Add new essentiality indices to a data table");
+	private JButton remoteHelpBtn = new JButton("Help install remotely");
 
 	protected ProjectInfo projectInfo = new ProjectInfo();
 	private Logger logger = Logger.getLogger(MainFrame.class.getName());
 	private boolean hasSeqNum = false;
 	private boolean hasGeneFile = false;
+	private JTextField textField;
 
 	/**
 	 * Create the frame.
@@ -1182,7 +1182,7 @@ public class MainFrame extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				JOptionPane.showMessageDialog(MainFrame.this, 
-						"This is the same plot as shown in Figure 1 of Sarmiento et al., PNAS 110:4726–4731, 2013. A strong peak at zero separated from a wider peak for larger\n"
+						"This is the same plot as shown in Figure 1 of Sarmiento et al., PNAS 110:4726ï¿½4731, 2013. A strong peak at zero separated from a wider peak for larger\n"
 						+ "numbers of insertions indicates that the window size is suitable for detecting essential genes in the given library. Larger window sizes provide better\n"
 						+ "distinction between essential and non-essential genes but they can miss essential genes shorter than the window length." );
 			}
@@ -1460,7 +1460,6 @@ public class MainFrame extends JFrame {
 		alreadyInstalledRadio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				bwaInstallBtn.setEnabled(false);
-				samtoolsInstallBtn.setEnabled(false);
 
 				alreadyInstalledRadio.setSelected(true);
 			}
@@ -1472,49 +1471,11 @@ public class MainFrame extends JFrame {
 		useScriptsRadio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				bwaInstallBtn.setEnabled(true);
-				samtoolsInstallBtn.setEnabled(true);
 			}
 		});
 
-		useScriptsRadio.setBounds(10, 111, 351, 23);
+		useScriptsRadio.setBounds(10, 111, 292, 23);
 		panel_3.add(useScriptsRadio);
-		samtoolsInstallBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				URL programSource = MainFrame.class.getResource("/resources/samtools-0.1.19.tar.bz2");
-				File programDest = new File("samtools-0.1.19.tar.bz2");
-
-				URL shellSource = MainFrame.class.getResource("/resources/install-samstools.sh");
-				File shellDest = new File("shell.sh");
-
-				try {
-					FileUtils.copyURLToFile(programSource, programDest);
-					FileUtils.copyURLToFile(shellSource, shellDest);
-
-					String cmd[] = {"gnome-terminal", "-x", "bash", "-c", "echo 'Please Enter Your Root Password';"
-							+ "su -m root -c 'sh shell.sh';"
-							+ "echo;"
-							+ "echo;"
-							+ "echo 'Press Any Key To Continue...';"
-							+ "read"};
-
-					Path currentRelativePath = Paths.get("");
-					String location = currentRelativePath.toAbsolutePath()
-							.toString();
-					File dir = new File(location);
-					Process child = Runtime.getRuntime().exec(cmd, null, dir);
-					child.waitFor();
-				} catch (IOException | InterruptedException e1) {
-					logger.error(e1.getMessage());
-					return;
-				}finally{
-					shellDest.delete();
-					programDest.delete();
-				}
-			}
-		});
-
-		samtoolsInstallBtn.setBounds(503, 111, 138, 23);
-		panel_3.add(samtoolsInstallBtn);
 		bwaInstallBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				URL programSource = MainFrame.class.getResource("/resources/bwa-0.7.5a.tar.bz2");
@@ -1523,11 +1484,14 @@ public class MainFrame extends JFrame {
 				URL shellSource = MainFrame.class.getResource("/resources/install-bwa.sh");
 				File shellDest = new File("shell.sh");
 
+				JOptionPane.showMessageDialog(null, "In order to install the library, you should enter your machine's root password.\n"
+						+ "The password is only used to install the library.", "Root Password", JOptionPane.WARNING_MESSAGE);
+				
 				try {
 					FileUtils.copyURLToFile(programSource, programDest);
 					FileUtils.copyURLToFile(shellSource, shellDest);
 					String cmd[] = {"gnome-terminal", "-x", "bash", "-c", 
-							"echo 'Please Enter Your Root Password';"
+									  "echo 'Please Enter Your Root Password';"
 									+ "su -m root -c 'sh shell.sh';"
 									+ "echo;"
 									+ "echo;"
@@ -1550,11 +1514,11 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		bwaInstallBtn.setBounds(369, 111, 124, 23);
+		bwaInstallBtn.setBounds(357, 111, 168, 23);
 		panel_3.add(bwaInstallBtn);
 
 		JSeparator separator_8 = new JSeparator();
-		separator_8.setBounds(0, 160, 717, 5);
+		separator_8.setBounds(0, 162, 717, 5);
 		panel_3.add(separator_8);
 		reloadProjectFromFile();
 		hasGeneFile = findGeneFile();
@@ -1573,8 +1537,36 @@ public class MainFrame extends JFrame {
 		JLabel lblNewLabel_1 = new JLabel(" on your machine .");
 		lblNewLabel_1.setBounds(20, 58, 246, 15);
 		panel_3.add(lblNewLabel_1);
+		
+		remoteHelpBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				remoteInstallHelp();
+			}
+		});
+		remoteHelpBtn.setBounds(537, 110, 168, 25);
+		panel_3.add(remoteHelpBtn);
+		
+		JLabel lblSelectThefna = new JLabel("Select the 'FNA' File:");
+		lblSelectThefna.setBounds(10, 179, 161, 15);
+		panel_3.add(lblSelectThefna);
+		
+		textField = new JTextField();
+		textField.setEnabled(true);
+		textField.setEditable(false);
+		textField.setText("");
+		textField.setBounds(189, 177, 407, 19);
+		panel_3.add(textField);
+		textField.setColumns(10);
+		
+		JButton btnBrowse = new JButton("Browse");
+		btnBrowse.setBounds(608, 174, 97, 25);
+		panel_3.add(btnBrowse);
 	}
 
+	private void remoteInstallHelp() {
+		
+	}
+	
 	private void clearTheForm(){
 		/*File tempFile = null;
 		if (samFilePathTxt.getText() != null && samFilePathTxt.getText().compareTo("") != 0){
@@ -1883,7 +1875,6 @@ public class MainFrame extends JFrame {
 
 		}else{
 			bwaInstallBtn.setEnabled(false);
-			samtoolsInstallBtn.setEnabled(false);
 
 			alreadyInstalledRadio.setSelected(true);
 		}
