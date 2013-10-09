@@ -74,7 +74,7 @@ public class RemoteInstall extends JFrame {
 			}
 		});
 		label_1.setForeground(Color.BLUE);
-		label_1.setBounds(344, 61, 78, 14);
+		label_1.setBounds(456, 61, 78, 14);
 		panel.add(label_1);
 		
 		JLabel label_2 = new JLabel("Steps to install BWA on your remote machine:");
@@ -100,11 +100,11 @@ public class RemoteInstall extends JFrame {
 			}
 		});
 		lblyouCanUse.setForeground(Color.BLUE);
-		lblyouCanUse.setBounds(344, 36, 255, 14);
+		lblyouCanUse.setBounds(456, 36, 255, 14);
 		panel.add(lblyouCanUse);
 		
 		JLabel lblYouCan = new JLabel("- You can download the file using 'wget' command like this, ");
-		lblYouCan.setBounds(30, 86, 747, 14);
+		lblYouCan.setBounds(30, 86, 416, 14);
 		panel.add(lblYouCan);
 		
 		JLabel lblUncompressThe = new JLabel("3. Uncompress the downloaded file using the example command below:");
@@ -182,7 +182,7 @@ public class RemoteInstall extends JFrame {
 		txtWgetFileurl = new JTextField();
 		txtWgetFileurl.setEditable(false);
 		txtWgetFileurl.setText("wget FileURL");
-		txtWgetFileurl.setBounds(344, 83, 86, 20);
+		txtWgetFileurl.setBounds(456, 83, 86, 20);
 		panel.add(txtWgetFileurl);
 		txtWgetFileurl.setColumns(10);
 		
