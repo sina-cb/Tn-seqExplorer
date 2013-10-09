@@ -194,9 +194,13 @@ public class RemoteInstall extends JFrame {
 		tabbedPane.addTab("Run BWA on your remote machine", null, panel_1, null);
 		panel_1.setLayout(null);
 		
-		JLabel lblAfter = new JLabel("After ");
-		lblAfter.setBounds(10, 11, 46, 14);
+		JLabel lblAfter = new JLabel("1. Make sure you have the BWA program installed");
+		lblAfter.setBounds(10, 11, 767, 14);
 		panel_1.add(lblAfter);
+		
+		JLabel lblTranferYour = new JLabel("2. Tranfer your files to the remote machine");
+		lblTranferYour.setBounds(10, 36, 767, 14);
+		panel_1.add(lblTranferYour);
 	}
 	
 	public void setParentFrame(JFrame parent){
