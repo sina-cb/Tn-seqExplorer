@@ -154,15 +154,26 @@ public class WorkspaceChooser extends JFrame {
 					return;
 				}
 				
-				//JOptionPane.showMessageDialog(WorkspaceChooser.this, "Select a folder to store the new project in it");
 				Path currentRelativePath = Paths.get("");
 				String location = currentRelativePath.toAbsolutePath().toString();
 				
-				FolderChooser fileChooser = new FolderChooser();
-				fileChooser.setCurrentDirectory(new File(location));
-				fileChooser.setDialogTitle("Select a folder to store the new project in it");
-				int result = fileChooser.showSaveDialog(WorkspaceChooser.this);
+				String OSName = System.getProperty("os.name");
 
+				JFileChooser fileChooser = null;
+				int result = -1;
+				if(OSName.contains("Windows") || OSName.contains("windows")){
+					fileChooser = new FolderChooser();
+					fileChooser.setCurrentDirectory(new File(location));
+					fileChooser.setDialogTitle("Select a folder to store the new project in it");
+					result = fileChooser.showSaveDialog(WorkspaceChooser.this);					
+				}else{
+					JOptionPane.showMessageDialog(WorkspaceChooser.this, "Select a folder to store the new project in it");
+					fileChooser = new JFileChooser();
+					fileChooser.setCurrentDirectory(new File(location));
+					fileChooser.setDialogTitle("Select a folder to store the new project in it");
+					result = fileChooser.showSaveDialog(WorkspaceChooser.this);
+				}
+				
 				if (result == JFileChooser.APPROVE_OPTION){
 					File dir = fileChooser.getSelectedFile();
 					File[] matchedFiles = dir.listFiles(new FilenameFilter() {
