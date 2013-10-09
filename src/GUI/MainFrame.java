@@ -61,6 +61,7 @@ import essgenes.ProjectInfo;
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
 
+	private JLabel sequenceLengthLbl = new JLabel("0");
 	private JTextField sequenceLenTxt;
 	private JLabel libraryCountLbl = new JLabel("0");
 	private JTextField samFilePathTxt;
@@ -92,7 +93,7 @@ public class MainFrame extends JFrame {
 	private JButton dataTableRenameBtn = new JButton("Rename");
 	private JButton dataTableRemoveBtn = new JButton("Remove");
 	private JButton openAsSpreadsheetBtn = new JButton("Open as spreadsheet");
-	private JButton addNewDataTableBtn = new JButton("Add new");
+	private JButton addNewDataTableBtn = new JButton("Create new");
 	private JButton replaceXlsBtn = new JButton("Replace");
 	private JLabel dataTableCountLbl = new JLabel("0");
 	private JLabel doneLbl1 = new JLabel("");
@@ -112,7 +113,7 @@ public class MainFrame extends JFrame {
 	private JTextField winLenTxt;
 	private JTextField winStepTxt;
 	private JButton plotBtn = new JButton("Plot");
-	private JLabel plotWaitLbl = new JLabel("Please wait");
+	private JLabel plotWaitLbl = new JLabel("Please wait...");
 	private JButton addNewIndicesBtn = new JButton("Add new essentiality indices to a data table");
 	private JButton remoteHelpBtn = new JButton("Help do it manually");
 
@@ -129,11 +130,11 @@ public class MainFrame extends JFrame {
 		setResizable(false);
 		this.projectInfo.setPath(projectPath);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 750, 681);
+		setBounds(100, 100, 856, 681);
 		setLocationRelativeTo(null);	
 		getContentPane().setLayout(null);
 
-		tabbedPane.setBounds(12, 13, 722, 608);
+		tabbedPane.setBounds(12, 13, 828, 608);
 		getContentPane().add(tabbedPane);
 
 		tabbedPane.addChangeListener(new ChangeListener() {
@@ -262,6 +263,7 @@ public class MainFrame extends JFrame {
 
 				hasSeqNum = true;
 				JOptionPane.showMessageDialog(MainFrame.this, "New Sequence Length Has Been Applied!");
+				setSequenceLengthText(Integer.parseInt(seqLen));
 
 				if (hasGeneFile){
 					for (int i = 1; i < tabbedPane.getTabCount(); i++){
@@ -275,38 +277,38 @@ public class MainFrame extends JFrame {
 		panelMain.add(applySequenceBtn);
 
 		JSeparator separator = new JSeparator();
-		separator.setBounds(0, 62, 717, 2);
+		separator.setBounds(0, 62, 823, 2);
 		panelMain.add(separator);
 
 		JLabel lblProjectInformation = new JLabel("Project Information:");
 		lblProjectInformation.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblProjectInformation.setBounds(12, 510, 144, 20);
+		lblProjectInformation.setBounds(12, 499, 144, 20);
 		panelMain.add(lblProjectInformation);
 
 		JLabel lblLibrariesCount = new JLabel("Libraries count:");
 		lblLibrariesCount.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblLibrariesCount.setBounds(12, 541, 163, 22);
+		lblLibrariesCount.setBounds(166, 504, 163, 22);
 		panelMain.add(lblLibrariesCount);
 
 		libraryCountLbl.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		libraryCountLbl.setBounds(157, 536, 51, 33);
+		libraryCountLbl.setBounds(317, 499, 51, 33);
 		panelMain.add(libraryCountLbl);
 
 		JLabel lblDataTablesCount = new JLabel("Data tables count:");
 		lblDataTablesCount.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblDataTablesCount.setBounds(207, 541, 163, 22);
+		lblDataTablesCount.setBounds(166, 541, 163, 22);
 		panelMain.add(lblDataTablesCount);
 
 		dataTableCountLbl.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		dataTableCountLbl.setBounds(371, 536, 51, 33);
+		dataTableCountLbl.setBounds(317, 536, 51, 33);
 		panelMain.add(dataTableCountLbl);
 
-		ftpFirstLevelCombo.setBounds(12, 110, 588, 22);
+		ftpFirstLevelCombo.setBounds(12, 110, 695, 22);
 
 		panelMain.add(ftpFirstLevelCombo);
 		ftpSecondLevelCombo.setEnabled(false);
 
-		ftpSecondLevelCombo.setBounds(12, 145, 588, 22);
+		ftpSecondLevelCombo.setBounds(12, 145, 695, 22);
 		panelMain.add(ftpSecondLevelCombo);
 		downloadBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -361,7 +363,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		downloadBtn.setBounds(610, 144, 97, 25);
+		downloadBtn.setBounds(716, 144, 97, 25);
 		panelMain.add(downloadBtn);
 
 		JLabel lblPttFile = new JLabel("PTT File:");
@@ -373,13 +375,13 @@ public class MainFrame extends JFrame {
 		panelMain.add(lblRntFile);
 
 		pttFileTxt = new JTextField();
-		pttFileTxt.setBounds(85, 232, 515, 22);
+		pttFileTxt.setBounds(85, 232, 622, 22);
 		panelMain.add(pttFileTxt);
 		pttFileTxt.setColumns(10);
 
 		rntFileTxt = new JTextField();
 		rntFileTxt.setColumns(10);
-		rntFileTxt.setBounds(85, 264, 515, 22);
+		rntFileTxt.setBounds(85, 264, 622, 22);
 		panelMain.add(rntFileTxt);
 		pttBrowseBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -401,7 +403,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		pttBrowseBtn.setBounds(610, 231, 97, 25);
+		pttBrowseBtn.setBounds(716, 231, 97, 25);
 		panelMain.add(pttBrowseBtn);
 		rntBrowseBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -421,7 +423,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		rntBrowseBtn.setBounds(610, 263, 97, 25);
+		rntBrowseBtn.setBounds(716, 263, 97, 25);
 		panelMain.add(rntBrowseBtn);
 
 		JLabel lblOr = new JLabel("Or");
@@ -437,17 +439,17 @@ public class MainFrame extends JFrame {
 		});
 
 		btnPrepareGeneFile.setFont(new Font("Tahoma", Font.BOLD, 13));
-		btnPrepareGeneFile.setBounds(285, 450, 182, 25);
+		btnPrepareGeneFile.setBounds(339, 450, 182, 25);
 		panelMain.add(btnPrepareGeneFile);
 
 		JSeparator separator_3 = new JSeparator();
-		separator_3.setBounds(52, 187, 665, 2);
+		separator_3.setBounds(52, 187, 771, 2);
 		panelMain.add(separator_3);
 
 		buttonGroup.add(databaseRadioBtn);
 		databaseRadioBtn.setToolTipText("Automatically download from the NCBI FTP Server");
 		databaseRadioBtn.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		databaseRadioBtn.setBounds(10, 76, 360, 25);
+		databaseRadioBtn.setBounds(10, 76, 404, 25);
 		panelMain.add(databaseRadioBtn);	
 
 		databaseRadioBtn.addActionListener(new ActionListener() {
@@ -575,7 +577,7 @@ public class MainFrame extends JFrame {
 		buttonGroup.add(ownRadioBtn);
 		ownRadioBtn.setToolTipText("Use existing files from NCBI FTP server");
 		ownRadioBtn.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		ownRadioBtn.setBounds(12, 201, 358, 25);
+		ownRadioBtn.setBounds(12, 201, 402, 25);
 		panelMain.add(ownRadioBtn);
 		ownRadioBtn.setSelected(true);
 
@@ -614,11 +616,11 @@ public class MainFrame extends JFrame {
 
 		JLabel lblGenesFileName = new JLabel("Gene annotation:");
 		lblGenesFileName.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblGenesFileName.setBounds(427, 541, 163, 22);
+		lblGenesFileName.setBounds(377, 541, 163, 22);
 		panelMain.add(lblGenesFileName);
 
 		geneFileNameLbl.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		geneFileNameLbl.setBounds(582, 536, 123, 33);
+		geneFileNameLbl.setBounds(521, 536, 186, 33);
 		panelMain.add(geneFileNameLbl);
 
 		JLabel label = new JLabel("Or");
@@ -627,7 +629,7 @@ public class MainFrame extends JFrame {
 		panelMain.add(label);
 
 		JSeparator separator_4 = new JSeparator();
-		separator_4.setBounds(52, 313, 665, 2);
+		separator_4.setBounds(52, 313, 771, 2);
 		panelMain.add(separator_4);
 
 		buttonGroup.add(imgRadioBtn);
@@ -656,7 +658,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 		imgRadioBtn.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		imgRadioBtn.setBounds(12, 322, 358, 25);
+		imgRadioBtn.setBounds(12, 322, 402, 25);
 		panelMain.add(imgRadioBtn);
 
 		JLabel lblImgFile = new JLabel("IMG file:");
@@ -668,7 +670,7 @@ public class MainFrame extends JFrame {
 		imgFileTxt.setEditable(false);
 		imgFileTxt.setEnabled(false);
 		imgFileTxt.setColumns(10);
-		imgFileTxt.setBounds(148, 379, 452, 22);
+		imgFileTxt.setBounds(148, 379, 559, 22);
 		panelMain.add(imgFileTxt);
 		imgBrowseBtn.setToolTipText("Select the file downloaded from IMG server");
 		imgBrowseBtn.setEnabled(false);
@@ -693,7 +695,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		imgBrowseBtn.setBounds(610, 378, 97, 25);
+		imgBrowseBtn.setBounds(716, 378, 97, 25);
 		panelMain.add(imgBrowseBtn);
 
 		JLabel lblSelectYourScaffold = new JLabel("Select a scaffold:");
@@ -702,11 +704,11 @@ public class MainFrame extends JFrame {
 		scaffoldCombo.setToolTipText("Select the scaffold within the IMG file");
 		scaffoldCombo.setEnabled(false);
 
-		scaffoldCombo.setBounds(148, 410, 452, 20);
+		scaffoldCombo.setBounds(148, 410, 559, 20);
 		panelMain.add(scaffoldCombo);
 
 		JSeparator separator_7 = new JSeparator();
-		separator_7.setBounds(0, 486, 717, 2);
+		separator_7.setBounds(0, 486, 823, 2);
 		panelMain.add(separator_7);
 
 		JLabel lblyouCanDownload = new JLabel("You can download the IMG file by clicking on this link");
@@ -730,7 +732,7 @@ public class MainFrame extends JFrame {
 		lblNeedHelp.setToolTipText("Click me!");
 		lblNeedHelp.setForeground(Color.BLUE);
 		lblNeedHelp.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		lblNeedHelp.setBounds(371, 85, 88, 14);
+		lblNeedHelp.setBounds(433, 85, 88, 14);
 		panelMain.add(lblNeedHelp);
 
 		JLabel lblhelp = new JLabel("(?)");
@@ -745,7 +747,7 @@ public class MainFrame extends JFrame {
 		lblhelp.setToolTipText("Click me!");
 		lblhelp.setForeground(Color.BLUE);
 		lblhelp.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		lblhelp.setBounds(371, 207, 88, 14);
+		lblhelp.setBounds(433, 207, 88, 14);
 		panelMain.add(lblhelp);
 
 		JLabel label_2 = new JLabel("(?)");
@@ -760,7 +762,7 @@ public class MainFrame extends JFrame {
 		label_2.setToolTipText( "Click me!");
 		label_2.setForeground(Color.BLUE);
 		label_2.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_2.setBounds(371, 329, 88, 14);
+		label_2.setBounds(433, 329, 88, 14);
 		panelMain.add(label_2);
 
 		JLabel label_1 = new JLabel("(?)");
@@ -776,18 +778,27 @@ public class MainFrame extends JFrame {
 		label_1.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		label_1.setBounds(120, 412, 88, 14);
 		panelMain.add(label_1);
+		
+		JLabel lblSequqenceLength = new JLabel("Sequqence length:");
+		lblSequqenceLength.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblSequqenceLength.setBounds(378, 504, 163, 22);
+		panelMain.add(lblSequqenceLength);
+		
+		sequenceLengthLbl.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		sequenceLengthLbl.setBounds(529, 499, 178, 33);
+		panelMain.add(sequenceLengthLbl);
 
 		JPanel panelInitialize = new JPanel();
 		tabbedPane.addTab("Manage Libraries", null, panelInitialize, null);
 		panelInitialize.setLayout(null);
 
 		JLabel lblBrowseFoThe = new JLabel("Add new library to the project:");
-		lblBrowseFoThe.setBounds(14, 124, 311, 16);
+		lblBrowseFoThe.setBounds(14, 124, 799, 16);
 		panelInitialize.add(lblBrowseFoThe);
 
 		samFilePathTxt = new JTextField();
 		samFilePathTxt.setToolTipText("Path to the SAM file");
-		samFilePathTxt.setBounds(14, 153, 477, 22);
+		samFilePathTxt.setBounds(14, 153, 581, 22);
 		panelInitialize.add(samFilePathTxt);
 		samFilePathTxt.setColumns(10);
 		browseForSamBtn.setToolTipText("Use this to browse for the SAM file");
@@ -815,7 +826,7 @@ public class MainFrame extends JFrame {
 				}
 			}
 		});
-		browseForSamBtn.setBounds(501, 152, 99, 25);
+		browseForSamBtn.setBounds(605, 151, 99, 25);
 		panelInitialize.add(browseForSamBtn);
 
 		extractInsLbl.setForeground(Color.LIGHT_GRAY);
@@ -871,7 +882,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		extractInsBtn.setBounds(610, 152, 99, 25);
+		extractInsBtn.setBounds(714, 152, 99, 25);
 		panelInitialize.add(extractInsBtn);
 
 		sortInsLbl.setForeground(Color.LIGHT_GRAY);
@@ -894,11 +905,11 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		cancelLibSaveBtn.setBounds(587, 261, 122, 25);
+		cancelLibSaveBtn.setBounds(660, 261, 153, 25);
 		panelInitialize.add(cancelLibSaveBtn);
 
 		JSeparator separator_2 = new JSeparator();
-		separator_2.setBounds(2, 297, 717, 2);
+		separator_2.setBounds(2, 297, 821, 2);
 		panelInitialize.add(separator_2);
 
 		JLabel lblRemoveExistingLibraries = new JLabel("Edit existing libraries:");
@@ -906,7 +917,7 @@ public class MainFrame extends JFrame {
 		panelInitialize.add(lblRemoveExistingLibraries);
 		libraryComboBox.setToolTipText("Select a library to edit");
 
-		libraryComboBox.setBounds(14, 341, 479, 22);
+		libraryComboBox.setBounds(14, 341, 581, 22);
 		panelInitialize.add(libraryComboBox);
 		removeLibBtn.setToolTipText("Remove the selected library");
 
@@ -990,7 +1001,7 @@ public class MainFrame extends JFrame {
 				libraryCountLbl.setText((Integer.parseInt(libraryCountLbl.getText()) - 1) + "");
 			}
 		});
-		removeLibBtn.setBounds(612, 340, 97, 25);
+		removeLibBtn.setBounds(716, 340, 97, 25);
 		panelInitialize.add(removeLibBtn);
 		renameLibBtn.setToolTipText("Rename the selected library");
 
@@ -1082,7 +1093,7 @@ public class MainFrame extends JFrame {
 
 			}
 		});
-		renameLibBtn.setBounds(503, 340, 97, 25);
+		renameLibBtn.setBounds(607, 340, 97, 25);
 		panelInitialize.add(renameLibBtn);
 
 		loadingLbl.setIcon(new ImageIcon(MainFrame.class.getResource("/resources/load.gif")));
@@ -1106,15 +1117,15 @@ public class MainFrame extends JFrame {
 		panelInitialize.add(doneLbl4);
 		
 		JLabel lblNewLabel_2 = new JLabel("You can add and manage transposon insertion mutant libraries here. You need the .sam file from the Barrows-Wheeler aligner.");
-		lblNewLabel_2.setBounds(10, 11, 697, 14);
+		lblNewLabel_2.setBounds(10, 11, 803, 14);
 		panelInitialize.add(lblNewLabel_2);
 		
 		JLabel lblbwaHttpbiobwasourceforgenet = new JLabel("(bwa; http://bio-bwa.sourceforge.net/) to add a library to your project. If the Barrows-Wheeler Aligner is installed on this computer you may");
-		lblbwaHttpbiobwasourceforgenet.setBounds(10, 36, 697, 14);
+		lblbwaHttpbiobwasourceforgenet.setBounds(10, 36, 803, 14);
 		panelInitialize.add(lblbwaHttpbiobwasourceforgenet);
 		
 		JLabel lblBeAbleTo = new JLabel(" be able to run it from this application. To add new library, provide the name for the library, navigate to the .sam file using the 'Browse' button,");
-		lblBeAbleTo.setBounds(8, 61, 699, 14);
+		lblBeAbleTo.setBounds(8, 61, 805, 14);
 		panelInitialize.add(lblBeAbleTo);
 		
 		JLabel lblAndThenClick = new JLabel(" and then click 'Extract'.");
@@ -1122,7 +1133,7 @@ public class MainFrame extends JFrame {
 		panelInitialize.add(lblAndThenClick);
 		
 		JSeparator separator_9 = new JSeparator();
-		separator_9.setBounds(2, 111, 717, 2);
+		separator_9.setBounds(2, 111, 821, 2);
 		panelInitialize.add(separator_9);
 		
 		JLabel lblChooseALibrary = new JLabel("Choose a library to plot:");
@@ -1130,7 +1141,7 @@ public class MainFrame extends JFrame {
 		panelInitialize.add(lblChooseALibrary);
 		plotLibraryCombo.setToolTipText("Select a libray to plot");
 		
-		plotLibraryCombo.setBounds(14, 458, 400, 20);
+		plotLibraryCombo.setBounds(14, 458, 402, 20);
 		panelInitialize.add(plotLibraryCombo);
 		plotBtn.setToolTipText("Plot the selected library");
 		
@@ -1139,41 +1150,41 @@ public class MainFrame extends JFrame {
 				plotDataMethod();
 			}
 		});
-		plotBtn.setBounds(622, 457, 62, 23);
+		plotBtn.setBounds(691, 455, 87, 23);
 		panelInitialize.add(plotBtn);
 		
 		winLenTxt = new JTextField();
 		winLenTxt.setToolTipText("Enter the window length");
 		winLenTxt.setText("1000");
 		winLenTxt.setColumns(10);
-		winLenTxt.setBounds(424, 458, 89, 20);
+		winLenTxt.setBounds(426, 458, 118, 20);
 		panelInitialize.add(winLenTxt);
 		
 		winStepTxt = new JTextField();
 		winStepTxt.setToolTipText("Enter window step size");
 		winStepTxt.setText("100");
 		winStepTxt.setColumns(10);
-		winStepTxt.setBounds(523, 458, 89, 20);
+		winStepTxt.setBounds(563, 458, 118, 20);
 		panelInitialize.add(winStepTxt);
 		
-		JLabel label_4 = new JLabel("Window Len:");
-		label_4.setBounds(410, 443, 89, 14);
-		panelInitialize.add(label_4);
+		JLabel lblWindowLength = new JLabel("Window length:");
+		lblWindowLength.setBounds(416, 443, 123, 14);
+		panelInitialize.add(lblWindowLength);
 		
 		JLabel label_5 = new JLabel("Step:");
-		label_5.setBounds(509, 443, 89, 14);
+		label_5.setBounds(549, 443, 108, 14);
 		panelInitialize.add(label_5);
 		
 		JSeparator separator_10 = new JSeparator();
-		separator_10.setBounds(2, 395, 717, 2);
+		separator_10.setBounds(2, 395, 821, 2);
 		panelInitialize.add(separator_10);
 		
 		JLabel lblPlotTheDistribution = new JLabel("Plot the distribution of the number of unique insertions per window for a selected library.");
-		lblPlotTheDistribution.setBounds(12, 408, 695, 14);
+		lblPlotTheDistribution.setBounds(12, 408, 801, 14);
 		panelInitialize.add(lblPlotTheDistribution);
 		
 		plotWaitLbl.setIcon(new ImageIcon(MainFrame.class.getResource("/resources/load.gif")));
-		plotWaitLbl.setBounds(328, 517, 99, 14);
+		plotWaitLbl.setBounds(392, 531, 99, 14);
 		panelInitialize.add(plotWaitLbl);
 		
 		JLabel label_3 = new JLabel("(?)");
@@ -1189,14 +1200,14 @@ public class MainFrame extends JFrame {
 		});
 		label_3.setForeground(Color.BLUE);
 		label_3.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_3.setBounds(689, 461, 30, 14);
+		label_3.setBounds(783, 459, 30, 14);
 		panelInitialize.add(label_3);
 
 		JPanel panel = new JPanel();
 		tabbedPane.addTab("Manage Data Tables", null, panel, null);
 		panel.setLayout(null);
 
-		JLabel lblAddNewData = new JLabel("Add new data table to your project:");
+		JLabel lblAddNewData = new JLabel("Create new data table:");
 		lblAddNewData.setBounds(10, 55, 290, 16);
 		panel.add(lblAddNewData);
 		addNewDataTableBtn.setToolTipText("Add new data table to the project, after clicking just enter the name of the table.");
@@ -1253,11 +1264,11 @@ public class MainFrame extends JFrame {
 
 			}
 		});
-		addNewDataTableBtn.setBounds(316, 52, 113, 23);
+		addNewDataTableBtn.setBounds(187, 52, 113, 23);
 		panel.add(addNewDataTableBtn);
 
 		JSeparator separator_5 = new JSeparator();
-		separator_5.setBounds(0, 86, 717, 8);
+		separator_5.setBounds(0, 86, 823, 8);
 		panel.add(separator_5);
 
 		JLabel lblOldLibraries = new JLabel("Manage existing tables:");
@@ -1265,7 +1276,7 @@ public class MainFrame extends JFrame {
 		panel.add(lblOldLibraries);
 		dataTableCombo.setToolTipText("Just select the data table you want to edit");
 
-		dataTableCombo.setBounds(10, 132, 338, 20);
+		dataTableCombo.setBounds(10, 132, 448, 20);
 		panel.add(dataTableCombo);
 		dataTableRenameBtn.setToolTipText("Rename the data table in the project");
 		dataTableRenameBtn.addActionListener(new ActionListener() {
@@ -1292,7 +1303,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		dataTableRenameBtn.setBounds(519, 131, 89, 23);
+		dataTableRenameBtn.setBounds(625, 132, 89, 23);
 		panel.add(dataTableRenameBtn);
 		dataTableRemoveBtn.setToolTipText("Remove the selected data table from the project");
 		dataTableRemoveBtn.addActionListener(new ActionListener() {
@@ -1312,7 +1323,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		dataTableRemoveBtn.setBounds(618, 131, 89, 23);
+		dataTableRemoveBtn.setBounds(724, 132, 89, 23);
 		panel.add(dataTableRemoveBtn);
 		openAsSpreadsheetBtn.setToolTipText("Open the data table in a seperate editor so that you can edit it on your own.");
 		openAsSpreadsheetBtn.addActionListener(new ActionListener() {
@@ -1328,7 +1339,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		openAsSpreadsheetBtn.setBounds(362, 131, 147, 23);
+		openAsSpreadsheetBtn.setBounds(468, 132, 147, 23);
 		panel.add(openAsSpreadsheetBtn);
 		replaceXlsBtn.setToolTipText("Replace editted data table with the original one");
 
@@ -1366,15 +1377,15 @@ public class MainFrame extends JFrame {
 		});
 		tableCancelChangeBtn.setEnabled(false);
 		replaceXlsBtn.setFont(new Font("Tahoma", Font.BOLD, 11));
-		replaceXlsBtn.setBounds(362, 165, 147, 23);
+		replaceXlsBtn.setBounds(625, 166, 89, 23);
 		panel.add(replaceXlsBtn);
 		tableCancelChangeBtn.setEnabled(false);
 
-		tableCancelChangeBtn.setBounds(519, 165, 89, 23);
+		tableCancelChangeBtn.setBounds(724, 166, 89, 23);
 		panel.add(tableCancelChangeBtn);
 		
 		JLabel lblNewLabel_3 = new JLabel("Create and manage spreadsheets with gene information.");
-		lblNewLabel_3.setBounds(10, 11, 300, 14);
+		lblNewLabel_3.setBounds(10, 11, 386, 14);
 		panel.add(lblNewLabel_3);
 		
 		JLabel label_6 = new JLabel("(?)");
@@ -1391,11 +1402,11 @@ public class MainFrame extends JFrame {
 		});
 		label_6.setForeground(Color.BLUE);
 		label_6.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_6.setBounds(318, 11, 30, 14);
+		label_6.setBounds(406, 11, 30, 14);
 		panel.add(label_6);
 		
 		JSeparator separator_6 = new JSeparator();
-		separator_6.setBounds(0, 39, 717, 8);
+		separator_6.setBounds(0, 39, 823, 8);
 		panel.add(separator_6);
 		addNewIndicesBtn.setToolTipText("You can add extra data to your data tables in this subsection");
 		
@@ -1409,7 +1420,7 @@ public class MainFrame extends JFrame {
 				
 			}
 		});
-		addNewIndicesBtn.setBounds(362, 199, 290, 23);
+		addNewIndicesBtn.setBounds(10, 166, 347, 23);
 		panel.add(addNewIndicesBtn);
 		loadingLbl.setVisible(false);
 		doneLbl1.setVisible(false);
@@ -1514,11 +1525,11 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		bwaInstallBtn.setBounds(357, 111, 168, 23);
+		bwaInstallBtn.setBounds(357, 111, 203, 23);
 		panel_3.add(bwaInstallBtn);
 
 		JSeparator separator_8 = new JSeparator();
-		separator_8.setBounds(0, 162, 717, 5);
+		separator_8.setBounds(0, 165, 823, 2);
 		panel_3.add(separator_8);
 		reloadProjectFromFile();
 		hasGeneFile = findGeneFile();
@@ -1543,7 +1554,7 @@ public class MainFrame extends JFrame {
 				remoteInstallHelp();
 			}
 		});
-		remoteHelpBtn.setBounds(537, 110, 168, 25);
+		remoteHelpBtn.setBounds(10, 544, 191, 25);
 		panel_3.add(remoteHelpBtn);
 		
 		JLabel lblSelectThefna = new JLabel("Select the 'FNA' File:");
@@ -1554,15 +1565,29 @@ public class MainFrame extends JFrame {
 		textField.setEnabled(true);
 		textField.setEditable(false);
 		textField.setText("");
-		textField.setBounds(189, 177, 407, 19);
+		textField.setBounds(189, 177, 518, 19);
 		panel_3.add(textField);
 		textField.setColumns(10);
 		
 		JButton btnBrowse = new JButton("Browse");
-		btnBrowse.setBounds(608, 174, 97, 25);
+		btnBrowse.setBounds(716, 174, 97, 25);
 		panel_3.add(btnBrowse);
 	}
 
+	private void setSequenceLengthText(int num){
+		String output = "" + num;
+		int counter = 0;
+		for (int index = output.length() - 1; index > 0; index--){
+		    counter++;
+		    if (counter % 3 == 0){
+		        counter = 0;
+		        output = output.substring(0,index) + "," + output.substring(index);
+		    }
+		}
+		
+		sequenceLengthLbl.setText(output);
+	}
+	
 	private void remoteInstallHelp() {
 		RemoteInstall remote = new RemoteInstall();
 		remote.setParentFrame(this);
@@ -2084,6 +2109,7 @@ public class MainFrame extends JFrame {
 
 			projectInfo.setSequenceLen(Integer.parseInt(line.substring(Messages.projectSequenceLen.length())));
 			MainFrame.this.sequenceLenTxt.setText(projectInfo.getSequenceLen() + "");
+			setSequenceLengthText(projectInfo.getSequenceLen());
 
 			line = br.readLine();
 			int libCount = 0;

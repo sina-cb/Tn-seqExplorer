@@ -158,13 +158,10 @@ public class AddColumns {
 					}
 				}
 			}else{				//Gene is smaller than the window
-				// TODO: FIX FIX FIX FIX FIX FIX FIX FIX FIX FIX FIX FIX FIX
-				// TODO: FIX FIX FIX FIX FIX FIX FIX FIX FIX FIX FIX FIX FIX 
+				//TODO: Needs more debug
 				if(LJ >= windows.size()){
 					JOptionPane.showMessageDialog(null, "error");
 				}
-				// TODO: FIX FIX FIX FIX FIX FIX FIX FIX FIX FIX FIX FIX FIX 
-				// TODO: FIX FIX FIX FIX FIX FIX FIX FIX FIX FIX FIX FIX FIX 
 				N = windows.get(LJ).N;
 				for (geneLen = LI; geneLen <= LJ; ++geneLen){
 					if (geneLen >= 0){

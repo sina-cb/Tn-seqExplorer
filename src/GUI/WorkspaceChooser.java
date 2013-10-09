@@ -27,7 +27,8 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.log4j.Logger;
 
-import essgenes.*;
+import CustomGUIComponent.FolderChooser;
+import essgenes.Messages;
 
 @SuppressWarnings("serial")
 public class WorkspaceChooser extends JFrame {
@@ -36,6 +37,7 @@ public class WorkspaceChooser extends JFrame {
 	private ArrayList<String> projectPaths = new ArrayList<>();
 	private ArrayList<String> projectNames = new ArrayList<>();
 	private JComboBox<String> recentProjects = new JComboBox<String>();
+	private boolean isTrimed = false;
 
 	private JPanel contentPane;
 
@@ -58,7 +60,12 @@ public class WorkspaceChooser extends JFrame {
 		contentPane.add(recentProjects);
 
 		trimRecentProjects();
-
+		
+		if(isTrimed){
+			JOptionPane.showMessageDialog(WorkspaceChooser.this, "Some project were moved or removed since last run.\n"
+					+ "Those projects are removed from your recent projects");
+		}
+		
 		getRecentProjects();
 		for (String temp : projectNames){
 			recentProjects.addItem(temp);
@@ -142,12 +149,18 @@ public class WorkspaceChooser extends JFrame {
 		newBtn.setToolTipText("Create new project by selecting a folder to store the new project in it");
 		newBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane.showMessageDialog(WorkspaceChooser.this, "Select a folder to store the new project in it");
+				String projectName = JOptionPane.showInputDialog(WorkspaceChooser.this, "Enter project name:", "Project Name", JOptionPane.CANCEL_OPTION);
+				if(projectName == null || projectName.compareTo("") == 0){
+					return;
+				}
 				
+				//JOptionPane.showMessageDialog(WorkspaceChooser.this, "Select a folder to store the new project in it");
 				Path currentRelativePath = Paths.get("");
 				String location = currentRelativePath.toAbsolutePath().toString();
-				JFileChooser fileChooser = new JFileChooser(location);
-				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				
+				FolderChooser fileChooser = new FolderChooser();
+				fileChooser.setCurrentDirectory(new File(location));
+				fileChooser.setDialogTitle("Select a folder to store the new project in it");
 				int result = fileChooser.showSaveDialog(WorkspaceChooser.this);
 
 				if (result == JFileChooser.APPROVE_OPTION){
@@ -163,11 +176,6 @@ public class WorkspaceChooser extends JFrame {
 					if (matchedFiles.length != 0){
 						JOptionPane.showMessageDialog(WorkspaceChooser.this, "There is already another project existing "
 								+ "in this directory, choose another one please.");
-						return;
-					}
-
-					String projectName = JOptionPane.showInputDialog(WorkspaceChooser.this, "Enter Project Name:", "Project Name", JOptionPane.CANCEL_OPTION);
-					if(projectName == null || projectName.compareTo("") == 0){
 						return;
 					}
 					
@@ -209,13 +217,6 @@ public class WorkspaceChooser extends JFrame {
 					}catch(IOException e){
 						logger.error(e.getMessage());
 						return;
-					}finally{
-						try {
-							bw.close();
-						} catch (IOException e) {
-							logger.error(e.getMessage());
-							return;
-						}
 					}
 
 				}
@@ -266,9 +267,46 @@ public class WorkspaceChooser extends JFrame {
 	}
 
 	private void trimRecentProjects(){
+		File projects = new File("projects.dat");
+		File trimmed = new File("temp.dat");
+		BufferedReader br = null;
+		BufferedWriter bw = null;
+		
+		try {
+			if(!projects.exists()){
+				projects.createNewFile();
+			}
+			
+			br = new BufferedReader(new FileReader(projects));
+			bw = new BufferedWriter(new FileWriter(trimmed));
+			String line = br.readLine();
 
+			while(line != null){
+				int tempIndex = line.indexOf(Messages.separatorString);
+				String tempPath = line.substring(tempIndex + Messages.separatorString.length());
 
+				File tempProDir = new File(tempPath);
+				
+				if(tempProDir.exists()){
+					bw.write(line + "\n");
+				}else{
+					isTrimed = true;
+				}
 
+				line = br.readLine();
+			}
+			
+			br.close();
+			bw.close();
+			
+			projects.delete();
+			trimmed.renameTo(projects);
+
+		} catch (FileNotFoundException e) {
+			logger.error(e.getMessage());
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+		}
 	}
 
 	private void addToRecentProjects(String projectName, String projectPath){
