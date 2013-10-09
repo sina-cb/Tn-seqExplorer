@@ -174,11 +174,11 @@ public class RemoteInstall extends JFrame {
 		txtusrsbinalternativesinstallusrbinbwa.setBounds(101, 295, 401, 20);
 		panel.add(txtusrsbinalternativesinstallusrbinbwa);
 		
-		JLabel lblInTheExample = new JLabel("- In the example command above, you only have to replace the (Uncompressed Directory) with the complete ");
+		JLabel lblInTheExample = new JLabel("- In the example command above, you only have to replace the (Uncompressed Directory)");
 		lblInTheExample.setBounds(30, 323, 536, 14);
 		panel.add(lblInTheExample);
 		
-		JLabel lblPathOfThe = new JLabel("path of the uncompressed folder");
+		JLabel lblPathOfThe = new JLabel("with the complete path of the uncompressed folder");
 		lblPathOfThe.setBounds(40, 348, 270, 14);
 		panel.add(lblPathOfThe);
 		

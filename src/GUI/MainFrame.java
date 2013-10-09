@@ -774,7 +774,7 @@ public class MainFrame extends JFrame {
 		label_1.setToolTipText("Click me!");
 		label_1.setForeground(Color.BLUE);
 		label_1.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_1.setBounds(104, 413, 88, 14);
+		label_1.setBounds(120, 412, 88, 14);
 		panelMain.add(label_1);
 
 		JPanel panelInitialize = new JPanel();

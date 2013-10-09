@@ -18,8 +18,14 @@ public class Main {
 	public static void main(String[] args) {
 
 		try {
-			//UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+			
+			String OSName = System.getProperty("os.name");
+
+			if(OSName.contains("Windows") || OSName.contains("windows")){
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			}else{
+				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+			}
 		} 
 		catch (UnsupportedLookAndFeelException e) {
 			
