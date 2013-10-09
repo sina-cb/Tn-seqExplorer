@@ -56,7 +56,7 @@ public class RemoteInstall extends JFrame {
 		panel.setLayout(null);
 		
 		JLabel lblDownloadBwa = new JLabel("2. Download BWA source code from  their website");
-		lblDownloadBwa.setBounds(20, 86, 314, 14);
+		lblDownloadBwa.setBounds(20, 86, 680, 14);
 		panel.add(lblDownloadBwa);
 		
 		JLabel label_1 = new JLabel("BWA website");
@@ -74,7 +74,7 @@ public class RemoteInstall extends JFrame {
 			}
 		});
 		label_1.setForeground(Color.BLUE);
-		label_1.setBounds(40, 111, 78, 14);
+		label_1.setBounds(40, 111, 244, 14);
 		panel.add(label_1);
 		
 		JLabel label_2 = new JLabel("Steps to install BWA on your remote machine:");
@@ -82,7 +82,7 @@ public class RemoteInstall extends JFrame {
 		panel.add(label_2);
 		
 		JLabel lblConnectTo = new JLabel("1. Connect to your remote machine using SSH. ");
-		lblConnectTo.setBounds(20, 36, 314, 14);
+		lblConnectTo.setBounds(20, 36, 690, 14);
 		panel.add(lblConnectTo);
 		
 		JLabel lblyouCanUse = new JLabel("(You can use PuTTY as your SSH client)");
@@ -100,11 +100,11 @@ public class RemoteInstall extends JFrame {
 			}
 		});
 		lblyouCanUse.setForeground(Color.BLUE);
-		lblyouCanUse.setBounds(40, 61, 255, 14);
+		lblyouCanUse.setBounds(40, 61, 406, 14);
 		panel.add(lblyouCanUse);
 		
 		JLabel lblYouCan = new JLabel("- You can download the file using 'wget' command like this, ");
-		lblYouCan.setBounds(30, 139, 416, 14);
+		lblYouCan.setBounds(30, 139, 680, 14);
 		panel.add(lblYouCan);
 		
 		JLabel lblUncompressThe = new JLabel("3. Uncompress the downloaded file using the example command below:");
@@ -168,7 +168,7 @@ public class RemoteInstall extends JFrame {
 		panel.add(txtusrsbinalternativesinstallusrbinbwa);
 		
 		JLabel lblInTheExample = new JLabel("- In the example command above, you only have to replace the (Uncompressed Directory)");
-		lblInTheExample.setBounds(30, 407, 633, 14);
+		lblInTheExample.setBounds(30, 407, 737, 14);
 		panel.add(lblInTheExample);
 		
 		JLabel lblPathOfThe = new JLabel("with the complete path of the uncompressed folder");
