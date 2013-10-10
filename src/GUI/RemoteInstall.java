@@ -206,7 +206,7 @@ public class RemoteInstall extends JFrame {
 		lblYouCanUse.setBounds(20, 61, 406, 14);
 		panel_1.add(lblYouCanUse);
 		
-		JLabel lblAfterTransfering = new JLabel("3. After transferring the files to your remote machine, you should run the following command using SSH on the remote machine.");
+		JLabel lblAfterTransfering = new JLabel("3. After transferring the files to the remote machine, run the following command using SSH.");
 		lblAfterTransfering.setBounds(10, 86, 767, 14);
 		panel_1.add(lblAfterTransfering);
 		
