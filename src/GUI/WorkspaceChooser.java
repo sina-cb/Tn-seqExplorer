@@ -170,6 +170,7 @@ public class WorkspaceChooser extends JFrame {
 					JOptionPane.showMessageDialog(WorkspaceChooser.this, "Select a folder to store the new project in it");
 					fileChooser = new JFileChooser();
 					fileChooser.setCurrentDirectory(new File(location));
+					fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 					fileChooser.setDialogTitle("Select a folder to store the new project in it");
 					result = fileChooser.showSaveDialog(WorkspaceChooser.this);
 				}

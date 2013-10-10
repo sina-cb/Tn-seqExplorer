@@ -1641,7 +1641,7 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					createSamFile();
-				} catch (IOException e1) {
+				} catch (IOException | InterruptedException e1) {
 					e1.printStackTrace();
 				}
 			}
@@ -1650,7 +1650,7 @@ public class MainFrame extends JFrame {
 		panel_3.add(btnRun);
 	}
 
-	private void createSamFile() throws IOException{
+	private void createSamFile() throws IOException, InterruptedException{
 		
 		String fnafile = fnaFilePath.getText();
 		String fastqFile = fastqFilePath.getText();
@@ -1688,8 +1688,18 @@ public class MainFrame extends JFrame {
 		bw.write(cmdTemp);
 		bw.close();
 		
-		
-		
+		String cmd[] = {"gnome-terminal", "-x", "bash", "-c", 
+						  "echo 'Please wait till the SAM file gets created';"
+						+ "sh " + shellScript.getAbsolutePath() + ";"
+						+ "echo 'Press Any Key To Continue...';"
+						+ "read"};
+
+		Path currentRelativePath = Paths.get("");
+		String location = currentRelativePath.toAbsolutePath()
+				.toString();
+		File dir = new File(location);
+		Process child = Runtime.getRuntime().exec(cmd, null, dir);
+		child.waitFor();
 	}
 	
 	private void setSequenceLengthText(int num){
