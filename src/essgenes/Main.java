@@ -5,6 +5,7 @@ package essgenes;
 
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import GUI.WorkspaceChooser;
 
