@@ -1,6 +1,7 @@
 package GUI;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.event.MouseAdapter;
@@ -31,12 +32,15 @@ public class RemoteInstall extends JFrame {
 	private JTextField txtMake;
 	private JTextField txtusrsbinalternativesinstallusrbinbwa;
 	private JTextField txtWgetFileurl;
+	private JTextField txtBwaIndexp;
+	private JTextField txtBwaAlnk;
+	private JTextField txtBwaSamsef;
 
 	/**
 	 * Create the frame.
 	 */
 	public RemoteInstall() {
-		setTitle("Do it manually");
+		setTitle("Create SAM file manually");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 818, 577);
@@ -60,17 +64,11 @@ public class RemoteInstall extends JFrame {
 		panel.add(lblDownloadBwa);
 		
 		JLabel label_1 = new JLabel("BWA website");
-		label_1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		setHandCursor(label_1);
 		label_1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				try {
-					Desktop.getDesktop().browse(new URI("http://sourceforge.net/projects/bio-bwa/files/"));
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				} catch (URISyntaxException e1) {
-					e1.printStackTrace();
-				}
+				openBrowserFor("http://sourceforge.net/projects/bio-bwa/files/");
 			}
 		});
 		label_1.setForeground(Color.BLUE);
@@ -85,18 +83,12 @@ public class RemoteInstall extends JFrame {
 		lblConnectTo.setBounds(20, 36, 690, 14);
 		panel.add(lblConnectTo);
 		
-		JLabel lblyouCanUse = new JLabel("(You can use PuTTY as your SSH client)");
-		lblyouCanUse.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		JLabel lblyouCanUse = new JLabel("You can use WinSCP as your SSH client");
+		setHandCursor(lblyouCanUse);
 		lblyouCanUse.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				try {
-					Desktop.getDesktop().browse(new URI("http://www.putty.org/"));
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				} catch (URISyntaxException e1) {
-					e1.printStackTrace();
-				}
+				openBrowserFor("http://http://winscp.net/eng/index.php");
 			}
 		});
 		lblyouCanUse.setForeground(Color.BLUE);
@@ -198,9 +190,92 @@ public class RemoteInstall extends JFrame {
 		lblAfter.setBounds(10, 11, 767, 14);
 		panel_1.add(lblAfter);
 		
-		JLabel lblTranferYour = new JLabel("2. Tranfer your files to the remote machine");
+		JLabel lblTranferYour = new JLabel("2. Tranfer your files to the remote machine using SFTP. You will need a FNA file and a FASTQ file.");
 		lblTranferYour.setBounds(10, 36, 767, 14);
 		panel_1.add(lblTranferYour);
+		
+		JLabel lblYouCanUse = new JLabel("You can use WinSCP as your SSH client");
+		setHandCursor(lblYouCanUse);
+		lblYouCanUse.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				openBrowserFor("http://winscp.net/eng/index.php");
+			}
+		});
+		lblYouCanUse.setForeground(Color.BLUE);
+		lblYouCanUse.setBounds(20, 61, 406, 14);
+		panel_1.add(lblYouCanUse);
+		
+		JLabel lblAfterTransfering = new JLabel("3. After transferring the files to your remote machine, you should run the following command using SSH on the remote machine.");
+		lblAfterTransfering.setBounds(10, 86, 767, 14);
+		panel_1.add(lblAfterTransfering);
+		
+		JLabel lblChangeFileNames = new JLabel("Change between the parentheses:");
+		lblChangeFileNames.setBounds(20, 111, 566, 14);
+		panel_1.add(lblChangeFileNames);
+		
+		txtBwaIndexp = new JTextField();
+		txtBwaIndexp.setText("bwa index -p (Name1) (FNA file)");
+		txtBwaIndexp.setEditable(false);
+		txtBwaIndexp.setBounds(306, 108, 313, 20);
+		panel_1.add(txtBwaIndexp);
+		txtBwaIndexp.setColumns(10);
+		
+		JLabel lblAfterRunninng = new JLabel("4. After running the previous command, run the following command.");
+		lblAfterRunninng.setBounds(10, 136, 767, 14);
+		panel_1.add(lblAfterRunninng);
+		
+		JLabel label_6 = new JLabel("Change between the parentheses:");
+		label_6.setBounds(20, 164, 566, 14);
+		panel_1.add(label_6);
+		
+		txtBwaAlnk = new JTextField();
+		txtBwaAlnk.setText("bwa aln -k 2 -n 0.001 -l 18 (Name1) (FASTQ file) > (Name2).sai");
+		txtBwaAlnk.setEditable(false);
+		txtBwaAlnk.setColumns(10);
+		txtBwaAlnk.setBounds(306, 161, 313, 20);
+		panel_1.add(txtBwaAlnk);
+		
+		JLabel lbltheParametersk = new JLabel("* The parameters -k -n and -l should not be change.");
+		lbltheParametersk.setBounds(20, 189, 471, 14);
+		panel_1.add(lbltheParametersk);
+		
+		JLabel lblFinalStep = new JLabel("5. Final step to create a SAM file is to run the next command.");
+		lblFinalStep.setBounds(10, 214, 767, 14);
+		panel_1.add(lblFinalStep);
+		
+		JLabel label_7 = new JLabel("Change between the parentheses:");
+		label_7.setBounds(20, 242, 566, 14);
+		panel_1.add(label_7);
+		
+		txtBwaSamsef = new JTextField();
+		txtBwaSamsef.setText("bwa samse -f (Name3).sam (Name1) (Name2).sai (FASTQ file)");
+		txtBwaSamsef.setEditable(false);
+		txtBwaSamsef.setColumns(10);
+		txtBwaSamsef.setBounds(306, 239, 313, 20);
+		panel_1.add(txtBwaSamsef);
+		
+		JLabel lblYouCan_1 = new JLabel("6. Transfer the created SAM file back to your own machine.");
+		lblYouCan_1.setBounds(10, 267, 767, 14);
+		panel_1.add(lblYouCan_1);
+		
+		JLabel lblYouCan_2 = new JLabel("7. Use the created SAM file to add new libraries to the project in the \"Manage Libraries\" tab.");
+		lblYouCan_2.setBounds(10, 292, 767, 14);
+		panel_1.add(lblYouCan_2);
+	}
+	
+	private void setHandCursor(Component a){
+		a.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+	}
+	
+	private void openBrowserFor(String url){
+		try {
+			Desktop.getDesktop().browse(new URI(url));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		} catch (URISyntaxException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	public void setParentFrame(JFrame parent){

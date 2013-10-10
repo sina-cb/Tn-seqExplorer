@@ -115,13 +115,17 @@ public class MainFrame extends JFrame {
 	private JButton plotBtn = new JButton("Plot");
 	private JLabel plotWaitLbl = new JLabel("Please wait...");
 	private JButton addNewIndicesBtn = new JButton("Add new essentiality indices to a data table");
-	private JButton remoteHelpBtn = new JButton("Help do it manually");
+	private JButton remoteHelpBtn = new JButton("Create SAM file manually");
 
 	protected ProjectInfo projectInfo = new ProjectInfo();
 	private Logger logger = Logger.getLogger(MainFrame.class.getName());
 	private boolean hasSeqNum = false;
 	private boolean hasGeneFile = false;
-	private JTextField textField;
+	private JTextField fnaFilePath;
+	private JTextField fastqFilePath;
+	private JTextField name1Txt;
+	private JTextField newSaiNameTxt;
+	private JTextField newSamNameTxt;
 
 	/**
 	 * Create the frame.
@@ -1561,17 +1565,73 @@ public class MainFrame extends JFrame {
 		lblSelectThefna.setBounds(10, 179, 161, 15);
 		panel_3.add(lblSelectThefna);
 		
-		textField = new JTextField();
-		textField.setEnabled(true);
-		textField.setEditable(false);
-		textField.setText("");
-		textField.setBounds(189, 177, 518, 19);
-		panel_3.add(textField);
-		textField.setColumns(10);
+		fnaFilePath = new JTextField();
+		fnaFilePath.setEnabled(true);
+		fnaFilePath.setEditable(false);
+		fnaFilePath.setText("");
+		fnaFilePath.setBounds(189, 177, 518, 19);
+		panel_3.add(fnaFilePath);
+		fnaFilePath.setColumns(10);
 		
-		JButton btnBrowse = new JButton("Browse");
-		btnBrowse.setBounds(716, 174, 97, 25);
-		panel_3.add(btnBrowse);
+		JButton fnaBrowseBtn = new JButton("Browse");
+		fnaBrowseBtn.setBounds(716, 174, 97, 25);
+		panel_3.add(fnaBrowseBtn);
+		
+		JLabel lblSelectThefastq = new JLabel("Select the 'FASTQ' File:");
+		lblSelectThefastq.setBounds(10, 210, 161, 15);
+		panel_3.add(lblSelectThefastq);
+		
+		fastqFilePath = new JTextField();
+		fastqFilePath.setText("");
+		fastqFilePath.setEnabled(true);
+		fastqFilePath.setEditable(false);
+		fastqFilePath.setColumns(10);
+		fastqFilePath.setBounds(189, 208, 518, 19);
+		panel_3.add(fastqFilePath);
+		
+		JButton fastqBrowseBtn = new JButton("Browse");
+		fastqBrowseBtn.setBounds(716, 205, 97, 25);
+		panel_3.add(fastqBrowseBtn);
+		
+		JLabel lblEnterName = new JLabel("Enter Name1:");
+		lblEnterName.setBounds(10, 238, 161, 15);
+		panel_3.add(lblEnterName);
+		
+		name1Txt = new JTextField();
+		name1Txt.setText("");
+		name1Txt.setEnabled(true);
+		name1Txt.setEditable(false);
+		name1Txt.setColumns(10);
+		name1Txt.setBounds(189, 236, 175, 19);
+		panel_3.add(name1Txt);
+		
+		newSaiNameTxt = new JTextField();
+		newSaiNameTxt.setText("");
+		newSaiNameTxt.setEnabled(true);
+		newSaiNameTxt.setEditable(false);
+		newSaiNameTxt.setColumns(10);
+		newSaiNameTxt.setBounds(189, 264, 175, 19);
+		panel_3.add(newSaiNameTxt);
+		
+		JLabel lblEnterName_1 = new JLabel("Enter Name2:");
+		lblEnterName_1.setBounds(10, 266, 161, 15);
+		panel_3.add(lblEnterName_1);
+		
+		newSamNameTxt = new JTextField();
+		newSamNameTxt.setText("");
+		newSamNameTxt.setEnabled(true);
+		newSamNameTxt.setEditable(false);
+		newSamNameTxt.setColumns(10);
+		newSamNameTxt.setBounds(189, 294, 175, 19);
+		panel_3.add(newSamNameTxt);
+		
+		JLabel lblEnterNewSam = new JLabel("Enter new SAM file name:");
+		lblEnterNewSam.setBounds(10, 296, 169, 15);
+		panel_3.add(lblEnterNewSam);
+		
+		JButton btnRun = new JButton("Create SAM file");
+		btnRun.setBounds(638, 293, 175, 23);
+		panel_3.add(btnRun);
 	}
 
 	private void setSequenceLengthText(int num){
