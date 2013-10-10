@@ -1558,18 +1558,18 @@ public class MainFrame extends JFrame {
 				remoteInstallHelp();
 			}
 		});
-		remoteHelpBtn.setBounds(10, 544, 191, 25);
+		remoteHelpBtn.setBounds(10, 544, 256, 25);
 		panel_3.add(remoteHelpBtn);
 		
 		JLabel lblSelectThefna = new JLabel("Select the 'FNA' File:");
-		lblSelectThefna.setBounds(10, 179, 161, 15);
+		lblSelectThefna.setBounds(10, 179, 200, 15);
 		panel_3.add(lblSelectThefna);
 		
 		fnaFilePath = new JTextField();
 		fnaFilePath.setEnabled(true);
 		fnaFilePath.setEditable(false);
 		fnaFilePath.setText("");
-		fnaFilePath.setBounds(189, 177, 518, 19);
+		fnaFilePath.setBounds(220, 177, 487, 19);
 		panel_3.add(fnaFilePath);
 		fnaFilePath.setColumns(10);
 		
@@ -1578,7 +1578,7 @@ public class MainFrame extends JFrame {
 		panel_3.add(fnaBrowseBtn);
 		
 		JLabel lblSelectThefastq = new JLabel("Select the 'FASTQ' File:");
-		lblSelectThefastq.setBounds(10, 210, 161, 15);
+		lblSelectThefastq.setBounds(10, 210, 200, 15);
 		panel_3.add(lblSelectThefastq);
 		
 		fastqFilePath = new JTextField();
@@ -1586,7 +1586,7 @@ public class MainFrame extends JFrame {
 		fastqFilePath.setEnabled(true);
 		fastqFilePath.setEditable(false);
 		fastqFilePath.setColumns(10);
-		fastqFilePath.setBounds(189, 208, 518, 19);
+		fastqFilePath.setBounds(220, 208, 487, 19);
 		panel_3.add(fastqFilePath);
 		
 		JButton fastqBrowseBtn = new JButton("Browse");
@@ -1594,7 +1594,7 @@ public class MainFrame extends JFrame {
 		panel_3.add(fastqBrowseBtn);
 		
 		JLabel lblEnterName = new JLabel("Enter Name1:");
-		lblEnterName.setBounds(10, 238, 161, 15);
+		lblEnterName.setBounds(10, 238, 200, 15);
 		panel_3.add(lblEnterName);
 		
 		name1Txt = new JTextField();
@@ -1602,7 +1602,7 @@ public class MainFrame extends JFrame {
 		name1Txt.setEnabled(true);
 		name1Txt.setEditable(false);
 		name1Txt.setColumns(10);
-		name1Txt.setBounds(189, 236, 175, 19);
+		name1Txt.setBounds(220, 236, 144, 19);
 		panel_3.add(name1Txt);
 		
 		newSaiNameTxt = new JTextField();
@@ -1610,11 +1610,11 @@ public class MainFrame extends JFrame {
 		newSaiNameTxt.setEnabled(true);
 		newSaiNameTxt.setEditable(false);
 		newSaiNameTxt.setColumns(10);
-		newSaiNameTxt.setBounds(189, 264, 175, 19);
+		newSaiNameTxt.setBounds(220, 264, 144, 19);
 		panel_3.add(newSaiNameTxt);
 		
 		JLabel lblEnterName_1 = new JLabel("Enter Name2:");
-		lblEnterName_1.setBounds(10, 266, 161, 15);
+		lblEnterName_1.setBounds(10, 266, 200, 15);
 		panel_3.add(lblEnterName_1);
 		
 		newSamNameTxt = new JTextField();
@@ -1622,11 +1622,11 @@ public class MainFrame extends JFrame {
 		newSamNameTxt.setEnabled(true);
 		newSamNameTxt.setEditable(false);
 		newSamNameTxt.setColumns(10);
-		newSamNameTxt.setBounds(189, 294, 175, 19);
+		newSamNameTxt.setBounds(220, 294, 144, 19);
 		panel_3.add(newSamNameTxt);
 		
 		JLabel lblEnterNewSam = new JLabel("Enter new SAM file name:");
-		lblEnterNewSam.setBounds(10, 296, 169, 15);
+		lblEnterNewSam.setBounds(10, 296, 200, 15);
 		panel_3.add(lblEnterNewSam);
 		
 		JButton btnRun = new JButton("Create SAM file");
