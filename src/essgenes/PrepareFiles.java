@@ -597,9 +597,9 @@ public class PrepareFiles {
 		}
 
 		String fileName = new String(inPath);
-		if(fileName.endsWith(".inspo")){
+		if(fileName.endsWith(".inspo") || fileName.endsWith(".fastq")){
 			fileName = fileName.substring(0, fileName.length() - 6);
-		}else{
+		}else if(fileName.endsWith(".sam")){
 			fileName = fileName.substring(0, fileName.length() - 4);			
 		}
 		if (windows){
@@ -626,7 +626,7 @@ public class PrepareFiles {
 
 		String fileName = new String(inPath);
 		
-		if(fileName.endsWith(".inspo")){
+		if(fileName.endsWith(".inspo") || fileName.endsWith(".fastq")){
 			fileName = fileName.substring(0, fileName.length() - 6);
 		}else{
 			fileName = fileName.substring(0, fileName.length() - 4);			

@@ -123,8 +123,6 @@ public class MainFrame extends JFrame {
 	private boolean hasGeneFile = false;
 	private JTextField fnaFilePath;
 	private JTextField fastqFilePath;
-	private JTextField name1Txt;
-	private JTextField newSaiNameTxt;
 	private JTextField newSamNameTxt;
 
 	/**
@@ -1574,6 +1572,23 @@ public class MainFrame extends JFrame {
 		fnaFilePath.setColumns(10);
 		
 		JButton fnaBrowseBtn = new JButton("Browse");
+		fnaBrowseBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Path currentRelativePath = Paths.get("");
+				String location = currentRelativePath.toAbsolutePath()
+						.toString();
+				JFileChooser fileChooser = new JFileChooser(location);
+				fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+				fileChooser.setFileFilter(new FileNameExtensionFilter("FNA Files (.fna)", "fna"));
+				int result = fileChooser.showOpenDialog(MainFrame.this);
+				
+				if (result == JFileChooser.APPROVE_OPTION){
+					fnaFilePath.setText(fileChooser.getSelectedFile().getAbsolutePath());
+				}else{
+					return;
+				}
+			}
+		});
 		fnaBrowseBtn.setBounds(716, 174, 97, 25);
 		panel_3.add(fnaBrowseBtn);
 		
@@ -1590,50 +1605,93 @@ public class MainFrame extends JFrame {
 		panel_3.add(fastqFilePath);
 		
 		JButton fastqBrowseBtn = new JButton("Browse");
+		fastqBrowseBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Path currentRelativePath = Paths.get("");
+				String location = currentRelativePath.toAbsolutePath()
+						.toString();
+				JFileChooser fileChooser = new JFileChooser(location);
+				fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+				fileChooser.setFileFilter(new FileNameExtensionFilter("FASTQ Files (.fastq)", "fastq"));
+				int result = fileChooser.showOpenDialog(MainFrame.this);
+				
+				if (result == JFileChooser.APPROVE_OPTION){
+					fastqFilePath.setText(fileChooser.getSelectedFile().getAbsolutePath());
+				}else{
+					return;
+				}
+			}
+		});
 		fastqBrowseBtn.setBounds(716, 205, 97, 25);
 		panel_3.add(fastqBrowseBtn);
-		
-		JLabel lblEnterName = new JLabel("Enter Name1:");
-		lblEnterName.setBounds(10, 238, 200, 15);
-		panel_3.add(lblEnterName);
-		
-		name1Txt = new JTextField();
-		name1Txt.setText("");
-		name1Txt.setEnabled(true);
-		name1Txt.setEditable(false);
-		name1Txt.setColumns(10);
-		name1Txt.setBounds(220, 236, 144, 19);
-		panel_3.add(name1Txt);
-		
-		newSaiNameTxt = new JTextField();
-		newSaiNameTxt.setText("");
-		newSaiNameTxt.setEnabled(true);
-		newSaiNameTxt.setEditable(false);
-		newSaiNameTxt.setColumns(10);
-		newSaiNameTxt.setBounds(220, 264, 144, 19);
-		panel_3.add(newSaiNameTxt);
-		
-		JLabel lblEnterName_1 = new JLabel("Enter Name2:");
-		lblEnterName_1.setBounds(10, 266, 200, 15);
-		panel_3.add(lblEnterName_1);
 		
 		newSamNameTxt = new JTextField();
 		newSamNameTxt.setText("");
 		newSamNameTxt.setEnabled(true);
-		newSamNameTxt.setEditable(false);
 		newSamNameTxt.setColumns(10);
-		newSamNameTxt.setBounds(220, 294, 144, 19);
+		newSamNameTxt.setBounds(220, 237, 144, 19);
 		panel_3.add(newSamNameTxt);
 		
 		JLabel lblEnterNewSam = new JLabel("Enter new SAM file name:");
-		lblEnterNewSam.setBounds(10, 296, 200, 15);
+		lblEnterNewSam.setBounds(10, 239, 200, 15);
 		panel_3.add(lblEnterNewSam);
 		
 		JButton btnRun = new JButton("Create SAM file");
-		btnRun.setBounds(638, 293, 175, 23);
+		btnRun.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					createSamFile();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnRun.setBounds(638, 264, 175, 23);
 		panel_3.add(btnRun);
 	}
 
+	private void createSamFile() throws IOException{
+		
+		String fnafile = fnaFilePath.getText();
+		String fastqFile = fastqFilePath.getText();
+		String samName = newSamNameTxt.getText();
+		
+		if (fnafile == null || fnafile.compareTo("") == 0){
+			JOptionPane.showMessageDialog(MainFrame.this, "Please select a FNA file.", "FNA File is needed", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		if (fastqFile == null || fastqFile.compareTo("") == 0){
+			JOptionPane.showMessageDialog(MainFrame.this, "Please select a FASTQ file.", "FASTQ File is needed", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		if (samName == null || samName.compareTo("") == 0){
+			JOptionPane.showMessageDialog(MainFrame.this, "Please enter the new SAM file's name.", "SAM file name is required", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		String name1 = PrepareFiles.prepareOutputFilePath(fastqFile, projectInfo.getPath(), "");
+		String saiName = PrepareFiles.prepareOutputFilePath(fastqFile, projectInfo.getPath(), ".sai");
+		samName = projectInfo.getPath() + samName + ".sam";
+		
+		File shellScript = new File(projectInfo.getPath() + "temp.sh");
+		BufferedWriter bw = new BufferedWriter(new FileWriter(shellScript));
+		
+		String cmdTemp = String.format("bwa index -p %s %s\n", name1, fnafile);
+		bw.write(cmdTemp);
+		
+		cmdTemp = String.format("bwa aln -k 2 -n 0.001 -l 18 %s %s > %s\n", name1, fastqFile, saiName);
+		bw.write(cmdTemp);
+		
+		cmdTemp = String.format("bwa samse -f %s %s %s %s\n", samName, name1, saiName, fastqFile);
+		bw.write(cmdTemp);
+		bw.close();
+		
+		
+		
+	}
+	
 	private void setSequenceLengthText(int num){
 		String output = "" + num;
 		int counter = 0;
@@ -1955,7 +2013,7 @@ public class MainFrame extends JFrame {
 
 		if(OSName.contains("Windows") || OSName.contains("windows")){
 			for (Component c : ((JPanel)tabbedPane.getSelectedComponent()).getComponents()){
-				c.setEnabled(false);
+				//c.setEnabled(false);
 			}
 			
 			remoteHelpBtn.setEnabled(true);
