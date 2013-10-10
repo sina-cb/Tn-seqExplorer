@@ -2023,7 +2023,7 @@ public class MainFrame extends JFrame {
 
 		if(OSName.contains("Windows") || OSName.contains("windows")){
 			for (Component c : ((JPanel)tabbedPane.getSelectedComponent()).getComponents()){
-				//c.setEnabled(false);
+				c.setEnabled(false);
 			}
 			
 			remoteHelpBtn.setEnabled(true);
