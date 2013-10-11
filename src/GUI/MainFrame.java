@@ -1053,7 +1053,7 @@ public class MainFrame extends JFrame {
 		panelInitialize.add(lblBeAbleTo);
 		
 		JLabel lblAndThenClick = new JLabel("add new library, provide the name for the library, navigate to the .sam file using the 'Browse' button, ");
-		lblAndThenClick.setBounds(10, 86, 697, 14);
+		lblAndThenClick.setBounds(10, 86, 801, 14);
 		panelInitialize.add(lblAndThenClick);
 		
 		JSeparator separator_9 = new JSeparator();
