@@ -1731,19 +1731,19 @@ public class MainFrame extends JFrame {
 		File shellScript = new File(projectInfo.getPath() + "temp.sh");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(shellScript));
 		
-		String cmdTemp = String.format("bwa index -p %s %s\n", name1, fnafile);
+		String cmdTemp = String.format("bwa index -p \"%s\" \"%s\"\n", name1, fnafile);
 		bw.write(cmdTemp);
 		
-		cmdTemp = String.format("bwa aln -k 2 -n 0.001 -l 18 %s %s > %s\n", name1, fastqFile, saiName);
+		cmdTemp = String.format("bwa aln -k 2 -n 0.001 -l 18 \"%s\" \"%s\" > \"%s\"\n", name1, fastqFile, saiName);
 		bw.write(cmdTemp);
 		
-		cmdTemp = String.format("bwa samse -f %s %s %s %s\n", samName, name1, saiName, fastqFile);
+		cmdTemp = String.format("bwa samse -f \"%s\" \"%s\" \"%s\" \"%s\"\n", samName, name1, saiName, fastqFile);
 		bw.write(cmdTemp);
 		bw.close();
 		
 		String cmd[] = {"gnome-terminal", "-x", "bash", "-c", 
 						  "echo 'Please wait till the SAM file gets created';"
-						+ "sh " + shellScript.getAbsolutePath() + ";"
+						+ "sh \"" + shellScript.getAbsolutePath() + "\";"
 						+ "echo 'Press Any Key To Continue...';"
 						+ "read"};
 
@@ -1753,8 +1753,28 @@ public class MainFrame extends JFrame {
 		File dir = new File(location);
 		Process child = Runtime.getRuntime().exec(cmd, null, dir);
 		child.waitFor();
+		
+		shellScript.delete();
+		
+		File toDelete = new File(projectInfo.getPath() + PrepareFiles.prepareFileName(fastqFile, ".amb"));
+		toDelete.delete();
+		
+		toDelete = new File(projectInfo.getPath() + PrepareFiles.prepareFileName(fastqFile, ".ann"));
+		toDelete.delete();
+		
+		toDelete = new File(projectInfo.getPath() + PrepareFiles.prepareFileName(fastqFile, ".bwt"));
+		toDelete.delete();
+		
+		toDelete = new File(projectInfo.getPath() + PrepareFiles.prepareFileName(fastqFile, ".pac"));
+		toDelete.delete();
+		
+		toDelete = new File(projectInfo.getPath() + PrepareFiles.prepareFileName(fastqFile, ".sa"));
+		toDelete.delete();
+		
+		toDelete = new File(projectInfo.getPath() + PrepareFiles.prepareFileName(fastqFile, ".sai"));
+		toDelete.delete();
 	}
-	
+
 	private void setSequenceLengthText(int num){
 		String output = "" + num;
 		int counter = 0;
