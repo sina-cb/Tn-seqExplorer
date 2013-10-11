@@ -1013,86 +1013,7 @@ public class MainFrame extends JFrame {
 				String newName = JOptionPane.showInputDialog(MainFrame.this, "Enter the New Name");
 				String selectedLib = (String) libraryComboBox.getSelectedItem();
 
-				if(newName != null && newName.compareTo("") != 0){
-
-					BufferedReader br = null;
-					BufferedWriter bw = null;
-					File tempCopy = null;
-					try {
-						tempCopy = new File(projectInfo.getPath() + "temp.pro");
-						br = new BufferedReader(new FileReader(
-								projectInfo.getFile()));
-						bw = new BufferedWriter(new FileWriter(
-								tempCopy));
-
-						String line = br.readLine();
-						bw.write(line + "\n");
-
-						line = br.readLine();
-						bw.write(line + "\n");
-
-						line = br.readLine();
-						bw.write(line + "\n");
-
-						line = br.readLine();
-						while(line != null){
-							if (selectedLib.compareTo(line.substring(0, line.length() - 6)) == 0){					
-								File temp = new File(projectInfo.getPath() + selectedLib + ".inspo");
-								temp.renameTo(new File(projectInfo.getPath() + newName + ".inspo"));
-								bw.write(newName + ".inspo" + "\n");
-
-								temp = new File(projectInfo.getPath() + selectedLib + ".inspos");
-								temp.renameTo(new File(projectInfo.getPath() + newName + ".inspos"));
-								bw.write(newName + ".inspos" + "\n");
-
-								temp = new File(projectInfo.getPath() + selectedLib + ".inspou");
-								temp.renameTo(new File(projectInfo.getPath() + newName + ".inspou"));
-								bw.write(newName + ".inspou" + "\n");
-
-								temp = new File(projectInfo.getPath() + selectedLib + ".inspous");
-								temp.renameTo(new File(projectInfo.getPath() + newName + ".inspous"));
-								bw.write(newName + ".inspous" + "\n");
-
-								br.readLine();
-								br.readLine();
-								br.readLine();
-								line = br.readLine();
-
-							}else{
-								bw.write(line + "\n");
-
-								line = br.readLine();
-								bw.write(line + "\n");
-
-								line = br.readLine();
-								bw.write(line + "\n");
-
-								line = br.readLine();
-								bw.write(line + "\n");
-
-								line = br.readLine();
-							}
-
-						}
-
-					} catch (IOException e) {
-						logger.error(e.getMessage());
-						return;
-					} finally {
-						try {
-							br.close();
-							bw.close();
-						} catch (IOException e) {
-							logger.error(e.getMessage());
-							return;
-						}
-					}
-
-					File pro = projectInfo.getFile();
-					pro.delete();
-					tempCopy.renameTo(pro);
-					initiateLibraryComboBox();
-				}
+				renameLibrary(newName, selectedLib);
 
 			}
 		});
@@ -1690,6 +1611,89 @@ public class MainFrame extends JFrame {
 		panel_3.add(newSamBrowseBtn);
 	}
 
+	private void renameLibrary(String newName, String selectedLib) {
+		if(newName != null && newName.compareTo("") != 0){
+
+			BufferedReader br = null;
+			BufferedWriter bw = null;
+			File tempCopy = null;
+			try {
+				tempCopy = new File(projectInfo.getPath() + "temp.pro");
+				br = new BufferedReader(new FileReader(
+						projectInfo.getFile()));
+				bw = new BufferedWriter(new FileWriter(
+						tempCopy));
+
+				String line = br.readLine();
+				bw.write(line + "\n");
+
+				line = br.readLine();
+				bw.write(line + "\n");
+
+				line = br.readLine();
+				bw.write(line + "\n");
+
+				line = br.readLine();
+				while(line != null){
+					if (selectedLib.compareTo(line.substring(0, line.length() - 6)) == 0){					
+						File temp = new File(projectInfo.getPath() + selectedLib + ".inspo");
+						temp.renameTo(new File(projectInfo.getPath() + newName + ".inspo"));
+						bw.write(newName + ".inspo" + "\n");
+
+						temp = new File(projectInfo.getPath() + selectedLib + ".inspos");
+						temp.renameTo(new File(projectInfo.getPath() + newName + ".inspos"));
+						bw.write(newName + ".inspos" + "\n");
+
+						temp = new File(projectInfo.getPath() + selectedLib + ".inspou");
+						temp.renameTo(new File(projectInfo.getPath() + newName + ".inspou"));
+						bw.write(newName + ".inspou" + "\n");
+
+						temp = new File(projectInfo.getPath() + selectedLib + ".inspous");
+						temp.renameTo(new File(projectInfo.getPath() + newName + ".inspous"));
+						bw.write(newName + ".inspous" + "\n");
+
+						br.readLine();
+						br.readLine();
+						br.readLine();
+						line = br.readLine();
+
+					}else{
+						bw.write(line + "\n");
+
+						line = br.readLine();
+						bw.write(line + "\n");
+
+						line = br.readLine();
+						bw.write(line + "\n");
+
+						line = br.readLine();
+						bw.write(line + "\n");
+
+						line = br.readLine();
+					}
+
+				}
+
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				return;
+			} finally {
+				try {
+					br.close();
+					bw.close();
+				} catch (IOException e) {
+					logger.error(e.getMessage());
+					return;
+				}
+			}
+
+			File pro = projectInfo.getFile();
+			pro.delete();
+			tempCopy.renameTo(pro);
+			initiateLibraryComboBox();
+		}
+	}
+	
 	private void createSamFile() throws IOException, InterruptedException{
 		
 		String fnafile = fnaFilePath.getText();
@@ -2478,9 +2482,16 @@ public class MainFrame extends JFrame {
 					bw.write(PrepareFiles.prepareFileName(samFilePathTxt.getText(), ".inspos") + "\n");
 					bw.write(PrepareFiles.prepareFileName(samFilePathTxt.getText(), ".inspou") + "\n");
 					bw.write(PrepareFiles.prepareFileName(samFilePathTxt.getText(), ".inspous") + "\n");
+					
+					bw.close();
 
 					doneLbl4.setVisible(true);
 					loadingLbl.setVisible(false);
+					
+					String libraryName = JOptionPane.showInputDialog(MainFrame.this, "Enter the library's name:", 
+							PrepareFiles.prepareFileName(samFilePathTxt.getText(), ""));
+					renameLibrary(libraryName, PrepareFiles.prepareFileName(samFilePathTxt.getText(), ""));
+					
 					JOptionPane.showMessageDialog(MainFrame.this, "Library added to the project.");
 					libraryCountLbl.setText((Integer.parseInt(libraryCountLbl.getText()) + 1) + "");
 

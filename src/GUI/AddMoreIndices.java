@@ -243,8 +243,16 @@ public class AddMoreIndices extends JFrame {
 		JPanel panel_1 = new JPanel();
 		tabbedPane.addTab("Compare", null, panel_1, null);
 		
+		JLabel lblToBeImplemented = new JLabel("To Be Implemented...");
+		lblToBeImplemented.setFont(new Font("Tahoma", Font.BOLD, 18));
+		panel_1.add(lblToBeImplemented);
+		
 		JPanel panel_2 = new JPanel();
 		tabbedPane.addTab("Randomize", null, panel_2, null);
+		
+		JLabel label_7 = new JLabel("To Be Implemented...");
+		label_7.setFont(new Font("Tahoma", Font.BOLD, 18));
+		panel_2.add(label_7);
 	}
 
 	private void addBtnAction(){
