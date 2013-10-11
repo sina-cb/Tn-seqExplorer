@@ -796,12 +796,12 @@ public class MainFrame extends JFrame {
 		panelInitialize.setLayout(null);
 
 		JLabel lblBrowseFoThe = new JLabel("Add new library to the project:");
-		lblBrowseFoThe.setBounds(14, 124, 799, 16);
+		lblBrowseFoThe.setBounds(12, 149, 799, 16);
 		panelInitialize.add(lblBrowseFoThe);
 
 		samFilePathTxt = new JTextField();
 		samFilePathTxt.setToolTipText("Path to the SAM file");
-		samFilePathTxt.setBounds(14, 153, 581, 22);
+		samFilePathTxt.setBounds(12, 178, 581, 22);
 		panelInitialize.add(samFilePathTxt);
 		samFilePathTxt.setColumns(10);
 		browseForSamBtn.setToolTipText("Use this to browse for the SAM file");
@@ -829,11 +829,11 @@ public class MainFrame extends JFrame {
 				}
 			}
 		});
-		browseForSamBtn.setBounds(605, 151, 99, 25);
+		browseForSamBtn.setBounds(603, 176, 99, 25);
 		panelInitialize.add(browseForSamBtn);
 
 		extractInsLbl.setForeground(Color.LIGHT_GRAY);
-		extractInsLbl.setBounds(56, 194, 411, 16);
+		extractInsLbl.setBounds(54, 219, 411, 16);
 		panelInitialize.add(extractInsLbl);
 		extractInsBtn.setToolTipText("Process and extract the SAM file");
 		extractInsBtn.setEnabled(false);
@@ -885,19 +885,19 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		extractInsBtn.setBounds(714, 152, 99, 25);
+		extractInsBtn.setBounds(712, 177, 99, 25);
 		panelInitialize.add(extractInsBtn);
 
 		sortInsLbl.setForeground(Color.LIGHT_GRAY);
-		sortInsLbl.setBounds(56, 213, 411, 16);
+		sortInsLbl.setBounds(54, 238, 411, 16);
 		panelInitialize.add(sortInsLbl);
 
 		countUniLbl.setForeground(Color.LIGHT_GRAY);
-		countUniLbl.setBounds(56, 232, 411, 16);
+		countUniLbl.setBounds(54, 257, 411, 16);
 		panelInitialize.add(countUniLbl);
 
 		sortUniLbl.setForeground(Color.LIGHT_GRAY);
-		sortUniLbl.setBounds(56, 251, 411, 16);
+		sortUniLbl.setBounds(54, 276, 411, 16);
 		panelInitialize.add(sortUniLbl);
 		cancelLibSaveBtn.setToolTipText("Clear everything and start over");
 		cancelLibSaveBtn.addActionListener(new ActionListener() {
@@ -908,19 +908,19 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		cancelLibSaveBtn.setBounds(660, 261, 153, 25);
+		cancelLibSaveBtn.setBounds(658, 286, 153, 25);
 		panelInitialize.add(cancelLibSaveBtn);
 
 		JSeparator separator_2 = new JSeparator();
-		separator_2.setBounds(2, 297, 821, 2);
+		separator_2.setBounds(0, 322, 821, 2);
 		panelInitialize.add(separator_2);
 
 		JLabel lblRemoveExistingLibraries = new JLabel("Edit existing libraries:");
-		lblRemoveExistingLibraries.setBounds(12, 312, 313, 16);
+		lblRemoveExistingLibraries.setBounds(10, 337, 313, 16);
 		panelInitialize.add(lblRemoveExistingLibraries);
 		libraryComboBox.setToolTipText("Select a library to edit");
 
-		libraryComboBox.setBounds(14, 341, 581, 22);
+		libraryComboBox.setBounds(12, 366, 581, 22);
 		panelInitialize.add(libraryComboBox);
 		removeLibBtn.setToolTipText("Remove the selected library");
 
@@ -1004,7 +1004,7 @@ public class MainFrame extends JFrame {
 				libraryCountLbl.setText((Integer.parseInt(libraryCountLbl.getText()) - 1) + "");
 			}
 		});
-		removeLibBtn.setBounds(716, 340, 97, 25);
+		removeLibBtn.setBounds(714, 365, 97, 25);
 		panelInitialize.add(removeLibBtn);
 		renameLibBtn.setToolTipText("Rename the selected library");
 
@@ -1017,55 +1017,55 @@ public class MainFrame extends JFrame {
 
 			}
 		});
-		renameLibBtn.setBounds(607, 340, 97, 25);
+		renameLibBtn.setBounds(605, 365, 97, 25);
 		panelInitialize.add(renameLibBtn);
 
 		loadingLbl.setIcon(new ImageIcon(MainFrame.class.getResource("/resources/load.gif")));
-		loadingLbl.setBounds(16, 194, 30, 16);
+		loadingLbl.setBounds(14, 219, 30, 16);
 		panelInitialize.add(loadingLbl);
 
 		doneLbl1.setIcon(new ImageIcon(MainFrame.class.getResource("/resources/done.gif")));
-		doneLbl1.setBounds(24, 194, 23, 14);
+		doneLbl1.setBounds(22, 219, 23, 14);
 		panelInitialize.add(doneLbl1);
 
 		doneLbl2.setIcon(new ImageIcon(MainFrame.class.getResource("/resources/done.gif")));
-		doneLbl2.setBounds(23, 214, 23, 14);
+		doneLbl2.setBounds(21, 239, 23, 14);
 		panelInitialize.add(doneLbl2);
 
 		doneLbl3.setIcon(new ImageIcon(MainFrame.class.getResource("/resources/done.gif")));
-		doneLbl3.setBounds(23, 233, 23, 14);
+		doneLbl3.setBounds(21, 258, 23, 14);
 		panelInitialize.add(doneLbl3);
 
 		doneLbl4.setIcon(new ImageIcon(MainFrame.class.getResource("/resources/done.gif")));
-		doneLbl4.setBounds(23, 252, 23, 14);
+		doneLbl4.setBounds(21, 277, 23, 14);
 		panelInitialize.add(doneLbl4);
 		
-		JLabel lblNewLabel_2 = new JLabel("You can add and manage transposon insertion mutant libraries here. You need the .sam file from the Barrows-Wheeler aligner.");
+		JLabel lblNewLabel_2 = new JLabel("You can add and manage transposon insertion mutant libraries here. You need the .sam file from the ");
 		lblNewLabel_2.setBounds(10, 11, 803, 14);
 		panelInitialize.add(lblNewLabel_2);
 		
-		JLabel lblbwaHttpbiobwasourceforgenet = new JLabel("(bwa; http://bio-bwa.sourceforge.net/) to add a library to your project. If the Barrows-Wheeler Aligner is installed on this computer you may");
+		JLabel lblbwaHttpbiobwasourceforgenet = new JLabel("Barrows-Wheeler aligner. (bwa; http://bio-bwa.sourceforge.net/) to add a library to your project. If the ");
 		lblbwaHttpbiobwasourceforgenet.setBounds(10, 36, 803, 14);
 		panelInitialize.add(lblbwaHttpbiobwasourceforgenet);
 		
-		JLabel lblBeAbleTo = new JLabel(" be able to run it from this application. To add new library, provide the name for the library, navigate to the .sam file using the 'Browse' button,");
+		JLabel lblBeAbleTo = new JLabel("Barrows-Wheeler Aligner is installed on this computer you may be able to run it from this application. To ");
 		lblBeAbleTo.setBounds(8, 61, 805, 14);
 		panelInitialize.add(lblBeAbleTo);
 		
-		JLabel lblAndThenClick = new JLabel(" and then click 'Extract'.");
+		JLabel lblAndThenClick = new JLabel("add new library, provide the name for the library, navigate to the .sam file using the 'Browse' button, ");
 		lblAndThenClick.setBounds(10, 86, 697, 14);
 		panelInitialize.add(lblAndThenClick);
 		
 		JSeparator separator_9 = new JSeparator();
-		separator_9.setBounds(2, 111, 821, 2);
+		separator_9.setBounds(0, 136, 821, 2);
 		panelInitialize.add(separator_9);
 		
 		JLabel lblChooseALibrary = new JLabel("Choose a library to plot:");
-		lblChooseALibrary.setBounds(14, 433, 286, 14);
+		lblChooseALibrary.setBounds(12, 458, 286, 14);
 		panelInitialize.add(lblChooseALibrary);
 		plotLibraryCombo.setToolTipText("Select a libray to plot");
 		
-		plotLibraryCombo.setBounds(14, 458, 402, 20);
+		plotLibraryCombo.setBounds(12, 483, 402, 20);
 		panelInitialize.add(plotLibraryCombo);
 		plotBtn.setToolTipText("Plot the selected library");
 		
@@ -1074,41 +1074,41 @@ public class MainFrame extends JFrame {
 				plotDataMethod();
 			}
 		});
-		plotBtn.setBounds(691, 455, 87, 23);
+		plotBtn.setBounds(689, 480, 87, 23);
 		panelInitialize.add(plotBtn);
 		
 		winLenTxt = new JTextField();
 		winLenTxt.setToolTipText("Enter the window length");
 		winLenTxt.setText("1000");
 		winLenTxt.setColumns(10);
-		winLenTxt.setBounds(426, 458, 118, 20);
+		winLenTxt.setBounds(424, 483, 118, 20);
 		panelInitialize.add(winLenTxt);
 		
 		winStepTxt = new JTextField();
 		winStepTxt.setToolTipText("Enter window step size");
 		winStepTxt.setText("100");
 		winStepTxt.setColumns(10);
-		winStepTxt.setBounds(563, 458, 118, 20);
+		winStepTxt.setBounds(561, 483, 118, 20);
 		panelInitialize.add(winStepTxt);
 		
 		JLabel lblWindowLength = new JLabel("Window length:");
-		lblWindowLength.setBounds(416, 443, 123, 14);
+		lblWindowLength.setBounds(414, 468, 123, 14);
 		panelInitialize.add(lblWindowLength);
 		
 		JLabel label_5 = new JLabel("Step:");
-		label_5.setBounds(549, 443, 108, 14);
+		label_5.setBounds(547, 468, 108, 14);
 		panelInitialize.add(label_5);
 		
 		JSeparator separator_10 = new JSeparator();
-		separator_10.setBounds(2, 395, 821, 2);
+		separator_10.setBounds(0, 420, 821, 2);
 		panelInitialize.add(separator_10);
 		
 		JLabel lblPlotTheDistribution = new JLabel("Plot the distribution of the number of unique insertions per window for a selected library.");
-		lblPlotTheDistribution.setBounds(12, 408, 801, 14);
+		lblPlotTheDistribution.setBounds(10, 433, 801, 14);
 		panelInitialize.add(lblPlotTheDistribution);
 		
 		plotWaitLbl.setIcon(new ImageIcon(MainFrame.class.getResource("/resources/load.gif")));
-		plotWaitLbl.setBounds(373, 533, 183, 14);
+		plotWaitLbl.setBounds(359, 543, 183, 14);
 		panelInitialize.add(plotWaitLbl);
 		
 		JLabel label_3 = new JLabel("(?)");
@@ -1124,8 +1124,12 @@ public class MainFrame extends JFrame {
 		});
 		label_3.setForeground(Color.BLUE);
 		label_3.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_3.setBounds(783, 459, 30, 14);
+		label_3.setBounds(781, 484, 30, 14);
 		panelInitialize.add(label_3);
+		
+		JLabel lblAndThenClick_1 = new JLabel("and then click 'Extract'.");
+		lblAndThenClick_1.setBounds(10, 111, 697, 14);
+		panelInitialize.add(lblAndThenClick_1);
 
 		JPanel panel = new JPanel();
 		tabbedPane.addTab("Manage Data Tables", null, panel, null);
