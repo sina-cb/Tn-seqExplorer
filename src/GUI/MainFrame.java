@@ -1187,7 +1187,7 @@ public class MainFrame extends JFrame {
 		panelInitialize.add(lblPlotTheDistribution);
 		
 		plotWaitLbl.setIcon(new ImageIcon(MainFrame.class.getResource("/resources/load.gif")));
-		plotWaitLbl.setBounds(392, 531, 99, 14);
+		plotWaitLbl.setBounds(373, 533, 183, 14);
 		panelInitialize.add(plotWaitLbl);
 		
 		JLabel label_3 = new JLabel("(?)");

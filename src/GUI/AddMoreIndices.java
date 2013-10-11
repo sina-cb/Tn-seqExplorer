@@ -150,7 +150,7 @@ public class AddMoreIndices extends JFrame {
 				addBtnAction();
 			}
 		});
-		addMoreColumnsBtn.setBounds(429, 135, 89, 23);
+		addMoreColumnsBtn.setBounds(397, 134, 121, 23);
 		panel.add(addMoreColumnsBtn);
 		
 		tableNameTxt = new JTextField();
@@ -165,7 +165,7 @@ public class AddMoreIndices extends JFrame {
 		panel.add(lblSelectedTable);
 		
 		lblPleaseWait.setIcon(new ImageIcon(AddMoreIndices.class.getResource("/resources/load.gif")));
-		lblPleaseWait.setBounds(244, 222, 121, 14);
+		lblPleaseWait.setBounds(244, 222, 185, 14);
 		lblPleaseWait.setVisible(false);
 		panel.add(lblPleaseWait);
 		
