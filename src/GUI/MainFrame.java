@@ -1267,7 +1267,7 @@ public class MainFrame extends JFrame {
 
 			}
 		});
-		addNewDataTableBtn.setBounds(187, 52, 113, 23);
+		addNewDataTableBtn.setBounds(187, 52, 147, 23);
 		panel.add(addNewDataTableBtn);
 
 		JSeparator separator_5 = new JSeparator();
@@ -1279,7 +1279,7 @@ public class MainFrame extends JFrame {
 		panel.add(lblOldLibraries);
 		dataTableCombo.setToolTipText("Just select the data table you want to edit");
 
-		dataTableCombo.setBounds(10, 132, 448, 20);
+		dataTableCombo.setBounds(10, 132, 433, 20);
 		panel.add(dataTableCombo);
 		dataTableRenameBtn.setToolTipText("Rename the data table in the project");
 		dataTableRenameBtn.addActionListener(new ActionListener() {
@@ -1306,7 +1306,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		dataTableRenameBtn.setBounds(625, 132, 89, 23);
+		dataTableRenameBtn.setBounds(675, 131, 138, 23);
 		panel.add(dataTableRenameBtn);
 		dataTableRemoveBtn.setToolTipText("Remove the selected data table from the project");
 		dataTableRemoveBtn.addActionListener(new ActionListener() {
@@ -1326,7 +1326,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		dataTableRemoveBtn.setBounds(724, 132, 89, 23);
+		dataTableRemoveBtn.setBounds(675, 165, 138, 23);
 		panel.add(dataTableRemoveBtn);
 		openAsSpreadsheetBtn.setToolTipText("Open the data table in a seperate editor so that you can edit it on your own.");
 		openAsSpreadsheetBtn.addActionListener(new ActionListener() {
@@ -1342,7 +1342,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		openAsSpreadsheetBtn.setBounds(468, 132, 147, 23);
+		openAsSpreadsheetBtn.setBounds(453, 132, 212, 23);
 		panel.add(openAsSpreadsheetBtn);
 		replaceXlsBtn.setToolTipText("Replace editted data table with the original one");
 
@@ -1380,11 +1380,11 @@ public class MainFrame extends JFrame {
 		});
 		tableCancelChangeBtn.setEnabled(false);
 		replaceXlsBtn.setFont(new Font("Tahoma", Font.BOLD, 11));
-		replaceXlsBtn.setBounds(625, 166, 89, 23);
+		replaceXlsBtn.setBounds(453, 166, 101, 23);
 		panel.add(replaceXlsBtn);
 		tableCancelChangeBtn.setEnabled(false);
 
-		tableCancelChangeBtn.setBounds(724, 166, 89, 23);
+		tableCancelChangeBtn.setBounds(564, 166, 101, 23);
 		panel.add(tableCancelChangeBtn);
 		
 		JLabel lblNewLabel_3 = new JLabel("Create and manage spreadsheets with gene information.");
@@ -1423,7 +1423,7 @@ public class MainFrame extends JFrame {
 				
 			}
 		});
-		addNewIndicesBtn.setBounds(10, 166, 347, 23);
+		addNewIndicesBtn.setBounds(10, 165, 433, 23);
 		panel.add(addNewIndicesBtn);
 		loadingLbl.setVisible(false);
 		doneLbl1.setVisible(false);
