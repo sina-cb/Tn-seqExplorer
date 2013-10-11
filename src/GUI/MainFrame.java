@@ -124,6 +124,7 @@ public class MainFrame extends JFrame {
 	private JTextField fnaFilePath;
 	private JTextField fastqFilePath;
 	private JTextField newSamNameTxt;
+	private JTextField samFilePath;
 
 	/**
 	 * Create the frame.
@@ -1489,6 +1490,7 @@ public class MainFrame extends JFrame {
 
 		useScriptsRadio.setBounds(10, 111, 292, 23);
 		panel_3.add(useScriptsRadio);
+		bwaInstallBtn.setToolTipText("Install BWA program");
 		bwaInstallBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				URL programSource = MainFrame.class.getResource("/resources/bwa-0.7.5a.tar.bz2");
@@ -1550,6 +1552,7 @@ public class MainFrame extends JFrame {
 		JLabel lblNewLabel_1 = new JLabel(" on your machine .");
 		lblNewLabel_1.setBounds(20, 58, 246, 15);
 		panel_3.add(lblNewLabel_1);
+		remoteHelpBtn.setToolTipText("Help for creating a SAM file on your remote Linux machine");
 		
 		remoteHelpBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -1572,6 +1575,7 @@ public class MainFrame extends JFrame {
 		fnaFilePath.setColumns(10);
 		
 		JButton fnaBrowseBtn = new JButton("Browse");
+		fnaBrowseBtn.setToolTipText("Select a FNA file");
 		fnaBrowseBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Path currentRelativePath = Paths.get("");
@@ -1605,6 +1609,7 @@ public class MainFrame extends JFrame {
 		panel_3.add(fastqFilePath);
 		
 		JButton fastqBrowseBtn = new JButton("Browse");
+		fastqBrowseBtn.setToolTipText("Select a FASTQ file");
 		fastqBrowseBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Path currentRelativePath = Paths.get("");
@@ -1626,17 +1631,19 @@ public class MainFrame extends JFrame {
 		panel_3.add(fastqBrowseBtn);
 		
 		newSamNameTxt = new JTextField();
+		newSamNameTxt.setToolTipText("Created SAM file name");
 		newSamNameTxt.setText("");
 		newSamNameTxt.setEnabled(true);
 		newSamNameTxt.setColumns(10);
-		newSamNameTxt.setBounds(220, 237, 144, 19);
+		newSamNameTxt.setBounds(220, 262, 144, 19);
 		panel_3.add(newSamNameTxt);
 		
 		JLabel lblEnterNewSam = new JLabel("Enter new SAM file name:");
-		lblEnterNewSam.setBounds(10, 239, 200, 15);
+		lblEnterNewSam.setBounds(10, 265, 200, 15);
 		panel_3.add(lblEnterNewSam);
 		
 		JButton btnRun = new JButton("Create SAM file");
+		btnRun.setToolTipText("Create the SAM file");
 		btnRun.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -1646,8 +1653,41 @@ public class MainFrame extends JFrame {
 				}
 			}
 		});
-		btnRun.setBounds(638, 264, 175, 23);
+		btnRun.setBounds(638, 292, 175, 23);
 		panel_3.add(btnRun);
+		
+		JLabel lblCreateSamFile = new JLabel("Create SAM file in:");
+		lblCreateSamFile.setBounds(10, 236, 200, 15);
+		panel_3.add(lblCreateSamFile);
+		
+		samFilePath = new JTextField();
+		samFilePath.setText("");
+		samFilePath.setEnabled(true);
+		samFilePath.setEditable(false);
+		samFilePath.setColumns(10);
+		samFilePath.setBounds(220, 234, 487, 19);
+		panel_3.add(samFilePath);
+		
+		JButton newSamBrowseBtn = new JButton("Browse");
+		newSamBrowseBtn.setToolTipText("Select a location to save the new SAM file");
+		newSamBrowseBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Path currentRelativePath = Paths.get("");
+				String location = currentRelativePath.toAbsolutePath()
+						.toString();
+				JFileChooser fileChooser = new JFileChooser(location);
+				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				int result = fileChooser.showOpenDialog(MainFrame.this);
+				
+				if (result == JFileChooser.APPROVE_OPTION){
+					samFilePath.setText(fileChooser.getSelectedFile().getAbsolutePath());
+				}else{
+					return;
+				}
+			}
+		});
+		newSamBrowseBtn.setBounds(716, 232, 97, 25);
+		panel_3.add(newSamBrowseBtn);
 	}
 
 	private void createSamFile() throws IOException, InterruptedException{
@@ -1655,6 +1695,7 @@ public class MainFrame extends JFrame {
 		String fnafile = fnaFilePath.getText();
 		String fastqFile = fastqFilePath.getText();
 		String samName = newSamNameTxt.getText();
+		String samPath = samFilePath.getText();
 		
 		if (fnafile == null || fnafile.compareTo("") == 0){
 			JOptionPane.showMessageDialog(MainFrame.this, "Please select a FNA file.", "FNA File is needed", JOptionPane.ERROR_MESSAGE);
@@ -1671,9 +1712,21 @@ public class MainFrame extends JFrame {
 			return;
 		}
 		
+		if (samPath == null || samPath.compareTo("") == 0){
+			int result = JOptionPane.showConfirmDialog(MainFrame.this, "Do you want the new SAM file to be created in your project folder?", "No location selected for SAM file", JOptionPane.YES_NO_OPTION);
+			
+			if(result == JOptionPane.YES_OPTION){
+				samPath = projectInfo.getPath();
+			}else{
+				return;				
+			}
+		}else{
+			samPath = samPath + "/";
+		}
+		
 		String name1 = PrepareFiles.prepareOutputFilePath(fastqFile, projectInfo.getPath(), "");
 		String saiName = PrepareFiles.prepareOutputFilePath(fastqFile, projectInfo.getPath(), ".sai");
-		samName = projectInfo.getPath() + samName + ".sam";
+		samName = samPath + samName + ".sam";
 		
 		File shellScript = new File(projectInfo.getPath() + "temp.sh");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(shellScript));
