@@ -1309,7 +1309,7 @@ public class MainFrame extends JFrame {
 		panel.add(tableCancelChangeBtn);
 		
 		JLabel lblNewLabel_3 = new JLabel("Create and manage spreadsheets with gene information.");
-		lblNewLabel_3.setBounds(10, 11, 386, 14);
+		lblNewLabel_3.setBounds(10, 11, 475, 14);
 		panel.add(lblNewLabel_3);
 		
 		JLabel label_6 = new JLabel("(?)");
@@ -1326,7 +1326,7 @@ public class MainFrame extends JFrame {
 		});
 		label_6.setForeground(Color.BLUE);
 		label_6.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_6.setBounds(406, 11, 30, 14);
+		label_6.setBounds(453, 11, 30, 14);
 		panel.add(label_6);
 		
 		JSeparator separator_6 = new JSeparator();
