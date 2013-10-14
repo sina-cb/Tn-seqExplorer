@@ -1384,6 +1384,17 @@ public class MainFrame extends JFrame {
 			}
 		});
 		mnMenu.add(mntmExit);
+		
+		JMenu mnAbout = new JMenu("About");
+		menuBar.add(mnAbout);
+		
+		JMenuItem mntmAboutUs = new JMenuItem("About US");
+		mntmAboutUs.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JOptionPane.showMessageDialog(MainFrame.this, "mib.uga.edu");
+			}
+		});
+		mnAbout.add(mntmAboutUs);
 
 		JPanel panel_3 = new JPanel();
 		tabbedPane.addTab("BWA", null, panel_3, null);
