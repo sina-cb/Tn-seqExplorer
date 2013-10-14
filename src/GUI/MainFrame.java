@@ -1608,7 +1608,6 @@ public class MainFrame extends JFrame {
 	}
 	
 	private void installBWAUbuntu(){
-		JOptionPane.showMessageDialog(null, "UBUNTU");
 		URL programSource = MainFrame.class.getResource("/resources/bwa-0.7.5a.tar.bz2");
 		File programDest = new File("bwa-0.7.5a.tar.bz2");
 
