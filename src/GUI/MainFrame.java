@@ -1418,39 +1418,9 @@ public class MainFrame extends JFrame {
 		bwaInstallBtn.setToolTipText("Install BWA program");
 		bwaInstallBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				URL programSource = MainFrame.class.getResource("/resources/bwa-0.7.5a.tar.bz2");
-				File programDest = new File("bwa-0.7.5a.tar.bz2");
-
-				URL shellSource = MainFrame.class.getResource("/resources/install-bwa.sh");
-				File shellDest = new File("shell.sh");
-
-				JOptionPane.showMessageDialog(null, "In order to install the library, you should enter your machine's root password.\n"
-						+ "The password is only used to install the library.", "Root Password", JOptionPane.WARNING_MESSAGE);
 				
-				try {
-					FileUtils.copyURLToFile(programSource, programDest);
-					FileUtils.copyURLToFile(shellSource, shellDest);
-					String cmd[] = {"gnome-terminal", "-x", "bash", "-c", 
-									  "echo 'Please Enter Your Root Password';"
-									+ "su -m root -c 'sh shell.sh';"
-									+ "echo;"
-									+ "echo;"
-									+ "echo 'Press Any Key To Continue...';"
-									+ "read"};
-
-					Path currentRelativePath = Paths.get("");
-					String location = currentRelativePath.toAbsolutePath()
-							.toString();
-					File dir = new File(location);
-					Process child = Runtime.getRuntime().exec(cmd, null, dir);
-					child.waitFor();
-				} catch (IOException | InterruptedException e1) {
-					logger.error(e1.getMessage());
-					return;
-				}finally{
-					shellDest.delete();
-					programDest.delete();
-				}
+				installBWA();
+				
 			}
 		});
 
@@ -1615,6 +1585,101 @@ public class MainFrame extends JFrame {
 		panel_3.add(newSamBrowseBtn);
 	}
 
+	private void installBWA() {
+		Process p = null;
+		BufferedReader br = null;
+		try {
+			p = Runtime.getRuntime().exec("uname -a");
+			br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			
+			String line = "";
+			while((line = br.readLine()) != null){
+				if (line.toLowerCase().contains("ubuntu")){
+					installBWAUbuntu();
+				}else{
+					installBWARedHat();
+				}
+				break;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void installBWAUbuntu(){
+		JOptionPane.showMessageDialog(null, "UBUNTU");
+		URL programSource = MainFrame.class.getResource("/resources/bwa-0.7.5a.tar.bz2");
+		File programDest = new File("bwa-0.7.5a.tar.bz2");
+
+		URL shellSource = MainFrame.class.getResource("/resources/install-bwa.sh");
+		File shellDest = new File("shell.sh");
+
+		JOptionPane.showMessageDialog(null, "In order to install the library, you should enter your machine's root password.\n"
+				+ "The password is only used to install the library.", "Root Password", JOptionPane.WARNING_MESSAGE);
+		
+		try {
+			FileUtils.copyURLToFile(programSource, programDest);
+			FileUtils.copyURLToFile(shellSource, shellDest);
+			String cmd[] = {"gnome-terminal", "-x", "bash", "-c", 
+							  "echo 'Please Enter Your Root Password';"
+							+ "su -m root -c 'sh shell.sh';"
+							+ "echo;"
+							+ "echo;"
+							+ "echo 'Press Any Key To Continue...';"
+							+ "read"};
+
+			Path currentRelativePath = Paths.get("");
+			String location = currentRelativePath.toAbsolutePath()
+					.toString();
+			File dir = new File(location);
+			Process child = Runtime.getRuntime().exec(cmd, null, dir);
+			child.waitFor();
+		} catch (IOException | InterruptedException e1) {
+			logger.error(e1.getMessage());
+			return;
+		}finally{
+			shellDest.delete();
+			programDest.delete();
+		}
+	}
+	
+	private void installBWARedHat(){
+		URL programSource = MainFrame.class.getResource("/resources/bwa-0.7.5a.tar.bz2");
+		File programDest = new File("bwa-0.7.5a.tar.bz2");
+
+		URL shellSource = MainFrame.class.getResource("/resources/install-bwa.sh");
+		File shellDest = new File("shell.sh");
+
+		JOptionPane.showMessageDialog(null, "In order to install the library, you should enter your machine's root password.\n"
+				+ "The password is only used to install the library.", "Root Password", JOptionPane.WARNING_MESSAGE);
+		
+		try {
+			FileUtils.copyURLToFile(programSource, programDest);
+			FileUtils.copyURLToFile(shellSource, shellDest);
+			String cmd[] = {"gnome-terminal", "-x", "bash", "-c", 
+							  "echo 'Please Enter Your Root Password';"
+							+ "su -m root -c 'sh shell.sh';"
+							+ "echo;"
+							+ "echo;"
+							+ "echo 'Press Any Key To Continue...';"
+							+ "read"};
+
+			Path currentRelativePath = Paths.get("");
+			String location = currentRelativePath.toAbsolutePath()
+					.toString();
+			File dir = new File(location);
+			Process child = Runtime.getRuntime().exec(cmd, null, dir);
+			child.waitFor();
+		} catch (IOException | InterruptedException e1) {
+			logger.error(e1.getMessage());
+			return;
+		}finally{
+			shellDest.delete();
+			programDest.delete();
+		}
+	}
+	
 	private void renameLibrary(String newName, String selectedLib) {
 		if(newName != null && newName.compareTo("") != 0){
 
@@ -2115,7 +2180,6 @@ public class MainFrame extends JFrame {
 
 		}else{
 			bwaInstallBtn.setEnabled(false);
-
 			alreadyInstalledRadio.setSelected(true);
 		}
 
