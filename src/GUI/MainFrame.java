@@ -823,7 +823,7 @@ public class MainFrame extends JFrame {
 					
 					if(fileChooser.getSelectedFile().getName().contains(".inspo")){
 						doneLbl1.setVisible(true);
-						loadingLbl.setBounds(22, 214, 30, 16);
+						loadingLbl.setBounds(22, 239, 30, 16);
 						extractInsLbl.setForeground(Color.BLACK);
 					}
 				}
@@ -869,14 +869,14 @@ public class MainFrame extends JFrame {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					loadingLbl.setBounds(22, 214, 30, 16);
+					loadingLbl.setBounds(22, 239, 30, 16);
 					loadingLbl.setVisible(true);
 					samFilePathTxt.setText(newPath);
 					SortInsertions run = new SortInsertions();
 					Thread runThread = new Thread(run);
 					runThread.start();
 				}else{
-					loadingLbl.setBounds(22, 194, 30, 16);
+					loadingLbl.setBounds(22, 219, 30, 16);
 					loadingLbl.setVisible(true);
 					ExtractInsertions run = new ExtractInsertions();
 					Thread runThread = new Thread(run);
@@ -2110,7 +2110,7 @@ public class MainFrame extends JFrame {
 			remoteHelpBtn.setEnabled(true);
 
 			JOptionPane.showMessageDialog(null, "Full functionality of this tab is only available when you are using Linux!!!\n"
-					+ "Now, you can only use the \"Help do it manually\" button to guide you install the BWA and do all other things\n"
+					+ "Now, you can only use the \"Create SAM file manually\" button to guide you install the BWA and do all other things\n"
 					+ "via SSH and SFTP!");
 
 		}else{
@@ -2386,7 +2386,7 @@ public class MainFrame extends JFrame {
 				MainFrame.this.sortInsLbl.setForeground(Color.BLUE);
 
 				doneLbl1.setVisible(true);
-				loadingLbl.setBounds(22, 214, 30, 16);
+				loadingLbl.setBounds(22, 239, 30, 16);
 
 				SortInsertions run = new SortInsertions();
 				Thread runThread = new Thread(run);
@@ -2435,7 +2435,7 @@ public class MainFrame extends JFrame {
 				MainFrame.this.countUniLbl.setForeground(Color.BLUE);
 
 				doneLbl2.setVisible(true);
-				loadingLbl.setBounds(22, 233, 30, 16);
+				loadingLbl.setBounds(22, 258, 30, 16);
 
 				CountUnique run = new CountUnique();
 				Thread runThread = new Thread(run);
@@ -2457,7 +2457,7 @@ public class MainFrame extends JFrame {
 				MainFrame.this.countUniLbl.setForeground(Color.black);
 
 				doneLbl3.setVisible(true);
-				loadingLbl.setBounds(22, 252, 30, 16);
+				loadingLbl.setBounds(22, 277, 30, 16);
 
 				SortByNumberOfInsertions run = new SortByNumberOfInsertions();
 				Thread runThread = new Thread(run);
