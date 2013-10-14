@@ -75,7 +75,7 @@ public class PrepareFiles {
 					description = t.gene_information;
 				}
 				
-				locus_tag = "";
+				locus_tag = t.locus_tag;
 			}
 			toBeWritten = String.format("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", start_coord, end_coord, strand, length, locus_type, locus_tag, gene_symbol, description);
 			bw.write(toBeWritten);
