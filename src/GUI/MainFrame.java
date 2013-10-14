@@ -1612,7 +1612,7 @@ public class MainFrame extends JFrame {
 		URL programSource = MainFrame.class.getResource("/resources/bwa-0.7.5a.tar.bz2");
 		File programDest = new File("bwa-0.7.5a.tar.bz2");
 
-		URL shellSource = MainFrame.class.getResource("/resources/install-bwa.sh");
+		URL shellSource = MainFrame.class.getResource("/resources/install-bwa-ubuntu.sh");
 		File shellDest = new File("shell.sh");
 
 		JOptionPane.showMessageDialog(null, "In order to install the library, you should enter your machine's root password.\n"
@@ -1648,7 +1648,7 @@ public class MainFrame extends JFrame {
 		URL programSource = MainFrame.class.getResource("/resources/bwa-0.7.5a.tar.bz2");
 		File programDest = new File("bwa-0.7.5a.tar.bz2");
 
-		URL shellSource = MainFrame.class.getResource("/resources/install-bwa.sh");
+		URL shellSource = MainFrame.class.getResource("/resources/install-bwa-redhat.sh");
 		File shellDest = new File("shell.sh");
 
 		JOptionPane.showMessageDialog(null, "In order to install the library, you should enter your machine's root password.\n"

@@ -9,6 +9,8 @@ fi
 
 # If we're here, we're supposed to have access. Copy the files over
 
+apt-get install zlib1g-dev
+
 if [ ! -d "/usr/lib/bwa" ]; then
 	# Control will enter here if $DIRECTORY doesn't exist.
 	mkdir /usr/lib/bwa
@@ -26,7 +28,7 @@ cd bwa-0.7.5a
 make clean
 make
 
-/usr/sbin/alternatives --install /usr/bin/bwa bwa /usr/lib/bwa/bwa-0.7.5a/bwa 20000
+update-alternatives --install /usr/bin/bwa bwa /usr/lib/bwa/bwa-0.7.5a/bwa 1
 
 
 echo 'BWA program got installed'
