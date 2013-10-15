@@ -15,17 +15,26 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.table.DefaultTableModel;
 
 import org.apache.log4j.Logger;
 
 import essgenes.AddColumns;
 import essgenes.Messages;
 import essgenes.ProjectInfo;
+
 import javax.swing.ImageIcon;
+
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import javax.swing.JTable;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 
 @SuppressWarnings("serial")
 public class AddMoreIndices extends JFrame {
@@ -46,6 +55,15 @@ public class AddMoreIndices extends JFrame {
 	private JTextField tableNameTxt;
 	private JLabel lblPleaseWait = new JLabel("Please wait...");
 	private JButton addMoreColumnsBtn = new JButton("Execute");
+	private JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+	private JComboBox<String> countInsLibCombo = new JComboBox<String>();
+	private JTextField countInsAdjStartTxt;
+	private JTextField countInsAdjEndTxt;
+	private JButton countInsBtn = new JButton("Count");
+	private JLabel countInsPleaseWaitLbl = new JLabel("Please wait...");
+	private JTable compareTable;
+	private JScrollPane scrollPane = new JScrollPane();
+	private JTextField compareMaxInsTxt;
 
 	/**
 	 * Create the frame.
@@ -60,10 +78,91 @@ public class AddMoreIndices extends JFrame {
 
 		setTitle("Add new essentiality indices to \"" + tableName + "\" table");
 		setLocationRelativeTo(parentFrame);
-		
+				
 		initializeAddPanel();
+		tabbedPane.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				int selectedTab = tabbedPane.getSelectedIndex();
+
+				if (selectedTab == 0){
+					initializeAddPanel();
+				}
+
+				if (selectedTab == 1){
+					initializeCountInsertions();
+				}
+
+				if(selectedTab == 2){
+					initializeCompare();
+				}
+
+				/*				if(selectedTab == 3){
+					initializeBWAPanel();
+				}*/				
+			}
+		});
 	}
 
+	private void initializeCompare(){
+		
+		try {
+			compareTable = new JTable(AddColumns.getHeaderData(tableName, info));
+		} catch (IOException e) {
+			logger.error("There was an error while creating the header table.");
+			return;
+		}
+		compareTable.setBounds(0, 0, 536 - 10, 159 - 11);
+
+		//TODO
+		
+		scrollPane.setBounds(10, 11, 536, 159);
+		scrollPane.add(compareTable);
+		scrollPane.setViewportView(compareTable);
+	}
+	
+	private void initializeCountInsertions(){
+
+		BufferedReader br = null;
+
+		if(countInsLibCombo != null){
+			countInsLibCombo.removeAllItems();
+		}
+		
+		countInsPleaseWaitLbl.setVisible(false);
+
+		try{
+			br = new BufferedReader(new FileReader(info.getFile()));
+
+			String line = br.readLine();
+			br.readLine();
+			br.readLine();
+
+			while(line != null){
+				line = br.readLine();
+
+				if (line != null)
+					countInsLibCombo.addItem(line.substring(0, line.length() - 6));
+
+				line = br.readLine();
+				line = br.readLine();
+				line = br.readLine();
+			}
+
+		}catch(IOException e){
+			logger.error(e.getMessage());
+			return;
+		}finally{
+			try{
+				br.close();
+			}catch(IOException e){
+				logger.error(e.getMessage());
+				return;
+			}
+		}
+	
+	}
+	
 	public AddMoreIndices() {
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -73,7 +172,6 @@ public class AddMoreIndices extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBounds(10, 11, 561, 340);
 		contentPane.add(tabbedPane);
 
@@ -150,7 +248,7 @@ public class AddMoreIndices extends JFrame {
 				addBtnAction();
 			}
 		});
-		addMoreColumnsBtn.setBounds(397, 134, 121, 23);
+		addMoreColumnsBtn.setBounds(426, 278, 120, 23);
 		panel.add(addMoreColumnsBtn);
 		
 		tableNameTxt = new JTextField();
@@ -165,7 +263,7 @@ public class AddMoreIndices extends JFrame {
 		panel.add(lblSelectedTable);
 		
 		lblPleaseWait.setIcon(new ImageIcon(AddMoreIndices.class.getResource("/resources/load.gif")));
-		lblPleaseWait.setBounds(244, 222, 185, 14);
+		lblPleaseWait.setBounds(231, 282, 185, 14);
 		lblPleaseWait.setVisible(false);
 		panel.add(lblPleaseWait);
 		
@@ -239,13 +337,93 @@ public class AddMoreIndices extends JFrame {
 		label_9.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		label_9.setBounds(528, 107, 88, 14);
 		panel.add(label_9);
-
-		JPanel panel_1 = new JPanel();
-		tabbedPane.addTab("Compare", null, panel_1, null);
 		
-		JLabel lblToBeImplemented = new JLabel("To Be Implemented...");
-		lblToBeImplemented.setFont(new Font("Tahoma", Font.BOLD, 18));
-		panel_1.add(lblToBeImplemented);
+		JPanel panel_3 = new JPanel();
+		tabbedPane.addTab("Count Insertions", null, panel_3, null);
+		panel_3.setLayout(null);
+		
+		JLabel label_10 = new JLabel("Choose a library:");
+		label_10.setBounds(10, 14, 137, 14);
+		panel_3.add(label_10);
+		
+		countInsLibCombo.setToolTipText("Choose a library to use for adding datat to the table");
+		countInsLibCombo.setBounds(157, 11, 361, 20);
+		panel_3.add(countInsLibCombo);
+		
+		JLabel label_11 = new JLabel("Adjust Start:");
+		label_11.setBounds(10, 42, 137, 14);
+		panel_3.add(label_11);
+		
+		countInsAdjStartTxt = new JTextField();
+		countInsAdjStartTxt.setToolTipText("You can also omit percent sign and use regular number");
+		countInsAdjStartTxt.setText("-5%");
+		countInsAdjStartTxt.setColumns(10);
+		countInsAdjStartTxt.setBounds(157, 39, 86, 20);
+		panel_3.add(countInsAdjStartTxt);
+		
+		JLabel lblTest = new JLabel("Adjust End:");
+		lblTest.setBounds(307, 42, 137, 14);
+		panel_3.add(lblTest);
+		
+		countInsAdjEndTxt = new JTextField();
+		countInsAdjEndTxt.setToolTipText("You can also omit percent sign and use regular number");
+		countInsAdjEndTxt.setText("-20%");
+		countInsAdjEndTxt.setColumns(10);
+		countInsAdjEndTxt.setBounds(432, 39, 86, 20);
+		panel_3.add(countInsAdjEndTxt);
+		
+		countInsBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				countIns();
+			}
+		});
+		countInsBtn.setBounds(457, 278, 89, 23);
+		panel_3.add(countInsBtn);
+		
+		countInsPleaseWaitLbl.setBounds(245, 282, 177, 14);
+		panel_3.add(countInsPleaseWaitLbl);
+
+		JPanel compareScrollPanel = new JPanel();
+		tabbedPane.addTab("Compare", null, compareScrollPanel, null);
+		compareScrollPanel.setLayout(null);
+		
+		scrollPane.setBounds(10, 11, 536, 159);
+		compareScrollPanel.add(scrollPane);
+		
+		compareTable = new JTable();
+		scrollPane.setViewportView(compareTable);
+		
+		JButton compareBtn = new JButton("Compare");
+		compareBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				compare();
+			}
+		});
+		compareBtn.setBounds(443, 278, 103, 23);
+		compareScrollPanel.add(compareBtn);
+		
+		JLabel lblMaximumInsertions = new JLabel("Maximum Insertions:");
+		lblMaximumInsertions.setBounds(10, 181, 268, 14);
+		compareScrollPanel.add(lblMaximumInsertions);
+		
+		compareMaxInsTxt = new JTextField();
+		compareMaxInsTxt.setBounds(215, 178, 125, 20);
+		compareScrollPanel.add(compareMaxInsTxt);
+		compareMaxInsTxt.setColumns(10);
+		
+		JLabel label_12 = new JLabel("(?)");
+		label_12.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JOptionPane.showMessageDialog(AddMoreIndices.this, "Maximum Insertions specifies a maximum number of insertions\n"
+						+ "If it is higher in any of the compared columns it is adjusted to this number");
+			}
+		});
+		label_12.setToolTipText("Click me!");
+		label_12.setForeground(Color.BLUE);
+		label_12.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		label_12.setBounds(350, 181, 88, 14);
+		compareScrollPanel.add(label_12);
 		
 		JPanel panel_2 = new JPanel();
 		tabbedPane.addTab("Randomize", null, panel_2, null);
@@ -255,8 +433,45 @@ public class AddMoreIndices extends JFrame {
 		panel_2.add(label_7);
 	}
 
-	private void addBtnAction(){
+	private void compare(){
 		
+		
+		
+	}
+	
+	private void countIns(){
+		
+		final String libraryName = (String) addLibraryCombo.getSelectedItem(); 
+		final String adjStart = adjustStartTxt.getText();
+		final String adjEnd = adjustEndTxt.getText();
+		
+		countInsPleaseWaitLbl.setVisible(true);
+		countInsBtn.setEnabled(false);
+		
+		(new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					if (AddColumns.countInsertions(libraryName, tableName, adjStart, adjEnd, info).compareTo(Messages.successMsg) == 0){
+						JOptionPane.showMessageDialog(AddMoreIndices.this, "Data added");
+					}else{
+						JOptionPane.showMessageDialog(AddMoreIndices.this, "There was some problem, data was not added!!!", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+					
+					countInsPleaseWaitLbl.setVisible(false);
+					countInsBtn.setEnabled(true);
+				} catch (IOException e) {
+					logger.error(e.getMessage());
+					return;
+				}
+			}
+		})).start();
+		
+	}
+	
+	private void addBtnAction(){
+
 		final String libraryName = (String) addLibraryCombo.getSelectedItem();
 		final int windowLen = Integer.parseInt(addWinLenTxt.getText());
 		final int step = Integer.parseInt(addStepTxt.getText());
@@ -266,7 +481,7 @@ public class AddMoreIndices extends JFrame {
 
 		lblPleaseWait.setVisible(true);
 		addMoreColumnsBtn.setEnabled(false);
-		
+
 		(new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -276,7 +491,7 @@ public class AddMoreIndices extends JFrame {
 					}else{
 						JOptionPane.showMessageDialog(AddMoreIndices.this, "There was some problem, data was not added!!!", "Error", JOptionPane.ERROR_MESSAGE);
 					}
-					
+
 					lblPleaseWait.setVisible(false);
 					addMoreColumnsBtn.setEnabled(true);
 				} catch (IOException e) {
@@ -291,42 +506,42 @@ public class AddMoreIndices extends JFrame {
 	private void initializeAddPanel(){
 
 		//Initializing Libraries ComboBox
-				BufferedReader br = null;
+		BufferedReader br = null;
 
-				if(addLibraryCombo != null){
-					addLibraryCombo.removeAllItems();
-				}
+		if(addLibraryCombo != null){
+			addLibraryCombo.removeAllItems();
+		}
 
-				try{
-					br = new BufferedReader(new FileReader(info.getFile()));
+		try{
+			br = new BufferedReader(new FileReader(info.getFile()));
 
-					String line = br.readLine();
-					br.readLine();
-					br.readLine();
+			String line = br.readLine();
+			br.readLine();
+			br.readLine();
 
-					while(line != null){
-						line = br.readLine();
+			while(line != null){
+				line = br.readLine();
 
-						if (line != null)
-							addLibraryCombo.addItem(line.substring(0, line.length() - 6));
+				if (line != null)
+					addLibraryCombo.addItem(line.substring(0, line.length() - 6));
 
-						line = br.readLine();
-						line = br.readLine();
-						line = br.readLine();
-					}
+				line = br.readLine();
+				line = br.readLine();
+				line = br.readLine();
+			}
 
-				}catch(IOException e){
-					logger.error(e.getMessage());
-					return;
-				}finally{
-					try{
-						br.close();
-					}catch(IOException e){
-						logger.error(e.getMessage());
-						return;
-					}
-				}
-				
-				addSeqLenTxt.setText(info.getSequenceLen() + "");
+		}catch(IOException e){
+			logger.error(e.getMessage());
+			return;
+		}finally{
+			try{
+				br.close();
+			}catch(IOException e){
+				logger.error(e.getMessage());
+				return;
+			}
+		}
+
+		addSeqLenTxt.setText(info.getSequenceLen() + "");
 	}
 }

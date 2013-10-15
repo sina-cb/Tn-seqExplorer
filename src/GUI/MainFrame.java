@@ -1343,9 +1343,7 @@ public class MainFrame extends JFrame {
 				
 				AddMoreIndices addFrame = new AddMoreIndices((String) dataTableCombo.getSelectedItem(), projectInfo, MainFrame.this);
 				addFrame.setVisible(true);
-				
-				
-				
+
 			}
 		});
 		addNewIndicesBtn.setBounds(10, 165, 433, 23);

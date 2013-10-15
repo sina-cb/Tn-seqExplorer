@@ -3,18 +3,142 @@ package essgenes;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.formula.functions.Columns;
 
 public class AddColumns {
 
 	private static Logger logger = Logger.getLogger(AddColumns.class.getName());
+	
+	@SuppressWarnings("resource")
+	public static String countInsertions(String libName, String tableName, String adjustStartString, String adjustEndString, ProjectInfo info) throws IOException{
+		
+		int adjustStart;
+		double adjustStartPercent;
+		int adjustEnd;
+		double adjustEndPercent;
+		
+		if (adjustStartString.contains("%")){
+			adjustStart = 0;
+			adjustStartPercent = Integer.parseInt(adjustStartString.substring(0, adjustStartString.length() - 1)) / 100.0;
+		}else{
+			adjustStart = Integer.parseInt(adjustStartString);
+			adjustStartPercent = 0.0;
+		}
+		
+		if (adjustEndString.contains("%")){
+			adjustEnd = 0;
+			adjustEndPercent = Integer.parseInt(adjustEndString.substring(0, adjustEndString.length() - 1)) / 100.0;
+		}else{
+			adjustEnd = Integer.parseInt(adjustEndString);
+			adjustEndPercent = 0.0;
+		}
+		
+		int LSeq = info.getSequenceLen();
+		
+		File libFile = new File(info.getPath() + libName + ".inspou");
+		BufferedReader br = new BufferedReader(new FileReader(libFile));
+		
+		ArrayList<Integer> insertions = new ArrayList<>();
+		for (int i = 0; i < LSeq; i++){
+			insertions.add(0);
+		}
+		
+		String line = br.readLine();
+		while(line != null){
+			int tempPos = Integer.parseInt(line.substring(0, line.indexOf("\t")));
+			if (tempPos > LSeq){
+				JOptionPane.showMessageDialog(null, "ERROR: insertion at position " + tempPos + " whereas chromosome length is " + LSeq + ".", "Error", JOptionPane.ERROR_MESSAGE);
+				return Messages.failMsg;
+			}
+			
+			insertions.set(tempPos, insertions.get(tempPos) + 1);
+			line = br.readLine();
+		}
+		
+		br.close();
+		File tableFile = new File(info.getPath() + tableName + ".table");
+		br = new BufferedReader(new FileReader(tableFile));
+		
+		File newTableFile = new File(info.getPath() + tableName + ".new");
+		BufferedWriter bw = new BufferedWriter(new FileWriter(newTableFile));
+
+		//Writing File Header at First
+		line = br.readLine();
+		bw.write(line + "\t" + "" + "\n");
+
+		line = br.readLine();
+		bw.write(line + "\t" + "" + "\n");
+
+		line = br.readLine();
+		bw.write(line + "\tunique_insertion_counts: " + libName + "\n");
+
+		line = br.readLine();
+		bw.write(line + "\t" + adjustStartString + "\n");
+
+		line = br.readLine();
+		bw.write(line + "\t" + adjustEndString + "\n");
+
+		//Reading Main Data and Process it
+		line = br.readLine();
+		while(line != null){
+			String tempLine = new String(line);
+			Tabs gene = new Tabs(tempLine);
+
+			int GeneL = gene.getStart_coord();
+			int GeneR = gene.getEnd_coord();
+			
+			int start = gene.getStart_coord();
+			int end = gene.getEnd_coord();
+			int geneLen = end - start + 1;
+			if (gene.getStrand().compareTo("+") == 0){
+				start = GeneL - adjustStart;
+				end = GeneR + adjustEnd;
+				geneLen = end - start + 1;
+				start = (int) (GeneL - adjustStartPercent * geneLen);
+				end = (int) (GeneR + adjustEndPercent * geneLen);
+			}else if (gene.getStrand().compareTo("-") == 0){
+				start = GeneL - adjustEnd;
+				end = GeneR + adjustStart;
+				geneLen = end - start + 1;
+				start = (int) (GeneL - adjustEndPercent * geneLen);
+				end = (int) (GeneR + adjustStartPercent * geneLen);
+			}else{
+				logger.error("Gene strand is not + or -  ...  skipping end adjustments");
+			}
+			
+			int count = 0;
+			for (int i = start; i <= end; i++){
+				count += insertions.get(i);
+			}
+			
+			bw.write(line + "\t" + count + "\n");
+			bw.flush();
+			
+			line = br.readLine();
+		}
+		
+		br.close();
+		bw.close();
+		
+		if(tableFile.delete()){
+			if(newTableFile.renameTo(tableFile)){
+				return Messages.successMsg;
+			}
+		}
+		
+		return Messages.failMsg;
+	}
 	
 	public static String add(String libName, String tableName, int windowLen, int step, String adjustStartString, String adjustEndString, int seqLen, ProjectInfo info) throws IOException {
 	
@@ -47,11 +171,6 @@ public class AddColumns {
 		while(line != null){
 			insertions.add(Integer.parseInt(line.substring(0, line.indexOf("\t"))));
 			line = br.readLine();
-		}
-		
-		ArrayList<Integer> numberOfInsertions = new ArrayList<>();
-		for(int i = 0; i < insertions.size(); i++){
-			numberOfInsertions.add(0);
 		}
 		
 		ArrayList<Window> windows = new ArrayList<>();
@@ -109,7 +228,6 @@ public class AddColumns {
 		//Reading Main Data and Process it
 		line = br.readLine();
 		while(line != null){
-
 			String tempLine = new String(line);
 			Tabs gene = new Tabs(tempLine);
 			
@@ -293,6 +411,68 @@ public class AddColumns {
 		public void setStart_coord(int start_coord) {
 			this.start_coord = start_coord;
 		}
+	}
+
+	
+	public static TableModel getHeaderData(String tableName, ProjectInfo info) throws IOException {
+
+		File tableFile = new File(info.getPath() + tableName + ".table");
+		BufferedReader br = new BufferedReader(new FileReader(tableFile));
+		
+		ArrayList<ArrayList<String>> data = new ArrayList<>();
+		
+		String line = br.readLine();
+		int lineCount = 0;
+		while(line != null){
+			line = line.substring(line.indexOf("\t") + 1);
+			line = line.substring(line.indexOf("\t") + 1);
+			line = line.substring(line.indexOf("\t") + 1);
+			line = line.substring(line.indexOf("\t") + 1);
+			line = line.substring(line.indexOf("\t") + 1);
+			line = line.substring(line.indexOf("\t") + 1);
+			line = line.substring(line.indexOf("\t") + 1);
+			if (line.contains("\t"))
+				line = line.substring(line.indexOf("\t") + 1);
+			else{
+				JOptionPane.showMessageDialog(null, "The table is empty and there is no data to compare");
+				return null;
+			}
+			 
+			ArrayList<String> row = new ArrayList<>();
+			
+			while(line.contains("\t")){
+				String temp = line.substring(0, line.indexOf("\t"));
+				line = line.substring(line.indexOf("\t") + 1);
+				
+				row.add(temp);
+			}
+			row.add(line);
+			data.add(row);
+			
+			line = br.readLine();
+			
+			lineCount++;
+			if(lineCount > 4){
+				break;
+			}
+		}
+		
+		int columnCount = data.get(0).size();
+		int rowCount = data.size();
+		
+		String[][] result = new String[rowCount][columnCount];
+		for (int i = 0; i < rowCount; i++){
+			for (int j = 0; j < columnCount; j++){
+				result[i][j] = data.get(i).get(j);
+			}
+		}
+		
+		String[] columnNames = new String[columnCount];
+		for (int i = 0; i < columnCount; i++){
+			columnNames[i] = (i + 1) + "";
+		}
+		
+		return new DefaultTableModel(result, columnNames);
 	}
 	
 }
