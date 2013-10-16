@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -21,6 +22,7 @@ import javax.swing.table.DefaultTableModel;
 
 import org.apache.log4j.Logger;
 
+import CustomGUIComponent.BoldCellRenderer;
 import essgenes.AddColumns;
 import essgenes.Messages;
 import essgenes.ProjectInfo;
@@ -64,7 +66,11 @@ public class AddMoreIndices extends JFrame {
 	private JTable compareTable;
 	private JScrollPane scrollPane = new JScrollPane();
 	private JTextField compareMaxInsTxt;
-
+	private JComboBox<String> columnOneCombo = new JComboBox<>();
+	private JComboBox<String> columnTwoCombo = new JComboBox<>();
+	private JButton compareBtn = new JButton("Compare");
+	private JLabel compareWaitLbl = new JLabel("Please wait...");
+	
 	/**
 	 * Create the frame.
 	 */
@@ -105,20 +111,37 @@ public class AddMoreIndices extends JFrame {
 	}
 
 	private void initializeCompare(){
+		compareWaitLbl.setVisible(false);
 		
 		try {
-			compareTable = new JTable(AddColumns.getHeaderData(tableName, info));
+			DefaultTableModel model = AddColumns.getHeaderData(tableName, info);
+			compareTable = new JTable(model);
 		} catch (IOException e) {
 			logger.error("There was an error while creating the header table.");
 			return;
 		}
-		compareTable.setBounds(0, 0, 536 - 10, 159 - 11);
+		//compareTable.setBounds(0, 0, 536 - 10, 159 - 11);
+		compareTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		compareTable.setCellSelectionEnabled(false);
+		compareTable.getColumnModel().getColumn(0).setCellRenderer(new BoldCellRenderer());
+		compareTable.getTableHeader().setFont(new Font("Arial" , Font.BOLD, 11));
 
-		//TODO
-		
-		scrollPane.setBounds(10, 11, 536, 159);
+		//scrollPane.setBounds(10, 11, 536, 159);
 		scrollPane.add(compareTable);
 		scrollPane.setViewportView(compareTable);
+		
+		columnOneCombo.removeAllItems();
+		columnTwoCombo.removeAllItems();
+		for (int i = 0; i < compareTable.getColumnCount(); i++){
+			if(i == 0){
+				columnOneCombo.addItem("");
+				columnTwoCombo.addItem("");
+			}else{
+				columnOneCombo.addItem(i + "");
+				columnTwoCombo.addItem(i + "");
+			}
+		}
+		
 	}
 	
 	private void initializeCountInsertions(){
@@ -393,7 +416,6 @@ public class AddMoreIndices extends JFrame {
 		compareTable = new JTable();
 		scrollPane.setViewportView(compareTable);
 		
-		JButton compareBtn = new JButton("Compare");
 		compareBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				compare();
@@ -407,7 +429,7 @@ public class AddMoreIndices extends JFrame {
 		compareScrollPanel.add(lblMaximumInsertions);
 		
 		compareMaxInsTxt = new JTextField();
-		compareMaxInsTxt.setBounds(215, 178, 125, 20);
+		compareMaxInsTxt.setBounds(237, 178, 103, 20);
 		compareScrollPanel.add(compareMaxInsTxt);
 		compareMaxInsTxt.setColumns(10);
 		
@@ -425,6 +447,24 @@ public class AddMoreIndices extends JFrame {
 		label_12.setBounds(350, 181, 88, 14);
 		compareScrollPanel.add(label_12);
 		
+		JLabel lblSelectColumn = new JLabel("Select column 1 for compare:");
+		lblSelectColumn.setBounds(10, 209, 310, 14);
+		compareScrollPanel.add(lblSelectColumn);
+		
+		JLabel lblSelectColumn_1 = new JLabel("Select column 2 for compare:");
+		lblSelectColumn_1.setBounds(10, 237, 310, 14);
+		compareScrollPanel.add(lblSelectColumn_1);
+		
+		columnOneCombo.setBounds(288, 209, 52, 20);
+		compareScrollPanel.add(columnOneCombo);
+		
+		columnTwoCombo.setBounds(288, 234, 52, 20);
+		compareScrollPanel.add(columnTwoCombo);
+		
+		compareWaitLbl.setIcon(new ImageIcon(AddMoreIndices.class.getResource("/resources/load.gif")));
+		compareWaitLbl.setBounds(228, 282, 112, 14);
+		compareScrollPanel.add(compareWaitLbl);
+		
 		JPanel panel_2 = new JPanel();
 		tabbedPane.addTab("Randomize", null, panel_2, null);
 		
@@ -435,7 +475,57 @@ public class AddMoreIndices extends JFrame {
 
 	private void compare(){
 		
+		String maxInsString = compareMaxInsTxt.getText();
+		String firstCol = (String) columnOneCombo.getSelectedItem();
+		String secondCol = (String) columnTwoCombo.getSelectedItem();
 		
+		if (maxInsString == null || maxInsString.compareTo("") == 0){
+			JOptionPane.showMessageDialog(AddMoreIndices.this, "Please enter Max Insertion.");
+			return;
+		}
+		
+		if (firstCol == null || firstCol.compareTo("") == 0){
+			JOptionPane.showMessageDialog(AddMoreIndices.this, "Please select columns to compare.");
+			return;
+		}
+		
+		if (secondCol == null || secondCol.compareTo("") == 0){
+			JOptionPane.showMessageDialog(AddMoreIndices.this, "Please select columns to compare.");
+			return;
+		}
+		
+		final int maxIns = Integer.parseInt(maxInsString);
+		final int first = Integer.parseInt(firstCol);
+		final int second = Integer.parseInt(secondCol);
+		
+		if (first == second){
+			JOptionPane.showMessageDialog(AddMoreIndices.this, "Please select different columns to compare.");
+			return;
+		}
+		
+		compareWaitLbl.setVisible(true);
+		compareBtn.setEnabled(false);
+		
+		(new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					if (AddColumns.compareColumns(tableName, first, second, maxIns, info).compareTo(Messages.successMsg) == 0){
+						JOptionPane.showMessageDialog(AddMoreIndices.this, "Data added");
+					}else{
+						JOptionPane.showMessageDialog(AddMoreIndices.this, "There was some problem, data was not added!!!", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+					
+					compareWaitLbl.setVisible(false);
+					compareBtn.setEnabled(true);
+					initializeCompare();
+				} catch (IOException e) {
+					logger.error(e.getMessage());
+					return;
+				}
+			}
+		})).start();
 		
 	}
 	

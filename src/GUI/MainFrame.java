@@ -2041,7 +2041,6 @@ public class MainFrame extends JFrame {
 			logger.fatal("The XLS file could not be found!!!");
 		}else{
 			if(xlsFile.canWrite()){
-
 				try{
 					FileChannel destination = new FileOutputStream(tablefile).getChannel();
 					FileChannel source = new FileInputStream(xlsFile).getChannel();
@@ -2050,6 +2049,9 @@ public class MainFrame extends JFrame {
 					source.close();
 					destination.close();
 
+					
+					
+					
 					if(!xlsFile.delete()){
 						JOptionPane.showMessageDialog(MainFrame.this, "Please close the spreadsheet application.", "Could not write into the file", JOptionPane.ERROR_MESSAGE);
 						return;
@@ -2077,10 +2079,10 @@ public class MainFrame extends JFrame {
 			bw = new BufferedWriter(new FileWriter(xlsFile));
 			br = new BufferedReader(new FileReader(tablefile));
 
-			bw.write("\n");
-			bw.write("\n");
-			bw.write("\n");
-			bw.write("\n");
+			//bw.write("\n");
+			//bw.write("\n");
+			//bw.write("\n");
+			//bw.write("\n");
 
 			String tempLine = br.readLine();
 			while(tempLine != null){

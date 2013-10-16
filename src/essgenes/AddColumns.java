@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -414,8 +415,7 @@ public class AddColumns {
 	}
 
 	
-	public static TableModel getHeaderData(String tableName, ProjectInfo info) throws IOException {
-
+	public static DefaultTableModel getHeaderData(String tableName, ProjectInfo info) throws IOException {
 		File tableFile = new File(info.getPath() + tableName + ".table");
 		BufferedReader br = new BufferedReader(new FileReader(tableFile));
 		
@@ -460,19 +460,108 @@ public class AddColumns {
 		int columnCount = data.get(0).size();
 		int rowCount = data.size();
 		
-		String[][] result = new String[rowCount][columnCount];
+		String[][] result = new String[rowCount][columnCount + 1];
 		for (int i = 0; i < rowCount; i++){
+			result[i][0] = getInfo(i);
 			for (int j = 0; j < columnCount; j++){
-				result[i][j] = data.get(i).get(j);
+				result[i][j + 1] = data.get(i).get(j);
 			}
 		}
 		
-		String[] columnNames = new String[columnCount];
-		for (int i = 0; i < columnCount; i++){
-			columnNames[i] = (i + 1) + "";
+		String[] columnNames = new String[columnCount + 1];
+		columnNames[0] = "Info";
+		for (int i = 1; i < columnCount + 1; i++){
+			columnNames[i] = (i) + "";
 		}
 		
 		return new DefaultTableModel(result, columnNames);
 	}
+
+	private static String getInfo(int i) {
+		switch (i){
+		case 0:
+			return "Library Name";
+		case 1:
+			return "Window Size";
+		case 2:
+			return "Window Step";
+		case 3:
+			return "Start Adj.";
+		case 4:
+			return "End Adj.";
+		default:
+			return "ERROR";
+		}
+	}
+
+	public static String compareColumns(String tableName, int firstColumn, int secondColumn, int maxIns, ProjectInfo info) throws IOException {
+
+		File tableFile = new File(info.getPath() + tableName + ".table");
+		BufferedReader br = new BufferedReader(new FileReader(tableFile));
+
+		File newTableFile = new File(info.getPath() + tableName + ".new");
+		BufferedWriter bw = new BufferedWriter(new FileWriter(newTableFile));
+		
+		//Writing File Header at First
+		String line = br.readLine();
+		bw.write(line + "\t" + "\n");
+
+		line = br.readLine();
+		bw.write(line + "\t" + "\n");
+
+		line = br.readLine();
+		bw.write(line + "\t" + "\n");
+
+		line = br.readLine();
+		bw.write(line + "\t" + "Compare" + "\n");
+
+		line = br.readLine();
+		bw.write(line + "\t" + firstColumn + " - " + secondColumn + "\n");
+
+		//Reading Main Data and Process it
+		line = br.readLine();
+		while(line != null){
+			String tempLine = new String(line);
+			ArrayList<String> tabs = tabsForCompare(line);
+			
+			int one = Integer.parseInt(tabs.get(firstColumn + 7));
+			int two = Integer.parseInt(tabs.get(secondColumn + 7));
+			
+			if (one > maxIns){
+				one = maxIns;
+			}
+			
+			if (two > maxIns){
+				two = maxIns;
+			}
+			
+			bw.write(tempLine + "\t" + (one - two) + "\n");
+			
+			line = br.readLine();
+		}
+		
+		bw.close();
+		br.close();
+		
+		if (tableFile.delete()){
+			if(newTableFile.renameTo(tableFile)){
+				return Messages.successMsg;
+			}
+		}
+		
+		return Messages.failMsg;
+	}
 	
+	private static ArrayList<String> tabsForCompare(String line){
+		ArrayList<String> results = new ArrayList<>();
+		
+		while (line.contains("\t")){
+			String temp = line.substring(0, line.indexOf("\t"));
+			line = line.substring(line.indexOf("\t") + 1);
+			results.add(temp);
+		}
+		results.add(line);
+		
+		return results;
+	}
 }
