@@ -3,19 +3,16 @@ package essgenes;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.ss.formula.functions.Columns;
 
 public class AddColumns {
 
@@ -435,6 +432,7 @@ public class AddColumns {
 				line = line.substring(line.indexOf("\t") + 1);
 			else{
 				JOptionPane.showMessageDialog(null, "The table is empty and there is no data to compare");
+				br.close();
 				return null;
 			}
 			 
@@ -457,6 +455,8 @@ public class AddColumns {
 			}
 		}
 		
+		br.close();
+		
 		int columnCount = data.get(0).size();
 		int rowCount = data.size();
 		
@@ -473,6 +473,7 @@ public class AddColumns {
 		for (int i = 1; i < columnCount + 1; i++){
 			columnNames[i] = (i) + "";
 		}
+		
 		
 		return new DefaultTableModel(result, columnNames);
 	}
@@ -563,5 +564,57 @@ public class AddColumns {
 		results.add(line);
 		
 		return results;
+	}
+
+	public static String randomize(String tableName, int column, double lower, double higher, double constant, ProjectInfo info) throws IOException {
+		File tableFile = new File(info.getPath() + tableName + ".table");
+		BufferedReader br = new BufferedReader(new FileReader(tableFile));
+
+		File newTableFile = new File(info.getPath() + tableName + ".new");
+		BufferedWriter bw = new BufferedWriter(new FileWriter(newTableFile));
+		
+		double D = higher - lower;
+		
+		//Writing File Header at First
+		String line = br.readLine();
+		bw.write(line + "\t" + "Adjust" + "\n");
+
+		line = br.readLine();
+		bw.write(line + "\t" + column + "\n");
+
+		line = br.readLine();
+		bw.write(line + "\t" + constant + "\n");
+
+		line = br.readLine();
+		bw.write(line + "\t" + lower + "\n");
+
+		line = br.readLine();
+		bw.write(line + "\t" + higher + "\n");
+
+		//Reading Main Data and Process it
+		line = br.readLine();
+		while(line != null){
+			String tempLine = new String(line);
+			ArrayList<String> tabs = tabsForCompare(line);
+			
+			double rand = (new Random()).nextDouble();
+			double N = Double.parseDouble(tabs.get(column + 7));
+			N += (constant + rand * D + lower); 
+			
+			bw.write(tempLine + "\t" + N + "\n");
+			
+			line = br.readLine();
+		}
+		
+		bw.close();
+		br.close();
+		
+		if (tableFile.delete()){
+			if(newTableFile.renameTo(tableFile)){
+				return Messages.successMsg;
+			}
+		}
+		
+		return Messages.failMsg;
 	}
 }

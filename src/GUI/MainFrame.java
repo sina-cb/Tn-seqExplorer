@@ -1389,7 +1389,7 @@ public class MainFrame extends JFrame {
 		JMenuItem mntmAboutUs = new JMenuItem("About US");
 		mntmAboutUs.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane.showMessageDialog(MainFrame.this, "mib.uga.edu");
+				JOptionPane.showMessageDialog(MainFrame.this, "http://www.cmbl.uga.edu/");
 			}
 		});
 		mnAbout.add(mntmAboutUs);
