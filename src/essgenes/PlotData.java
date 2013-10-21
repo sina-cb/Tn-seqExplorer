@@ -20,6 +20,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.LogAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
@@ -225,16 +226,63 @@ public class PlotData {
 	
 	}
 	
-	public static JFreeChart plotColumns(String tableName, int firstCol, int secondCol, String title, ProjectInfo info) throws IOException{
+	public static JFreeChart plotColumns(String tableName, int firstCol, int secondCol, boolean logPlot, String title, ProjectInfo info) throws IOException{
 		
 		File tableFile = new File(info.getPath() + tableName + ".table");
 		BufferedReader br = new BufferedReader(new FileReader(tableFile));
 
+		String xAxisName = "Column " + firstCol + " (";
+		String yAxisName = "Column " + secondCol + " (";
+		
 		String line = br.readLine();
+		ArrayList<String> tabs = AddColumns.tabsForCompare(line);
+		if (tabs.get(firstCol + 7) != null && tabs.get(firstCol + 7).compareTo("") != 0){
+			xAxisName = xAxisName + tabs.get(firstCol + 7) + ", "; 
+		}
+		
+		if (tabs.get(secondCol + 7) != null && tabs.get(secondCol + 7).compareTo("") != 0){
+			yAxisName = yAxisName + tabs.get(secondCol + 7) + ", ";
+		}
+		
 		line = br.readLine();
+		tabs = AddColumns.tabsForCompare(line);
+		if (tabs.get(firstCol + 7) != null && tabs.get(firstCol + 7).compareTo("") != 0){
+			xAxisName = xAxisName + tabs.get(firstCol + 7) + ", "; 
+		}
+		
+		if (tabs.get(secondCol + 7) != null && tabs.get(secondCol + 7).compareTo("") != 0){
+			yAxisName = yAxisName + tabs.get(secondCol + 7) + ", ";
+		}
+		
 		line = br.readLine();
+		tabs = AddColumns.tabsForCompare(line);
+		if (tabs.get(firstCol + 7) != null && tabs.get(firstCol + 7).compareTo("") != 0){
+			xAxisName = xAxisName + tabs.get(firstCol + 7) + ", "; 
+		}
+		
+		if (tabs.get(secondCol + 7) != null && tabs.get(secondCol + 7).compareTo("") != 0){
+			yAxisName = yAxisName + tabs.get(secondCol + 7) + ", ";
+		}
+		
 		line = br.readLine();
+		tabs = AddColumns.tabsForCompare(line);
+		if (tabs.get(firstCol + 7) != null && tabs.get(firstCol + 7).compareTo("") != 0){
+			xAxisName = xAxisName + tabs.get(firstCol + 7) + ", "; 
+		}
+		
+		if (tabs.get(secondCol + 7) != null && tabs.get(secondCol + 7).compareTo("") != 0){
+			yAxisName = yAxisName + tabs.get(secondCol + 7) + ", ";
+		}
+		
 		line = br.readLine();
+		tabs = AddColumns.tabsForCompare(line);
+		if (tabs.get(firstCol + 7) != null && tabs.get(firstCol + 7).compareTo("") != 0){
+			xAxisName = xAxisName + tabs.get(firstCol + 7) + ")"; 
+		}
+		
+		if (tabs.get(secondCol + 7) != null && tabs.get(secondCol + 7).compareTo("") != 0){
+			yAxisName = yAxisName + tabs.get(secondCol + 7) + ")";
+		}
 
 		ArrayList<Double> xAxis = new ArrayList<>();
 		ArrayList<Double> yAxis = new ArrayList<>();
@@ -242,10 +290,13 @@ public class PlotData {
 		//Reading Main Data and Process it
 		line = br.readLine();
 		while(line != null){
-			ArrayList<String> tabs = AddColumns.tabsForCompare(line);
+			tabs = AddColumns.tabsForCompare(line);
 			
-			xAxis.add(Double.parseDouble(tabs.get(firstCol + 7)));
-			yAxis.add(Double.parseDouble(tabs.get(secondCol + 7)));
+			double one = Double.parseDouble(tabs.get(firstCol + 7));
+			double two = Double.parseDouble(tabs.get(secondCol + 7));
+			
+			xAxis.add(one);
+			yAxis.add(two);
 			
 			line = br.readLine();
 		}
@@ -253,16 +304,16 @@ public class PlotData {
 		br.close();
 		
 		XYDataset dataset = createDataset(xAxis, yAxis);
-		JFreeChart chart = createScatterChart(dataset, title);
+		JFreeChart chart = createScatterChart(dataset, logPlot, xAxisName, yAxisName, title);
 		
 		return chart;
 	}
 
-	private static JFreeChart createScatterChart(XYDataset dataset, String title) {
+	private static JFreeChart createScatterChart(XYDataset dataset, boolean logPlot, String xName, String yName, String title) {
 		final JFreeChart chart = ChartFactory.createScatterPlot(
 				title,                  	// chart title
-				"",                      	// x axis label
-				"",                      	// y axis label
+				xName,                      	// x axis label
+				yName,                      	// y axis label
 				dataset,                	// data
 				PlotOrientation.VERTICAL,
 				false,                     	// include legend
@@ -271,15 +322,17 @@ public class PlotData {
 				);
 		XYPlot plot = (XYPlot) chart.getPlot();
 		
-		//final LogAxis logAxisX = new LogAxis("X Axis");
-		//logAxisX.setStandardTickUnits(LogAxis.createLogTickUnits(Locale.ENGLISH));
-		//logAxisX.setRange(0.01, 10.0);
-		//plot.setDomainAxis(logAxisX);
-		
-		//final LogAxis logAxisY = new LogAxis("Y Axis");
-		//logAxisY.setStandardTickUnits(LogAxis.createLogTickUnits(Locale.ENGLISH));
-		//logAxisY.setRange(0.01, 10.0);
-		//plot.setRangeAxis(logAxisY);
+		if (logPlot){
+			final LogAxis logAxisX = new LogAxis(xName);
+			//logAxisX.setStandardTickUnits(LogAxis.createLogTickUnits(Locale.ENGLISH));
+			//logAxisX.setRange(Math.log(maxX), Math.log(minX));
+			plot.setDomainAxis(logAxisX);
+
+			final LogAxis logAxisY = new LogAxis(yName);
+			//logAxisY.setStandardTickUnits(LogAxis.createLogTickUnits(Locale.ENGLISH));
+			//logAxisY.setRange(Math.log(maxY), Math.log(minY));
+			plot.setRangeAxis(logAxisY);
+		}
 		
 		XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
 		renderer.setSeriesLinesVisible(0, false);

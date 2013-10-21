@@ -35,12 +35,14 @@ import essgenes.AddColumns;
 import essgenes.Messages;
 import essgenes.PlotData;
 import essgenes.ProjectInfo;
+import javax.swing.JCheckBox;
 
 @SuppressWarnings("serial")
 public class AddMoreIndices extends JFrame {
 
 	private Logger logger = Logger.getLogger(AddMoreIndices.class.getName());
 	private String tableName = "";
+	private boolean logPlot = false;
 	private ProjectInfo info = null;
 	@SuppressWarnings("unused")
 	private JFrame parentFrame = null;
@@ -76,6 +78,7 @@ public class AddMoreIndices extends JFrame {
 	private JLabel lblPleaseWait_1 = new JLabel("Please wait...");
 	private JComboBox<String> columnSelectCombo = new JComboBox<String>();
 	private JScrollPane scrollPane_1 = new JScrollPane();
+	private JCheckBox logPlotCheck = new JCheckBox("Logarithmic Plot");
 	
 	/**
 	 * Create the frame.
@@ -511,6 +514,9 @@ public class AddMoreIndices extends JFrame {
 		plotTwoColBtn.setBounds(335, 278, 103, 23);
 		compareScrollPanel.add(plotTwoColBtn);
 		
+		logPlotCheck.setBounds(10, 235, 330, 23);
+		compareScrollPanel.add(logPlotCheck);
+		
 		JPanel panel_2 = new JPanel();
 		tabbedPane.addTab("Randomize", null, panel_2, null);
 		panel_2.setLayout(null);
@@ -633,6 +639,8 @@ public class AddMoreIndices extends JFrame {
 		compareWaitLbl.setVisible(true);
 		compareBtn.setEnabled(false);
 		
+		this.logPlot = logPlotCheck.isSelected();
+		
 		(new Thread(new Runnable() {
 			
 			@Override
@@ -642,7 +650,7 @@ public class AddMoreIndices extends JFrame {
 				
 				ChartPanel panel;
 				try {
-					panel = new ChartPanel(PlotData.plotColumns(tableName, first, second, tempTitle, info));
+					panel = new ChartPanel(PlotData.plotColumns(tableName, first, second, AddMoreIndices.this.logPlot, tempTitle, info));
 				} catch (IOException e) {
 					logger.error("Some error while creating the plot!");
 					return;
