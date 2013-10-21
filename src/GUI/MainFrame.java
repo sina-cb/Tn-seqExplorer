@@ -1611,7 +1611,6 @@ public class MainFrame extends JFrame {
 				break;
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

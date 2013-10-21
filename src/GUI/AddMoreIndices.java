@@ -28,10 +28,12 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 
 import org.apache.log4j.Logger;
+import org.jfree.chart.ChartPanel;
 
 import CustomGUIComponent.BoldCellRenderer;
 import essgenes.AddColumns;
 import essgenes.Messages;
+import essgenes.PlotData;
 import essgenes.ProjectInfo;
 
 @SuppressWarnings("serial")
@@ -320,7 +322,7 @@ public class AddMoreIndices extends JFrame {
 		panel.add(lblSelectedTable);
 		
 		lblPleaseWait.setIcon(new ImageIcon(AddMoreIndices.class.getResource("/resources/load.gif")));
-		lblPleaseWait.setBounds(231, 282, 185, 14);
+		lblPleaseWait.setBounds(10, 282, 185, 14);
 		lblPleaseWait.setVisible(false);
 		panel.add(lblPleaseWait);
 		
@@ -436,15 +438,16 @@ public class AddMoreIndices extends JFrame {
 		});
 		countInsBtn.setBounds(457, 278, 89, 23);
 		panel_3.add(countInsBtn);
+		countInsPleaseWaitLbl.setIcon(new ImageIcon(AddMoreIndices.class.getResource("/resources/load.gif")));
 		
-		countInsPleaseWaitLbl.setBounds(245, 282, 177, 14);
+		countInsPleaseWaitLbl.setBounds(10, 282, 177, 14);
 		panel_3.add(countInsPleaseWaitLbl);
 
 		JPanel compareScrollPanel = new JPanel();
 		tabbedPane.addTab("Compare", null, compareScrollPanel, null);
 		compareScrollPanel.setLayout(null);
 		
-		scrollPane.setBounds(10, 11, 536, 159);
+		scrollPane.setBounds(10, 11, 536, 133);
 		compareScrollPanel.add(scrollPane);
 		
 		compareTable = new JTable();
@@ -459,11 +462,11 @@ public class AddMoreIndices extends JFrame {
 		compareScrollPanel.add(compareBtn);
 		
 		JLabel lblMaximumInsertions = new JLabel("Maximum Insertions:");
-		lblMaximumInsertions.setBounds(10, 181, 268, 14);
+		lblMaximumInsertions.setBounds(10, 158, 268, 14);
 		compareScrollPanel.add(lblMaximumInsertions);
 		
 		compareMaxInsTxt = new JTextField();
-		compareMaxInsTxt.setBounds(237, 178, 103, 20);
+		compareMaxInsTxt.setBounds(237, 155, 103, 20);
 		compareScrollPanel.add(compareMaxInsTxt);
 		compareMaxInsTxt.setColumns(10);
 		
@@ -478,44 +481,53 @@ public class AddMoreIndices extends JFrame {
 		label_12.setToolTipText("Click me!");
 		label_12.setForeground(Color.BLUE);
 		label_12.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_12.setBounds(350, 181, 88, 14);
+		label_12.setBounds(350, 158, 88, 14);
 		compareScrollPanel.add(label_12);
 		
 		JLabel lblSelectColumn = new JLabel("Select column 1 for compare:");
-		lblSelectColumn.setBounds(10, 209, 310, 14);
+		lblSelectColumn.setBounds(10, 186, 310, 14);
 		compareScrollPanel.add(lblSelectColumn);
 		
 		JLabel lblSelectColumn_1 = new JLabel("Select column 2 for compare:");
-		lblSelectColumn_1.setBounds(10, 237, 310, 14);
+		lblSelectColumn_1.setBounds(10, 214, 310, 14);
 		compareScrollPanel.add(lblSelectColumn_1);
 		
-		columnOneCombo.setBounds(288, 209, 52, 20);
+		columnOneCombo.setBounds(288, 186, 52, 20);
 		compareScrollPanel.add(columnOneCombo);
 		
-		columnTwoCombo.setBounds(288, 234, 52, 20);
+		columnTwoCombo.setBounds(288, 211, 52, 20);
 		compareScrollPanel.add(columnTwoCombo);
 		
 		compareWaitLbl.setIcon(new ImageIcon(AddMoreIndices.class.getResource("/resources/load.gif")));
-		compareWaitLbl.setBounds(228, 282, 112, 14);
+		compareWaitLbl.setBounds(10, 282, 112, 14);
 		compareScrollPanel.add(compareWaitLbl);
+		
+		JButton plotTwoColBtn = new JButton("Plot");
+		plotTwoColBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				plotColumns();
+			}
+		});
+		plotTwoColBtn.setBounds(335, 278, 103, 23);
+		compareScrollPanel.add(plotTwoColBtn);
 		
 		JPanel panel_2 = new JPanel();
 		tabbedPane.addTab("Randomize", null, panel_2, null);
 		panel_2.setLayout(null);
 		
-		scrollPane_1.setBounds(10, 11, 536, 159);
+		scrollPane_1.setBounds(10, 11, 536, 133);
 		panel_2.add(scrollPane_1);
 		
 		rndTable = new JTable();
 		scrollPane_1.setViewportView(rndTable);
 		
 		JLabel lblRandomLowerBound = new JLabel("Random lower bound:");
-		lblRandomLowerBound.setBounds(10, 184, 268, 14);
+		lblRandomLowerBound.setBounds(10, 158, 268, 14);
 		panel_2.add(lblRandomLowerBound);
 		
 		rndLowerBoundTxt = new JTextField();
 		rndLowerBoundTxt.setColumns(10);
-		rndLowerBoundTxt.setBounds(237, 181, 103, 20);
+		rndLowerBoundTxt.setBounds(237, 155, 103, 20);
 		panel_2.add(rndLowerBoundTxt);
 		
 		JLabel label_13 = new JLabel("(?)");
@@ -528,16 +540,16 @@ public class AddMoreIndices extends JFrame {
 		label_13.setToolTipText("Click me!");
 		label_13.setForeground(Color.BLUE);
 		label_13.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_13.setBounds(350, 184, 88, 14);
+		label_13.setBounds(350, 158, 88, 14);
 		panel_2.add(label_13);
 		
 		JLabel lblRandomHigherBound = new JLabel("Random higher bound:");
-		lblRandomHigherBound.setBounds(10, 212, 268, 14);
+		lblRandomHigherBound.setBounds(10, 186, 268, 14);
 		panel_2.add(lblRandomHigherBound);
 		
 		rndHigherBoundTxt = new JTextField();
 		rndHigherBoundTxt.setColumns(10);
-		rndHigherBoundTxt.setBounds(237, 209, 103, 20);
+		rndHigherBoundTxt.setBounds(237, 183, 103, 20);
 		panel_2.add(rndHigherBoundTxt);
 		
 		JLabel label_14 = new JLabel("(?)");
@@ -550,23 +562,23 @@ public class AddMoreIndices extends JFrame {
 		label_14.setToolTipText("Click me!");
 		label_14.setForeground(Color.BLUE);
 		label_14.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_14.setBounds(350, 212, 88, 14);
+		label_14.setBounds(350, 186, 88, 14);
 		panel_2.add(label_14);
 		
 		JLabel lblSelectAColumn = new JLabel("Select a column:");
-		lblSelectAColumn.setBounds(10, 268, 310, 14);
+		lblSelectAColumn.setBounds(10, 242, 310, 14);
 		panel_2.add(lblSelectAColumn);
 		
-		columnSelectCombo.setBounds(288, 265, 52, 20);
+		columnSelectCombo.setBounds(288, 239, 52, 20);
 		panel_2.add(columnSelectCombo);
 		
 		JLabel lblEnterRandomConstant = new JLabel("Enter a constant:");
-		lblEnterRandomConstant.setBounds(10, 240, 268, 14);
+		lblEnterRandomConstant.setBounds(10, 214, 268, 14);
 		panel_2.add(lblEnterRandomConstant);
 		
 		rndConstantTxt = new JTextField();
 		rndConstantTxt.setColumns(10);
-		rndConstantTxt.setBounds(237, 237, 103, 20);
+		rndConstantTxt.setBounds(237, 211, 103, 20);
 		panel_2.add(rndConstantTxt);
 		
 		JLabel label_15 = new JLabel("(?)");
@@ -579,7 +591,7 @@ public class AddMoreIndices extends JFrame {
 		label_15.setToolTipText("Click me!");
 		label_15.setForeground(Color.BLUE);
 		label_15.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_15.setBounds(350, 240, 88, 14);
+		label_15.setBounds(350, 214, 88, 14);
 		panel_2.add(label_15);
 		randomizeBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -591,8 +603,62 @@ public class AddMoreIndices extends JFrame {
 		panel_2.add(randomizeBtn);
 		
 		lblPleaseWait_1.setIcon(new ImageIcon(AddMoreIndices.class.getResource("/resources/load.gif")));
-		lblPleaseWait_1.setBounds(244, 293, 180, 14);
+		lblPleaseWait_1.setBounds(10, 282, 180, 14);
 		panel_2.add(lblPleaseWait_1);
+	}
+	
+	private void plotColumns(){
+		
+		String firstCol = (String) columnOneCombo.getSelectedItem();
+		String secondCol = (String) columnTwoCombo.getSelectedItem();
+		
+		if (firstCol == null || firstCol.compareTo("") == 0){
+			JOptionPane.showMessageDialog(AddMoreIndices.this, "Please select columns to compare.");
+			return;
+		}
+		
+		if (secondCol == null || secondCol.compareTo("") == 0){
+			JOptionPane.showMessageDialog(AddMoreIndices.this, "Please select columns to compare.");
+			return;
+		}
+		
+		final int first = Integer.parseInt(firstCol);
+		final int second = Integer.parseInt(secondCol);
+		
+		if (first == second){
+			JOptionPane.showMessageDialog(AddMoreIndices.this, "Please select different columns to compare.");
+			return;
+		}
+		
+		compareWaitLbl.setVisible(true);
+		compareBtn.setEnabled(false);
+		
+		(new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				String tempTitle = tableName + ", Columns: " + first + " v.s. " + second;
+				
+				ChartPanel panel;
+				try {
+					panel = new ChartPanel(PlotData.plotColumns(tableName, first, second, tempTitle, info));
+				} catch (IOException e) {
+					logger.error("Some error while creating the plot!");
+					return;
+				}
+				
+				PlotViewer frame = new PlotViewer();					
+				frame.setPlotName(tempTitle);
+				frame.setVisible(true);
+				frame.addPlot(panel);
+				
+				compareWaitLbl.setVisible(false);
+				compareBtn.setEnabled(true);
+				initializeCompare();
+			}
+		})).start();
+		
 	}
 
 	private void randomize(){

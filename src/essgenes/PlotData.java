@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -26,6 +27,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.util.ShapeUtilities;
 
 public class PlotData {
 
@@ -154,11 +156,24 @@ public class PlotData {
 		
 	}
 	
-	private static XYDataset createDataset(Vector<Integer> insertions, Vector<Integer> windows){
+	private static XYDataset createDataset(Vector<Integer> xAxis, Vector<Integer> yAxis){
 		XYSeries series = new XYSeries("Plot");
 		
-		for(int i = 0; i < insertions.size(); i++){
-			series.add(insertions.get(i), windows.get(i));
+		for(int i = 0; i < xAxis.size(); i++){
+			series.add(xAxis.get(i), yAxis.get(i));
+		}
+		
+		XYSeriesCollection dataset = new XYSeriesCollection();
+		dataset.addSeries(series);
+		
+		return dataset;
+	}
+	
+	private static XYDataset createDataset(ArrayList<Double> xAxis, ArrayList<Double> yAxis){
+		XYSeries series = new XYSeries("Plot");
+		
+		for(int i = 0; i < xAxis.size(); i++){
+			series.add(xAxis.get(i), yAxis.get(i));
 		}
 		
 		XYSeriesCollection dataset = new XYSeriesCollection();
@@ -208,6 +223,69 @@ public class PlotData {
 
 		return chart;
 	
+	}
+	
+	public static JFreeChart plotColumns(String tableName, int firstCol, int secondCol, String title, ProjectInfo info) throws IOException{
+		
+		File tableFile = new File(info.getPath() + tableName + ".table");
+		BufferedReader br = new BufferedReader(new FileReader(tableFile));
+
+		String line = br.readLine();
+		line = br.readLine();
+		line = br.readLine();
+		line = br.readLine();
+		line = br.readLine();
+
+		ArrayList<Double> xAxis = new ArrayList<>();
+		ArrayList<Double> yAxis = new ArrayList<>();
+		
+		//Reading Main Data and Process it
+		line = br.readLine();
+		while(line != null){
+			ArrayList<String> tabs = AddColumns.tabsForCompare(line);
+			
+			xAxis.add(Double.parseDouble(tabs.get(firstCol + 7)));
+			yAxis.add(Double.parseDouble(tabs.get(secondCol + 7)));
+			
+			line = br.readLine();
+		}
+		
+		br.close();
+		
+		XYDataset dataset = createDataset(xAxis, yAxis);
+		JFreeChart chart = createScatterChart(dataset, title);
+		
+		return chart;
+	}
+
+	private static JFreeChart createScatterChart(XYDataset dataset, String title) {
+		final JFreeChart chart = ChartFactory.createScatterPlot(
+				title,                  	// chart title
+				"",                      	// x axis label
+				"",                      	// y axis label
+				dataset,                	// data
+				PlotOrientation.VERTICAL,
+				false,                     	// include legend
+				true,                     	// Tool-tips
+				false                     	// URLs
+				);
+		XYPlot plot = (XYPlot) chart.getPlot();
+		
+		//final LogAxis logAxisX = new LogAxis("X Axis");
+		//logAxisX.setStandardTickUnits(LogAxis.createLogTickUnits(Locale.ENGLISH));
+		//logAxisX.setRange(0.01, 10.0);
+		//plot.setDomainAxis(logAxisX);
+		
+		//final LogAxis logAxisY = new LogAxis("Y Axis");
+		//logAxisY.setStandardTickUnits(LogAxis.createLogTickUnits(Locale.ENGLISH));
+		//logAxisY.setRange(0.01, 10.0);
+		//plot.setRangeAxis(logAxisY);
+		
+		XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+		renderer.setSeriesLinesVisible(0, false);
+		renderer.setSeriesShape(0, ShapeUtilities.createDiamond(1), true);
+		plot.setRenderer(renderer);
+		return chart;
 	}
 	
 }

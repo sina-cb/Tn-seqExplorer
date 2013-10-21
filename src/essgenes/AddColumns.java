@@ -274,7 +274,6 @@ public class AddColumns {
 					}
 				}
 			}else{				//Gene is smaller than the window
-				//TODO: Needs more debug
 				if(LJ >= windows.size()){
 					JOptionPane.showMessageDialog(null, "error");
 				}
@@ -553,7 +552,7 @@ public class AddColumns {
 		return Messages.failMsg;
 	}
 	
-	private static ArrayList<String> tabsForCompare(String line){
+	public static ArrayList<String> tabsForCompare(String line){
 		ArrayList<String> results = new ArrayList<>();
 		
 		while (line.contains("\t")){
