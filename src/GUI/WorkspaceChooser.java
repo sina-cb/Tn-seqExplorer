@@ -45,7 +45,7 @@ public class WorkspaceChooser extends JFrame {
 	 * Create the frame.
 	 */
 	public WorkspaceChooser() {
-		setTitle("Create/Open Your Project");
+		setTitle("Create/Open Projects");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 549, 225);
