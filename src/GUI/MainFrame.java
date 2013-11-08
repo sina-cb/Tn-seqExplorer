@@ -116,6 +116,7 @@ public class MainFrame extends JFrame {
 	private JLabel plotWaitLbl = new JLabel("Please wait...");
 	private JButton addNewIndicesBtn = new JButton("Add new essentiality indices to a data table");
 	private JButton remoteHelpBtn = new JButton("Create SAM file manually");
+	private JButton maxNumInsBtn = new JButton("Count");
 
 	protected ProjectInfo projectInfo = new ProjectInfo();
 	private Logger logger = Logger.getLogger(MainFrame.class.getName());
@@ -125,6 +126,7 @@ public class MainFrame extends JFrame {
 	private JTextField fastqFilePath;
 	private JTextField newSamNameTxt;
 	private JTextField samFilePath;
+	private JTextField maxNumInsTxt;
 
 	/**
 	 * Create the frame.
@@ -1014,7 +1016,6 @@ public class MainFrame extends JFrame {
 				String selectedLib = (String) libraryComboBox.getSelectedItem();
 
 				renameLibrary(newName, selectedLib);
-
 			}
 		});
 		renameLibBtn.setBounds(605, 365, 97, 25);
@@ -1060,7 +1061,7 @@ public class MainFrame extends JFrame {
 		separator_9.setBounds(0, 136, 821, 2);
 		panelInitialize.add(separator_9);
 		
-		JLabel lblChooseALibrary = new JLabel("Choose a library to plot:");
+		JLabel lblChooseALibrary = new JLabel("Choose a library:");
 		lblChooseALibrary.setBounds(12, 458, 286, 14);
 		panelInitialize.add(lblChooseALibrary);
 		plotLibraryCombo.setToolTipText("Select a libray to plot");
@@ -1108,7 +1109,7 @@ public class MainFrame extends JFrame {
 		panelInitialize.add(lblPlotTheDistribution);
 		
 		plotWaitLbl.setIcon(new ImageIcon(MainFrame.class.getResource("/resources/load.gif")));
-		plotWaitLbl.setBounds(359, 543, 183, 14);
+		plotWaitLbl.setBounds(10, 555, 183, 14);
 		panelInitialize.add(plotWaitLbl);
 		
 		JLabel label_3 = new JLabel("(?)");
@@ -1130,6 +1131,25 @@ public class MainFrame extends JFrame {
 		JLabel lblAndThenClick_1 = new JLabel("and then click 'Extract'.");
 		lblAndThenClick_1.setBounds(10, 111, 697, 14);
 		panelInitialize.add(lblAndThenClick_1);
+		
+		maxNumInsTxt = new JTextField();
+		maxNumInsTxt.setToolTipText("Enter the window length");
+		maxNumInsTxt.setText("20");
+		maxNumInsTxt.setColumns(10);
+		maxNumInsTxt.setBounds(561, 529, 118, 20);
+		panelInitialize.add(maxNumInsTxt);
+		
+		JLabel lblMaxNumberOf = new JLabel("Max number of insertions:");
+		lblMaxNumberOf.setBounds(547, 516, 183, 14);
+		panelInitialize.add(lblMaxNumberOf);
+		maxNumInsBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				maxNumInsrtions();
+			}
+		});
+		
+		maxNumInsBtn.setBounds(689, 528, 87, 23);
+		panelInitialize.add(maxNumInsBtn);
 
 		JPanel panel = new JPanel();
 		tabbedPane.addTab("Manage Data Tables", null, panel, null);
@@ -1389,7 +1409,8 @@ public class MainFrame extends JFrame {
 		JMenuItem mntmAboutUs = new JMenuItem("About US");
 		mntmAboutUs.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane.showMessageDialog(MainFrame.this, "http://www.cmbl.uga.edu/");
+				AboutFrame about = new AboutFrame();
+				about.setVisible(true);
 			}
 		});
 		mnAbout.add(mntmAboutUs);
@@ -1594,6 +1615,48 @@ public class MainFrame extends JFrame {
 		panel_3.add(newSamBrowseBtn);
 	}
 
+	private void maxNumInsrtions(){
+		if(winLenTxt.getText() == null || winLenTxt.getText().compareTo("") == 0){
+			JOptionPane.showMessageDialog(MainFrame.this, "Please provide the window length", "Warning", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		if(winStepTxt.getText() == null || winStepTxt.getText().compareTo("") == 0){
+			JOptionPane.showMessageDialog(MainFrame.this, "Please provide the window step length", "Warning", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		if(maxNumInsTxt.getText() == null || maxNumInsTxt.getText().compareTo("") == 0){
+			JOptionPane.showMessageDialog(MainFrame.this, "Please provide the maximum number of insertions", "Warning", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		
+		final int len = Integer.parseInt(winLenTxt.getText());
+		final int step = Integer.parseInt(winStepTxt.getText());
+		final int maxNumIns = Integer.parseInt(maxNumInsTxt.getText());
+		
+		plotWaitLbl.setVisible(true);
+		
+		(new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {					
+					String result = PrepareFiles.maxNumberOfInsertions((String) plotLibraryCombo.getSelectedItem(), len, step, maxNumIns, projectInfo);
+					
+					if (result.compareTo(Messages.failMsg) != 0){
+						JOptionPane.showMessageDialog(null, "Success");
+					}else{
+						logger.error("There was some error while processing Max Number of Insertions");
+						JOptionPane.showMessageDialog(MainFrame.this, "There was some error while processing Max Number of Insertions", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+					
+					plotWaitLbl.setVisible(false);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		})).start();
+	}
+	
 	private void installBWA() {
 		Process p = null;
 		BufferedReader br = null;
@@ -2222,8 +2285,16 @@ public class MainFrame extends JFrame {
 
 			if (plotLibraryCombo.getItemCount() == 0){
 				plotBtn.setEnabled(false);
+				maxNumInsBtn.setEnabled(false);
+				maxNumInsTxt.setEnabled(false);
+				winLenTxt.setEnabled(false);
+				winStepTxt.setEnabled(false);
 			}else{
 				plotBtn.setEnabled(true);
+				maxNumInsBtn.setEnabled(true);
+				maxNumInsTxt.setEnabled(true);
+				winLenTxt.setEnabled(true);
+				winStepTxt.setEnabled(true);
 			}
 
 		}catch(IOException e){
@@ -2376,7 +2447,7 @@ public class MainFrame extends JFrame {
 			String line = br.readLine();
 			projectInfo.setName(line.substring(Messages.projectName.length()));
 
-			setTitle("Essential Genes Finder - " + projectInfo.getName());
+			setTitle("Tn-seq explorer v0.1");
 
 			line = br.readLine();
 			//projectInfo.setPath(pathTemp);
@@ -2493,8 +2564,9 @@ public class MainFrame extends JFrame {
 									+ "'Main' tab.\n"
 									+ "- You have used a wrong DNA sequence when running the Barrows-WheelerAligner to locate\n"
 									+ "the insertions and generate the .sam file. Run BWA with the correct sequence.\n"
-									+ "- Some of the input files are not formatted properly. Verify that all input files, including the\n"
-									+ "DNA sequence used for BWA, have the correct format.", "ERROR", JOptionPane.ERROR_MESSAGE);
+									+ "- Some of the input files are not formatted properly. Verify that all input files, including the\n\n"
+									+ "DNA sequence used for BWA, have the correct format."
+									+ "This error can also occur if you did not push 'apply' to enter the sequence length prior to continuing", "ERROR", JOptionPane.ERROR_MESSAGE);
 							
 							clearTheForm();
 							return;

@@ -612,7 +612,7 @@ public class AddMoreIndices extends JFrame {
 		lblPleaseWait_1.setBounds(10, 282, 180, 14);
 		panel_2.add(lblPleaseWait_1);
 	}
-	
+
 	private void plotColumns(){
 		
 		String firstCol = (String) columnOneCombo.getSelectedItem();

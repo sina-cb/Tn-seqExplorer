@@ -9,12 +9,16 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.log4j.Logger;
 
@@ -24,6 +28,91 @@ public class PrepareFiles {
 
 	private static Logger logger = Logger.getLogger(PrepareFiles.class.getName());
 
+	public static String maxNumberOfInsertions(String libName, int winLen, int step, int maxNumIns, ProjectInfo info) throws IOException{
+		
+		File lib = new File(info.getPath() + libName + ".inspou");
+		BufferedReader br = new BufferedReader(new FileReader(lib));
+		
+		ArrayList<Integer> positions = new ArrayList<>();
+		String line = br.readLine();
+		while (line != null){
+			int temp = Integer.parseInt(line.substring(0, line.indexOf("\t")));
+			positions.add(temp);
+			line = br.readLine();
+		}
+
+		ArrayList<Integer> starts = new ArrayList<>();
+		for (int i = 0; i < positions.size(); i += step){
+			int count = 0;
+			for (int j = 0; j < positions.size(); j++){
+				if (positions.get(j) < i){
+					continue;
+				}
+				if (positions.get(j) > (i + winLen)){
+					break;
+				}
+				count++;
+			}
+			
+			if (count < maxNumIns){
+				starts.add(i);
+			}
+		}
+		
+		ArrayList<String> boundaries = new ArrayList<>();
+		for (int i = 0; i < starts.size(); i++){
+			int count = 0;
+			for (int j = i + 1; j < starts.size(); j++){
+				if (j > starts.size() || i + j > starts.size()){
+					break;
+				}
+				if (starts.get(j) < starts.get(i + count) + winLen){
+					count++;
+					continue;
+				}
+				
+				int start = starts.get(i);
+				int end = starts.get(i + count) + winLen;
+				
+				boundaries.add(start + "..." + end);
+				i = i + count + 1;
+			}
+		}
+
+		JOptionPane.showMessageDialog(null, "Windows are found, please select a place to save the output file.");
+		
+		Path currentRelativePath = Paths.get("");
+		String location = currentRelativePath.toAbsolutePath()
+				.toString();
+		JFileChooser fileChooser = new JFileChooser(location);
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		fileChooser.setFileFilter(new FileNameExtensionFilter("Excel tab delimited file (.xls)", "xls"));
+		int result = fileChooser.showSaveDialog(null);
+		
+		if (result == JFileChooser.APPROVE_OPTION){
+			
+			File save = fileChooser.getSelectedFile();
+			if (!save.getAbsolutePath().contains(".xls")){
+				save = new File(save.getAbsoluteFile() + ".xls");
+			}
+			BufferedWriter bw = new BufferedWriter(new FileWriter(save));
+			
+			bw.write(String.format("List of chomosomal segments with no more than %d insertions per %d bp window:\n", maxNumIns, winLen));
+			
+			for (int i = 0; i < boundaries.size(); i++){
+				bw.write(boundaries.get(i) + "\n");
+			}
+			
+			bw.close();
+			
+			br.close();
+			return save.getAbsolutePath();
+		}else{
+			br.close();
+			return Messages.failMsg; 
+		}		
+	}
+	
 	public static void processSelectedScaffold(String imgFilePath, String scaffoldName, ProjectInfo info) throws IOException{
 		
 		File genesFile = new File(info.getPath() + scaffoldName + ".genes");	
@@ -90,7 +179,8 @@ public class PrepareFiles {
 					+ "Possible reasons and solutions:\n"
 					+ "- The sequence length provided is incorrect. Correct the sequence length and try again.\n"
 					+ "- You are using a wrong file with annotation or the file is in a wrong format. Verify that you are\n"
-					+ "  the right file and that it is in the appropriate format."
+					+ "  the right file and that it is in the appropriate format.\n"
+					+ "- This error can also occur if you did not push 'apply' to enter the sequence length prior to continuing"
 					, "ERROR", JOptionPane.ERROR_MESSAGE);
 
 			bw.close();
@@ -258,7 +348,8 @@ public class PrepareFiles {
 						+ "Possible reasons and solutions:\n"
 						+ "- The sequence length provided is incorrect. Correct the sequence length and try again.\n"
 						+ "- You are using a wrong file with annotation or the file is in a wrong format. Verify that you are\n"
-						+ "  the right file and that it is in the appropriate format."
+						+ "  the right file and that it is in the appropriate format.\n"
+						+ "- This error can also occur if you did not push 'apply' to enter the sequence length prior to continuing"
 						, "ERROR", JOptionPane.ERROR_MESSAGE);
 				
 				if(!genesFile.delete()){
