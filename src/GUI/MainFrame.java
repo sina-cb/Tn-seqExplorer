@@ -117,6 +117,8 @@ public class MainFrame extends JFrame {
 	private JButton addNewIndicesBtn = new JButton("Add new essentiality indices to a data table");
 	private JButton remoteHelpBtn = new JButton("Create SAM file manually");
 	private JButton maxNumInsBtn = new JButton("Count");
+	private JRadioButton countOnlyUniqueRadio = new JRadioButton("Count only unique insertions");
+	private JRadioButton countAllReadsRadio = new JRadioButton("Count all sequence reads");
 
 	protected ProjectInfo projectInfo = new ProjectInfo();
 	private Logger logger = Logger.getLogger(MainFrame.class.getName());
@@ -135,11 +137,11 @@ public class MainFrame extends JFrame {
 		setResizable(false);
 		this.projectInfo.setPath(projectPath);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 856, 681);
+		setBounds(100, 100, 859, 732);
 		setLocationRelativeTo(null);	
 		getContentPane().setLayout(null);
 
-		tabbedPane.setBounds(12, 13, 828, 608);
+		tabbedPane.setBounds(12, 13, 828, 659);
 		getContentPane().add(tabbedPane);
 
 		tabbedPane.addChangeListener(new ChangeListener() {
@@ -287,25 +289,25 @@ public class MainFrame extends JFrame {
 
 		JLabel lblProjectInformation = new JLabel("Project Information:");
 		lblProjectInformation.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblProjectInformation.setBounds(12, 499, 144, 20);
+		lblProjectInformation.setBounds(12, 550, 144, 20);
 		panelMain.add(lblProjectInformation);
 
 		JLabel lblLibrariesCount = new JLabel("Libraries count:");
 		lblLibrariesCount.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblLibrariesCount.setBounds(166, 504, 163, 22);
+		lblLibrariesCount.setBounds(166, 555, 163, 22);
 		panelMain.add(lblLibrariesCount);
 
 		libraryCountLbl.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		libraryCountLbl.setBounds(317, 499, 51, 33);
+		libraryCountLbl.setBounds(317, 550, 51, 33);
 		panelMain.add(libraryCountLbl);
 
 		JLabel lblDataTablesCount = new JLabel("Data tables count:");
 		lblDataTablesCount.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblDataTablesCount.setBounds(166, 541, 163, 22);
+		lblDataTablesCount.setBounds(166, 592, 163, 22);
 		panelMain.add(lblDataTablesCount);
 
 		dataTableCountLbl.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		dataTableCountLbl.setBounds(317, 536, 51, 33);
+		dataTableCountLbl.setBounds(317, 587, 51, 33);
 		panelMain.add(dataTableCountLbl);
 
 		ftpFirstLevelCombo.setBounds(12, 110, 695, 22);
@@ -621,11 +623,11 @@ public class MainFrame extends JFrame {
 
 		JLabel lblGenesFileName = new JLabel("Gene annotation:");
 		lblGenesFileName.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblGenesFileName.setBounds(377, 541, 163, 22);
+		lblGenesFileName.setBounds(377, 592, 163, 22);
 		panelMain.add(lblGenesFileName);
 
 		geneFileNameLbl.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		geneFileNameLbl.setBounds(521, 536, 186, 33);
+		geneFileNameLbl.setBounds(521, 587, 186, 33);
 		panelMain.add(geneFileNameLbl);
 
 		JLabel label = new JLabel("Or");
@@ -713,7 +715,7 @@ public class MainFrame extends JFrame {
 		panelMain.add(scaffoldCombo);
 
 		JSeparator separator_7 = new JSeparator();
-		separator_7.setBounds(0, 486, 823, 2);
+		separator_7.setBounds(0, 493, 823, 2);
 		panelMain.add(separator_7);
 
 		JLabel lblyouCanDownload = new JLabel("You can download the IMG file by clicking on this link");
@@ -786,11 +788,11 @@ public class MainFrame extends JFrame {
 		
 		JLabel lblSequqenceLength = new JLabel("Sequqence length:");
 		lblSequqenceLength.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblSequqenceLength.setBounds(378, 504, 163, 22);
+		lblSequqenceLength.setBounds(378, 555, 163, 22);
 		panelMain.add(lblSequqenceLength);
 		
 		sequenceLengthLbl.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		sequenceLengthLbl.setBounds(529, 499, 178, 33);
+		sequenceLengthLbl.setBounds(529, 550, 178, 33);
 		panelMain.add(sequenceLengthLbl);
 
 		JPanel panelInitialize = new JPanel();
@@ -1109,7 +1111,7 @@ public class MainFrame extends JFrame {
 		panelInitialize.add(lblPlotTheDistribution);
 		
 		plotWaitLbl.setIcon(new ImageIcon(MainFrame.class.getResource("/resources/load.gif")));
-		plotWaitLbl.setBounds(10, 555, 183, 14);
+		plotWaitLbl.setBounds(12, 606, 183, 14);
 		panelInitialize.add(plotWaitLbl);
 		
 		JLabel label_3 = new JLabel("(?)");
@@ -1136,11 +1138,11 @@ public class MainFrame extends JFrame {
 		maxNumInsTxt.setToolTipText("Enter the window length");
 		maxNumInsTxt.setText("20");
 		maxNumInsTxt.setColumns(10);
-		maxNumInsTxt.setBounds(561, 529, 118, 20);
+		maxNumInsTxt.setBounds(561, 527, 118, 20);
 		panelInitialize.add(maxNumInsTxt);
 		
 		JLabel lblMaxNumberOf = new JLabel("Max number of insertions:");
-		lblMaxNumberOf.setBounds(547, 516, 183, 14);
+		lblMaxNumberOf.setBounds(547, 514, 183, 14);
 		panelInitialize.add(lblMaxNumberOf);
 		maxNumInsBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -1148,9 +1150,20 @@ public class MainFrame extends JFrame {
 			}
 		});
 		
-		maxNumInsBtn.setBounds(689, 528, 87, 23);
+		maxNumInsBtn.setBounds(689, 526, 87, 23);
 		panelInitialize.add(maxNumInsBtn);
+		countOnlyUniqueRadio.setSelected(true);
 
+		countOnlyUniqueRadio.setBounds(12, 510, 530, 23);
+		panelInitialize.add(countOnlyUniqueRadio);
+		
+		countAllReadsRadio.setBounds(12, 536, 530, 23);
+		panelInitialize.add(countAllReadsRadio);
+
+		ButtonGroup numberOfReads = new ButtonGroup();
+		numberOfReads.add(countOnlyUniqueRadio);
+		numberOfReads.add(countAllReadsRadio);
+		
 		JPanel panel = new JPanel();
 		tabbedPane.addTab("Manage Data Tables", null, panel, null);
 		panel.setLayout(null);
@@ -1473,7 +1486,7 @@ public class MainFrame extends JFrame {
 		ButtonGroup bwaGroup = new ButtonGroup();
 		bwaGroup.add(alreadyInstalledRadio);
 		bwaGroup.add(useScriptsRadio);
-
+		
 		JLabel lblNewLabel_1 = new JLabel(" on your machine .");
 		lblNewLabel_1.setBounds(20, 58, 246, 15);
 		panel_3.add(lblNewLabel_1);
@@ -1484,7 +1497,7 @@ public class MainFrame extends JFrame {
 				remoteInstallHelp();
 			}
 		});
-		remoteHelpBtn.setBounds(10, 544, 256, 25);
+		remoteHelpBtn.setBounds(10, 342, 256, 25);
 		panel_3.add(remoteHelpBtn);
 		
 		JLabel lblSelectThefna = new JLabel("Select the 'FNA' File:");
@@ -1970,32 +1983,41 @@ public class MainFrame extends JFrame {
 	}
 	
 	private void plotDataMethod(){
+		
 		if(winLenTxt.getText() == null || winLenTxt.getText().compareTo("") == 0){
 			JOptionPane.showMessageDialog(MainFrame.this, "Please provide the window length", "Warning", JOptionPane.WARNING_MESSAGE);
 		}
 		if(winStepTxt.getText() == null || winStepTxt.getText().compareTo("") == 0){
 			JOptionPane.showMessageDialog(MainFrame.this, "Please provide the window step length", "Warning", JOptionPane.WARNING_MESSAGE);
 		}
-		
+
 		final int len = Integer.parseInt(winLenTxt.getText());
 		final int step = Integer.parseInt(winStepTxt.getText());
-		final String title = String.format("Library Name: %s | Window Length: %d | Window Steps: %d", (String) plotLibraryCombo.getSelectedItem(),
-				len, step);
-		
 		plotWaitLbl.setVisible(true);
 		
+		final String title;
+		if (countOnlyUniqueRadio.isSelected()){
+			String temp = String.format("Library Name: %s (Counting unique insertions) | Window Length: %d | Window Steps: %d", (String) plotLibraryCombo.getSelectedItem(),
+					len, step);
+			title = temp;
+		} else{
+			String temp = String.format("Library Name: %s (Counting all reads) | Window Length: %d | Window Steps: %d", (String) plotLibraryCombo.getSelectedItem(),
+					len, step);
+			title = temp;
+		}
+		
 		(new Thread(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				try {					
-					ChartPanel panel = new ChartPanel(PlotData.plotData((String) plotLibraryCombo.getSelectedItem(), len, step, title, projectInfo));
-					
+					ChartPanel panel = new ChartPanel(PlotData.plotData((String) plotLibraryCombo.getSelectedItem(), len, step, title, projectInfo, countOnlyUniqueRadio.isSelected()));
+
 					PlotViewer frame = new PlotViewer();					
 					frame.setPlotName(title);
 					frame.setVisible(true);
 					frame.addPlot(panel);
-					
+
 					plotWaitLbl.setVisible(false);
 				} catch (Exception e) {
 					e.printStackTrace();

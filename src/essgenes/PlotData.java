@@ -34,7 +34,7 @@ public class PlotData {
 
 	private static Logger logger = Logger.getLogger(PlotData.class.getName());
 	
-	public static JFreeChart plotData(String libName, int windowLen, int windowStep, String title, ProjectInfo info){
+	public static JFreeChart plotData(String libName, int windowLen, int windowStep, String title, ProjectInfo info, boolean onlyUniqueInsertions){
 		
 		BufferedReader br = null;
 		String line = "";
@@ -80,7 +80,10 @@ public class PlotData {
 			for (int i = 0; i < numberOfInsertions.size(); i++){
 				int tempPos = positions.get(i);
 				if(tempPos >= currentPosition && tempPos < currentPosition + windowLen){
-					tempCount++;
+					if (onlyUniqueInsertions)
+						tempCount++;
+					else
+						tempCount += numberOfInsertions.get(i);
 				}
 				
 				if(tempPos > currentPosition + windowLen){
@@ -109,7 +112,6 @@ public class PlotData {
 		}
 		
 		for(int i = 0; i < yAxis.size(); i++){
-			logger.fatal("Position --> " + i + " Number of Windows --> " + yAxis.get(i));
 			xAxis.add(i);
 		}
 		
@@ -127,7 +129,9 @@ public class PlotData {
 	
 	private static void saveToXls(Vector<Integer> xAxis, Vector<Integer> yAxis, ProjectInfo info, String libName, int len, int step) throws IOException{
 		
-		Workbook wb = new HSSFWorkbook();
+		//TODO: It should be using tab delimitted file!!! :D
+		JOptionPane.showMessageDialog(null, "Change to tab delimitted file");
+		/*Workbook wb = new HSSFWorkbook();
 		String fileName = libName + "_w" + len + "_s" + step;
 		Sheet sheet = wb.createSheet(fileName);
 
@@ -153,7 +157,7 @@ public class PlotData {
 		fs.close();
 		
 		String msg = String.format("An Excel file containg all the data for this chart has been created at this location: %s", xlsPath);
-		JOptionPane.showMessageDialog(null, msg);
+		JOptionPane.showMessageDialog(null, msg);*/
 		
 	}
 	
