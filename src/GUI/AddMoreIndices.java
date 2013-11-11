@@ -263,9 +263,9 @@ public class AddMoreIndices extends JFrame {
 		addStepTxt.setBounds(432, 73, 86, 20);
 		panel.add(addStepTxt);
 
-		JLabel label_2 = new JLabel("Window Length:");
-		label_2.setBounds(10, 76, 137, 14);
-		panel.add(label_2);
+		JLabel lblWindowLength = new JLabel("Window length:");
+		lblWindowLength.setBounds(10, 76, 137, 14);
+		panel.add(lblWindowLength);
 
 		JLabel label_3 = new JLabel("Step:");
 		label_3.setBounds(307, 76, 137, 14);
@@ -278,9 +278,9 @@ public class AddMoreIndices extends JFrame {
 		adjustStartTxt.setBounds(157, 104, 86, 20);
 		panel.add(adjustStartTxt);
 
-		JLabel label_4 = new JLabel("Adjust Start:");
-		label_4.setBounds(10, 107, 137, 14);
-		panel.add(label_4);
+		JLabel lblAdjustGeneStart = new JLabel("Adjust gene start:");
+		lblAdjustGeneStart.setBounds(10, 107, 137, 14);
+		panel.add(lblAdjustGeneStart);
 
 		adjustEndTxt = new JTextField();
 		adjustEndTxt.setToolTipText("You can also omit percent sign and use regular number");
@@ -289,9 +289,9 @@ public class AddMoreIndices extends JFrame {
 		adjustEndTxt.setBounds(432, 104, 86, 20);
 		panel.add(adjustEndTxt);
 
-		JLabel label_5 = new JLabel("Adjust End:");
-		label_5.setBounds(307, 107, 137, 14);
-		panel.add(label_5);
+		JLabel lblAdjustGeneEnd = new JLabel("Adjust gene end:");
+		lblAdjustGeneEnd.setBounds(307, 107, 137, 14);
+		panel.add(lblAdjustGeneEnd);
 
 		addSeqLenTxt = new JTextField();
 		addSeqLenTxt.setToolTipText("Loaded from the main project");
@@ -300,9 +300,9 @@ public class AddMoreIndices extends JFrame {
 		addSeqLenTxt.setBounds(157, 135, 86, 20);
 		panel.add(addSeqLenTxt);
 
-		JLabel label_6 = new JLabel("Sequence Length:");
-		label_6.setBounds(10, 138, 137, 14);
-		panel.add(label_6);
+		JLabel lblSequenceLength = new JLabel("Sequence length:");
+		lblSequenceLength.setBounds(10, 138, 137, 14);
+		panel.add(lblSequenceLength);
 
 		addMoreColumnsBtn.setToolTipText("Start adding data to the specific table");
 		addMoreColumnsBtn.addActionListener(new ActionListener() {
@@ -412,9 +412,9 @@ public class AddMoreIndices extends JFrame {
 		countInsLibCombo.setBounds(157, 11, 361, 20);
 		panel_3.add(countInsLibCombo);
 		
-		JLabel label_11 = new JLabel("Adjust Start:");
-		label_11.setBounds(10, 42, 137, 14);
-		panel_3.add(label_11);
+		JLabel lblAdjustGeneStart_1 = new JLabel("Adjust gene start:");
+		lblAdjustGeneStart_1.setBounds(10, 42, 137, 14);
+		panel_3.add(lblAdjustGeneStart_1);
 		
 		countInsAdjStartTxt = new JTextField();
 		countInsAdjStartTxt.setToolTipText("You can also omit percent sign and use regular number");
@@ -423,7 +423,7 @@ public class AddMoreIndices extends JFrame {
 		countInsAdjStartTxt.setBounds(157, 39, 86, 20);
 		panel_3.add(countInsAdjStartTxt);
 		
-		JLabel lblTest = new JLabel("Adjust End:");
+		JLabel lblTest = new JLabel("Adjust gene end:");
 		lblTest.setBounds(307, 42, 137, 14);
 		panel_3.add(lblTest);
 		
@@ -464,7 +464,7 @@ public class AddMoreIndices extends JFrame {
 		compareBtn.setBounds(443, 278, 103, 23);
 		compareScrollPanel.add(compareBtn);
 		
-		JLabel lblMaximumInsertions = new JLabel("Maximum Insertions:");
+		JLabel lblMaximumInsertions = new JLabel("Maximum insertions:");
 		lblMaximumInsertions.setBounds(10, 158, 268, 14);
 		compareScrollPanel.add(lblMaximumInsertions);
 		
