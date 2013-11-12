@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -35,7 +36,9 @@ import essgenes.AddColumns;
 import essgenes.Messages;
 import essgenes.PlotData;
 import essgenes.ProjectInfo;
+
 import javax.swing.JCheckBox;
+import javax.swing.JRadioButton;
 
 @SuppressWarnings("serial")
 public class AddMoreIndices extends JFrame {
@@ -79,6 +82,10 @@ public class AddMoreIndices extends JFrame {
 	private JComboBox<String> columnSelectCombo = new JComboBox<String>();
 	private JScrollPane scrollPane_1 = new JScrollPane();
 	private JCheckBox logPlotCheck = new JCheckBox("Logarithmic Plot");
+	private JRadioButton newDataUniqueInsertionRadio = new JRadioButton("Count only unique insertions");
+	private JRadioButton newDataAllReadsRadio = new JRadioButton("Count all sequence reads");
+	private JRadioButton countInsUniqueInsertionRadio = new JRadioButton("Count only unique insertions");
+	private JRadioButton countInsAllReadsRadio = new JRadioButton("Count all sequence reads");
 	
 	/**
 	 * Create the frame.
@@ -117,6 +124,14 @@ public class AddMoreIndices extends JFrame {
 				}				
 			}
 		});
+		
+		ButtonGroup newData_group = new ButtonGroup();
+		newData_group.add(newDataAllReadsRadio);
+		newData_group.add(newDataUniqueInsertionRadio);
+		
+		ButtonGroup countIns_group = new ButtonGroup();
+		countIns_group.add(countInsAllReadsRadio);
+		countIns_group.add(countInsUniqueInsertionRadio);
 	}
 
 	private void initializeRandomize(){
@@ -400,6 +415,13 @@ public class AddMoreIndices extends JFrame {
 		label_9.setBounds(528, 107, 88, 14);
 		panel.add(label_9);
 		
+		newDataUniqueInsertionRadio.setSelected(true);
+		newDataUniqueInsertionRadio.setBounds(307, 131, 281, 23);
+		panel.add(newDataUniqueInsertionRadio);
+		
+		newDataAllReadsRadio.setBounds(307, 157, 281, 23);
+		panel.add(newDataAllReadsRadio);
+		
 		JPanel panel_3 = new JPanel();
 		tabbedPane.addTab("Count Insertions", null, panel_3, null);
 		panel_3.setLayout(null);
@@ -445,6 +467,13 @@ public class AddMoreIndices extends JFrame {
 		
 		countInsPleaseWaitLbl.setBounds(10, 282, 177, 14);
 		panel_3.add(countInsPleaseWaitLbl);
+		
+		countInsUniqueInsertionRadio.setSelected(true);
+		countInsUniqueInsertionRadio.setBounds(10, 63, 281, 23);
+		panel_3.add(countInsUniqueInsertionRadio);
+		
+		countInsAllReadsRadio.setBounds(10, 89, 281, 23);
+		panel_3.add(countInsAllReadsRadio);
 
 		JPanel compareScrollPanel = new JPanel();
 		tabbedPane.addTab("Compare", null, compareScrollPanel, null);
@@ -796,7 +825,7 @@ public class AddMoreIndices extends JFrame {
 			@Override
 			public void run() {
 				try {
-					if (AddColumns.countInsertions(libraryName, tableName, adjStart, adjEnd, info).compareTo(Messages.successMsg) == 0){
+					if (AddColumns.countInsertions(libraryName, tableName, adjStart, adjEnd, countInsUniqueInsertionRadio.isSelected(), info).compareTo(Messages.successMsg) == 0){
 						JOptionPane.showMessageDialog(AddMoreIndices.this, "Data added");
 					}else{
 						JOptionPane.showMessageDialog(AddMoreIndices.this, "There was some problem, data was not added!!!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -829,7 +858,7 @@ public class AddMoreIndices extends JFrame {
 			@Override
 			public void run() {
 				try {
-					if (AddColumns.add(libraryName, tableName, windowLen, step, adjStart, adjEnd, seqLen, info).compareTo(Messages.successMsg) == 0){
+					if (AddColumns.add(libraryName, tableName, windowLen, step, adjStart, adjEnd, seqLen, newDataUniqueInsertionRadio.isSelected(), info).compareTo(Messages.successMsg) == 0){
 						JOptionPane.showMessageDialog(AddMoreIndices.this, "Data added");
 					}else{
 						JOptionPane.showMessageDialog(AddMoreIndices.this, "There was some problem, data was not added!!!", "Error", JOptionPane.ERROR_MESSAGE);

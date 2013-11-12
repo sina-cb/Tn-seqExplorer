@@ -3,9 +3,10 @@ package essgenes;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -13,11 +14,6 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.LogAxis;
@@ -116,7 +112,7 @@ public class PlotData {
 		}
 		
 		XYDataset dataset = createDataset(xAxis, yAxis);
-		JFreeChart chart = createChart(dataset, title);
+		JFreeChart chart = createChart(dataset, title, !onlyUniqueInsertions, null, null, null, null);
 		
 		try {
 			saveToXls(xAxis, yAxis, info, libName, windowLen, windowStep);
@@ -129,35 +125,20 @@ public class PlotData {
 	
 	private static void saveToXls(Vector<Integer> xAxis, Vector<Integer> yAxis, ProjectInfo info, String libName, int len, int step) throws IOException{
 		
-		//TODO: It should be using tab delimitted file!!! :D
-		JOptionPane.showMessageDialog(null, "Change to tab delimitted file");
-		/*Workbook wb = new HSSFWorkbook();
 		String fileName = libName + "_w" + len + "_s" + step;
-		Sheet sheet = wb.createSheet(fileName);
-
-		for(int i = 0; i < xAxis.size(); i++){
-			
-			Row row = sheet.createRow((short)i);
-			
-			Cell cell1 = row.createCell(0);
-			cell1.setCellValue(xAxis.get(i));
-			
-			Cell cell2 = row.createCell(1);
-			cell2.setCellValue(yAxis.get(i));
-		}
-		
 		String xlsPath = info.getPath() + fileName + ".xls";
 		File xlsFile = new File(xlsPath);
-		if(xlsFile.exists()){
-			xlsFile.delete();
-			xlsFile.createNewFile();
+		
+		BufferedWriter bw = new BufferedWriter(new FileWriter(xlsFile));
+		
+		for(int i = 0; i < xAxis.size(); i++){
+			bw.write(String.format("%d\t%d\n", xAxis.get(i), yAxis.get(i)));
 		}
-		FileOutputStream fs = new FileOutputStream(xlsFile);
-		wb.write(fs);
-		fs.close();
+		
+		bw.close();
 		
 		String msg = String.format("An Excel file containg all the data for this chart has been created at this location: %s", xlsPath);
-		JOptionPane.showMessageDialog(null, msg);*/
+		JOptionPane.showMessageDialog(null, msg);
 		
 	}
 	
@@ -187,13 +168,23 @@ public class PlotData {
 		return dataset;
 	}
 	
-	private static JFreeChart createChart(XYDataset dataset, String title){
+	private static JFreeChart createChart(XYDataset dataset, String title, boolean ifReads, Double xStart, Double xEnd, Double yStart, Double yEnd){
 	
+		String xLabel;
+		String yLabel;
+		if (ifReads){
+			xLabel = "Number of reads within a window";
+			yLabel = "Number of windows with the given number of reads";
+		}else{
+			xLabel = "Number of insertions within a window";
+			yLabel = "Number of windows with the given number of insertions";			
+		}
+		
 		//		create the chart...
 		final JFreeChart chart = ChartFactory.createXYLineChart(
 				title,      // chart title
-				"Number of insertions within a window",                      // x axis label
-				"Number of windows with the given number of insertions",                      // y axis label
+				xLabel,                      // x axis label
+				yLabel,                      // y axis label
 				dataset,                  // data
 				PlotOrientation.VERTICAL,
 				false,                     // include legend
@@ -214,6 +205,16 @@ public class PlotData {
 		plot.setDomainGridlinePaint(Color.white);
 		plot.setRangeGridlinePaint(Color.white);
 
+		if (xStart != null && xEnd != null){
+			NumberAxis domain = (NumberAxis)plot.getDomainAxis();
+			domain.setRange(xStart, xEnd);
+		}
+		
+		if (yStart != null && yEnd != null){
+			NumberAxis range = (NumberAxis)plot.getRangeAxis();
+			range.setRange(yStart, yEnd);
+		}
+		
 		final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
 		renderer.setSeriesLinesVisible(0, true);
 		renderer.setSeriesShapesVisible(0, false);

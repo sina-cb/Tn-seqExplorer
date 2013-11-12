@@ -1138,10 +1138,10 @@ public class MainFrame extends JFrame {
 		maxNumInsTxt.setToolTipText("Enter the window length");
 		maxNumInsTxt.setText("20");
 		maxNumInsTxt.setColumns(10);
-		maxNumInsTxt.setBounds(561, 527, 118, 20);
+		maxNumInsTxt.setBounds(561, 535, 118, 20);
 		panelInitialize.add(maxNumInsTxt);
 		
-		JLabel lblMaxNumberOf = new JLabel("Max number of insertions:");
+		JLabel lblMaxNumberOf = new JLabel("Max number of insertions/reads:");
 		lblMaxNumberOf.setBounds(547, 514, 183, 14);
 		panelInitialize.add(lblMaxNumberOf);
 		maxNumInsBtn.addActionListener(new ActionListener() {
@@ -1150,7 +1150,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 		
-		maxNumInsBtn.setBounds(689, 526, 87, 23);
+		maxNumInsBtn.setBounds(689, 534, 87, 23);
 		panelInitialize.add(maxNumInsBtn);
 		countOnlyUniqueRadio.setSelected(true);
 
@@ -1645,6 +1645,7 @@ public class MainFrame extends JFrame {
 		final int len = Integer.parseInt(winLenTxt.getText());
 		final int step = Integer.parseInt(winStepTxt.getText());
 		final int maxNumIns = Integer.parseInt(maxNumInsTxt.getText());
+		final boolean ifOnlyInsertions = countOnlyUniqueRadio.isSelected();
 		
 		plotWaitLbl.setVisible(true);
 		
@@ -1652,8 +1653,8 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public void run() {
-				try {					
-					String result = PrepareFiles.maxNumberOfInsertions((String) plotLibraryCombo.getSelectedItem(), len, step, maxNumIns, projectInfo);
+				try {		
+					String result = PrepareFiles.maxNumberOfInsertions((String) plotLibraryCombo.getSelectedItem(), len, step, maxNumIns, ifOnlyInsertions, MainFrame.this.projectInfo);
 					
 					if (result.compareTo(Messages.failMsg) != 0){
 						JOptionPane.showMessageDialog(null, "Success");

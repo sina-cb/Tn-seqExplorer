@@ -28,22 +28,27 @@ public class PrepareFiles {
 
 	private static Logger logger = Logger.getLogger(PrepareFiles.class.getName());
 
-	public static String maxNumberOfInsertions(String libName, int winLen, int step, int maxNumIns, ProjectInfo info) throws IOException{
+	public static String maxNumberOfInsertions(String libName, int winLen, int step, int maxNumIns, boolean ifOnlyInsertions, ProjectInfo info) throws IOException{
 		
 		File lib = new File(info.getPath() + libName + ".inspou");
 		BufferedReader br = new BufferedReader(new FileReader(lib));
 		
 		ArrayList<Integer> positions = new ArrayList<>();
+		ArrayList<Integer> numberOfReads = new ArrayList<>();
 		String line = br.readLine();
 		while (line != null){
 			int temp = Integer.parseInt(line.substring(0, line.indexOf("\t")));
 			positions.add(temp);
+			line = line.substring(line.indexOf("\t") + 1);
+			line = line.substring(line.indexOf("\t") + 1);
+			numberOfReads.add(Integer.parseInt(line));
 			line = br.readLine();
 		}
 
 		ArrayList<Integer> starts = new ArrayList<>();
 		for (int i = 0; i < positions.size(); i += step){
 			int count = 0;
+			int num = 0;
 			for (int j = 0; j < positions.size(); j++){
 				if (positions.get(j) < i){
 					continue;
@@ -51,11 +56,22 @@ public class PrepareFiles {
 				if (positions.get(j) > (i + winLen)){
 					break;
 				}
-				count++;
+				if (ifOnlyInsertions){
+					count++;
+				}else{
+					count++;
+					num += numberOfReads.get(j); 
+				}
 			}
 			
-			if (count < maxNumIns){
-				starts.add(i);
+			if (ifOnlyInsertions){
+				if (count < maxNumIns){
+					starts.add(i);
+				}
+			}else{
+				if (num < maxNumIns){
+					starts.add(i);
+				}
 			}
 		}
 		
@@ -97,7 +113,11 @@ public class PrepareFiles {
 			}
 			BufferedWriter bw = new BufferedWriter(new FileWriter(save));
 			
-			bw.write(String.format("List of chomosomal segments with no more than %d insertions per %d bp window:\n", maxNumIns, winLen));
+			if (ifOnlyInsertions){
+				bw.write(String.format("List of chomosomal segments with no more than %d insertions per %d bp window:\n", maxNumIns, winLen));
+			}else{
+				bw.write(String.format("List of chomosomal segments with no more than %d reads per %d bp window:\n", maxNumIns, winLen));
+			}
 			
 			for (int i = 0; i < boundaries.size(); i++){
 				bw.write(boundaries.get(i) + "\n");

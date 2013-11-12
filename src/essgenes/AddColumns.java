@@ -19,7 +19,7 @@ public class AddColumns {
 	private static Logger logger = Logger.getLogger(AddColumns.class.getName());
 	
 	@SuppressWarnings("resource")
-	public static String countInsertions(String libName, String tableName, String adjustStartString, String adjustEndString, ProjectInfo info) throws IOException{
+	public static String countInsertions(String libName, String tableName, String adjustStartString, String adjustEndString, boolean ifUniqueInsertions, ProjectInfo info) throws IOException{
 		
 		int adjustStart;
 		double adjustStartPercent;
@@ -55,12 +55,19 @@ public class AddColumns {
 		String line = br.readLine();
 		while(line != null){
 			int tempPos = Integer.parseInt(line.substring(0, line.indexOf("\t")));
+			line = line.substring(line.indexOf("\t") + 1);
+			line = line.substring(line.indexOf("\t") + 1);
+			int tempNum = Integer.parseInt(line);
 			if (tempPos > LSeq){
 				JOptionPane.showMessageDialog(null, "ERROR: insertion at position " + tempPos + " whereas chromosome length is " + LSeq + ".", "Error", JOptionPane.ERROR_MESSAGE);
 				return Messages.failMsg;
 			}
 			
-			insertions.set(tempPos, insertions.get(tempPos) + 1);
+			if (ifUniqueInsertions){
+				insertions.set(tempPos, insertions.get(tempPos) + 1);
+			}else{
+				insertions.set(tempPos, insertions.get(tempPos) + tempNum);
+			}
 			line = br.readLine();
 		}
 		
@@ -79,7 +86,11 @@ public class AddColumns {
 		bw.write(line + "\t" + "" + "\n");
 
 		line = br.readLine();
-		bw.write(line + "\tunique_insertion_counts: " + libName + "\n");
+		if (ifUniqueInsertions){
+			bw.write(line + "\tunique_insertion_counts: " + libName + "\n");
+		}else{
+			bw.write(line + "\tall_reads_counts: " + libName + "\n");
+		}
 
 		line = br.readLine();
 		bw.write(line + "\t" + adjustStartString + "\n");
@@ -138,7 +149,7 @@ public class AddColumns {
 		return Messages.failMsg;
 	}
 	
-	public static String add(String libName, String tableName, int windowLen, int step, String adjustStartString, String adjustEndString, int seqLen, ProjectInfo info) throws IOException {
+	public static String add(String libName, String tableName, int windowLen, int step, String adjustStartString, String adjustEndString, int seqLen, boolean ifUniqueInsertions, ProjectInfo info) throws IOException {
 	
 		int adjustStart;
 		double adjustStartPercent;
@@ -165,9 +176,13 @@ public class AddColumns {
 		BufferedReader br = new BufferedReader(new FileReader(libFile));
 		
 		ArrayList<Integer> insertions = new ArrayList<>();
+		ArrayList<Integer> numberOfReads = new ArrayList<>();
 		String line = br.readLine();
 		while(line != null){
 			insertions.add(Integer.parseInt(line.substring(0, line.indexOf("\t"))));
+			line = line.substring(line.indexOf("\t") + 1);
+			line = line.substring(line.indexOf("\t") + 1);
+			numberOfReads.add(Integer.parseInt(line));
 			line = br.readLine();
 		}
 		
@@ -183,16 +198,28 @@ public class AddColumns {
 			if(LL < seqLen){
 				for (int j = 0; j < insertions.size(); j++){
 					if(insertions.get(j) > i && insertions.get(j) <= LL){
-						N++;
+						if (ifUniqueInsertions){
+							N++;	
+						}else{
+							N += numberOfReads.get(j);
+						}
 					}
 				}
 			}else{
 				for (int j = 0; j < insertions.size(); ++j){
 					if(insertions.get(j) > i && insertions.get(j) <= seqLen){
-						++N;
+						if (ifUniqueInsertions){
+							N++;	
+						}else{
+							N += numberOfReads.get(j);
+						}
 					}
 					if(insertions.get(j) <= LL - seqLen){
-						++N;
+						if (ifUniqueInsertions){
+							N++;	
+						}else{
+							N += numberOfReads.get(j);
+						}
 					}
 				}
 			}
@@ -209,7 +236,11 @@ public class AddColumns {
 		
 		//Writing File Header at First
 		line = br.readLine();
-		bw.write(line + "\t" + libName + "\n");
+		if (ifUniqueInsertions){
+			bw.write(line + "\t" + libName + "(Counting Unique Insertions)\n");
+		}else{
+			bw.write(line + "\t" + libName + "(Counting All Reads)\n");
+		}
 		
 		line = br.readLine();
 		bw.write(line + "\t" + windowLen + "\n");
