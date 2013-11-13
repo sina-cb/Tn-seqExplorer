@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
 
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -594,57 +593,5 @@ public class AddColumns {
 		results.add(line);
 		
 		return results;
-	}
-
-	public static String randomize(String tableName, int column, double lower, double higher, double constant, ProjectInfo info) throws IOException {
-		File tableFile = new File(info.getPath() + tableName + ".table");
-		BufferedReader br = new BufferedReader(new FileReader(tableFile));
-
-		File newTableFile = new File(info.getPath() + tableName + ".new");
-		BufferedWriter bw = new BufferedWriter(new FileWriter(newTableFile));
-		
-		double D = higher - lower;
-		
-		//Writing File Header at First
-		String line = br.readLine();
-		bw.write(line + "\t" + "Adjust" + "\n");
-
-		line = br.readLine();
-		bw.write(line + "\t" + column + "\n");
-
-		line = br.readLine();
-		bw.write(line + "\t" + constant + "\n");
-
-		line = br.readLine();
-		bw.write(line + "\t" + lower + "\n");
-
-		line = br.readLine();
-		bw.write(line + "\t" + higher + "\n");
-
-		//Reading Main Data and Process it
-		line = br.readLine();
-		while(line != null){
-			String tempLine = new String(line);
-			ArrayList<String> tabs = tabsForCompare(line);
-			
-			double rand = (new Random()).nextDouble();
-			double N = Double.parseDouble(tabs.get(column + 7));
-			N += (constant + rand * D + lower); 
-			
-			bw.write(tempLine + "\t" + N + "\n");
-			
-			line = br.readLine();
-		}
-		
-		bw.close();
-		br.close();
-		
-		if (tableFile.delete()){
-			if(newTableFile.renameTo(tableFile)){
-				return Messages.successMsg;
-			}
-		}
-		
-		return Messages.failMsg;
 	}
 }

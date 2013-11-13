@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -231,7 +232,7 @@ public class PlotData {
 	
 	}
 	
-	public static JFreeChart plotColumns(String tableName, int firstCol, int secondCol, boolean logPlot, String title, ProjectInfo info) throws IOException{
+	public static JFreeChart plotColumns(String tableName, int firstCol, int secondCol, boolean logPlot, String title,boolean randomize, ProjectInfo info) throws IOException{
 		
 		File tableFile = new File(info.getPath() + tableName + ".table");
 		BufferedReader br = new BufferedReader(new FileReader(tableFile));
@@ -307,6 +308,27 @@ public class PlotData {
 		}
 		
 		br.close();
+		
+		if (randomize){
+			double lower = -0.25;
+			double higher = 0.25;
+			double constant = 1.0;
+			double D = higher - lower;
+			
+			for (int i = 0; i < xAxis.size(); i++){
+				double rand = (new Random()).nextDouble();
+				double N = xAxis.get(i);
+				N += (constant + rand * D + lower);
+				xAxis.set(i, N);
+			}
+
+			for (int i = 0; i < yAxis.size(); i++){
+				double rand = (new Random()).nextDouble();
+				double N = yAxis.get(i);
+				N += (constant + rand * D + lower);
+				yAxis.set(i, N);
+			}
+		}
 		
 		XYDataset dataset = createDataset(xAxis, yAxis);
 		JFreeChart chart = createScatterChart(dataset, logPlot, xAxisName, yAxisName, title);

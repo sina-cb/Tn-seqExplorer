@@ -73,19 +73,12 @@ public class AddMoreIndices extends JFrame {
 	private JComboBox<String> columnTwoCombo = new JComboBox<>();
 	private JButton compareBtn = new JButton("Compare");
 	private JLabel compareWaitLbl = new JLabel("Please wait...");
-	private JTable rndTable;
-	private JTextField rndLowerBoundTxt;
-	private JTextField rndHigherBoundTxt;
-	private JTextField rndConstantTxt;
-	private JButton randomizeBtn = new JButton("Randomize");
-	private JLabel lblPleaseWait_1 = new JLabel("Please wait...");
-	private JComboBox<String> columnSelectCombo = new JComboBox<String>();
-	private JScrollPane scrollPane_1 = new JScrollPane();
 	private JCheckBox logPlotCheck = new JCheckBox("Logarithmic Plot");
 	private JRadioButton newDataUniqueInsertionRadio = new JRadioButton("Count only unique insertions");
 	private JRadioButton newDataAllReadsRadio = new JRadioButton("Count all sequence reads");
 	private JRadioButton countInsUniqueInsertionRadio = new JRadioButton("Count only unique insertions");
 	private JRadioButton countInsAllReadsRadio = new JRadioButton("Count all sequence reads");
+	private JCheckBox randomizePlotDataChk = new JCheckBox("Randomize data");
 	
 	/**
 	 * Create the frame.
@@ -117,11 +110,7 @@ public class AddMoreIndices extends JFrame {
 
 				if(selectedTab == 2){
 					initializeCompare();
-				}
-
-				if(selectedTab == 3){
-					initializeRandomize();
-				}				
+				}			
 			}
 		});
 		
@@ -132,36 +121,6 @@ public class AddMoreIndices extends JFrame {
 		ButtonGroup countIns_group = new ButtonGroup();
 		countIns_group.add(countInsAllReadsRadio);
 		countIns_group.add(countInsUniqueInsertionRadio);
-	}
-
-	private void initializeRandomize(){
-		lblPleaseWait_1.setVisible(false);
-		
-		try {
-			DefaultTableModel model = AddColumns.getHeaderData(tableName, info);
-			rndTable = new JTable(model);
-		} catch (IOException e) {
-			logger.error("There was an error while creating the header table.");
-			return;
-		}
-		//compareTable.setBounds(0, 0, 536 - 10, 159 - 11);
-		rndTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		rndTable.setCellSelectionEnabled(false);
-		rndTable.getColumnModel().getColumn(0).setCellRenderer(new BoldCellRenderer());
-		rndTable.getTableHeader().setFont(new Font("Arial" , Font.BOLD, 11));
-
-		//scrollPane.setBounds(10, 11, 536, 159);
-		scrollPane_1.add(rndTable);
-		scrollPane_1.setViewportView(rndTable);
-		
-		columnSelectCombo.removeAllItems();
-		for (int i = 0; i < rndTable.getColumnCount(); i++){
-			if(i == 0){
-				columnSelectCombo.addItem("");
-			}else{
-				columnSelectCombo.addItem(i + "");
-			}
-		}
 	}
 	
 	private void initializeCompare(){
@@ -543,103 +502,11 @@ public class AddMoreIndices extends JFrame {
 		plotTwoColBtn.setBounds(335, 278, 103, 23);
 		compareScrollPanel.add(plotTwoColBtn);
 		
-		logPlotCheck.setBounds(10, 235, 330, 23);
+		logPlotCheck.setBounds(10, 235, 171, 23);
 		compareScrollPanel.add(logPlotCheck);
 		
-		JPanel panel_2 = new JPanel();
-		tabbedPane.addTab("Randomize", null, panel_2, null);
-		panel_2.setLayout(null);
-		
-		scrollPane_1.setBounds(10, 11, 536, 133);
-		panel_2.add(scrollPane_1);
-		
-		rndTable = new JTable();
-		scrollPane_1.setViewportView(rndTable);
-		
-		JLabel lblRandomLowerBound = new JLabel("Random lower bound:");
-		lblRandomLowerBound.setBounds(10, 158, 268, 14);
-		panel_2.add(lblRandomLowerBound);
-		
-		rndLowerBoundTxt = new JTextField();
-		rndLowerBoundTxt.setColumns(10);
-		rndLowerBoundTxt.setBounds(237, 155, 103, 20);
-		panel_2.add(rndLowerBoundTxt);
-		
-		JLabel label_13 = new JLabel("(?)");
-		label_13.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				JOptionPane.showMessageDialog(AddMoreIndices.this, "Lower bound of the random adjustment");
-			}
-		});
-		label_13.setToolTipText("Click me!");
-		label_13.setForeground(Color.BLUE);
-		label_13.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_13.setBounds(350, 158, 88, 14);
-		panel_2.add(label_13);
-		
-		JLabel lblRandomHigherBound = new JLabel("Random higher bound:");
-		lblRandomHigherBound.setBounds(10, 186, 268, 14);
-		panel_2.add(lblRandomHigherBound);
-		
-		rndHigherBoundTxt = new JTextField();
-		rndHigherBoundTxt.setColumns(10);
-		rndHigherBoundTxt.setBounds(237, 183, 103, 20);
-		panel_2.add(rndHigherBoundTxt);
-		
-		JLabel label_14 = new JLabel("(?)");
-		label_14.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				JOptionPane.showMessageDialog(AddMoreIndices.this, "Higher bound of the random adjustment");
-			}
-		});
-		label_14.setToolTipText("Click me!");
-		label_14.setForeground(Color.BLUE);
-		label_14.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_14.setBounds(350, 186, 88, 14);
-		panel_2.add(label_14);
-		
-		JLabel lblSelectAColumn = new JLabel("Select a column:");
-		lblSelectAColumn.setBounds(10, 242, 310, 14);
-		panel_2.add(lblSelectAColumn);
-		
-		columnSelectCombo.setBounds(288, 239, 52, 20);
-		panel_2.add(columnSelectCombo);
-		
-		JLabel lblEnterRandomConstant = new JLabel("Enter a constant:");
-		lblEnterRandomConstant.setBounds(10, 214, 268, 14);
-		panel_2.add(lblEnterRandomConstant);
-		
-		rndConstantTxt = new JTextField();
-		rndConstantTxt.setColumns(10);
-		rndConstantTxt.setBounds(237, 211, 103, 20);
-		panel_2.add(rndConstantTxt);
-		
-		JLabel label_15 = new JLabel("(?)");
-		label_15.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				JOptionPane.showMessageDialog(AddMoreIndices.this, "This constant is added to the numbers.");
-			}
-		});
-		label_15.setToolTipText("Click me!");
-		label_15.setForeground(Color.BLUE);
-		label_15.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_15.setBounds(350, 214, 88, 14);
-		panel_2.add(label_15);
-		randomizeBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				randomize();
-			}
-		});
-		
-		randomizeBtn.setBounds(434, 278, 112, 23);
-		panel_2.add(randomizeBtn);
-		
-		lblPleaseWait_1.setIcon(new ImageIcon(AddMoreIndices.class.getResource("/resources/load.gif")));
-		lblPleaseWait_1.setBounds(10, 282, 180, 14);
-		panel_2.add(lblPleaseWait_1);
+		randomizePlotDataChk.setBounds(237, 235, 167, 23);
+		compareScrollPanel.add(randomizePlotDataChk);
 	}
 
 	private void plotColumns(){
@@ -675,11 +542,15 @@ public class AddMoreIndices extends JFrame {
 			@Override
 			public void run() {
 				
-				String tempTitle = tableName + ", Columns: " + first + " v.s. " + second;
+				String tempTitle = "";
+				if (randomizePlotDataChk.isSelected())
+					tempTitle = tableName + ", Columns: " + first + " v.s. " + second;
+				else
+					tempTitle = tableName + ", Columns: " + first + " v.s. " + second + " (Randomized data)";
 				
 				ChartPanel panel;
 				try {
-					panel = new ChartPanel(PlotData.plotColumns(tableName, first, second, AddMoreIndices.this.logPlot, tempTitle, info));
+					panel = new ChartPanel(PlotData.plotColumns(tableName, first, second, AddMoreIndices.this.logPlot, tempTitle,randomizePlotDataChk.isSelected() ,info));
 				} catch (IOException e) {
 					logger.error("Some error while creating the plot!");
 					return;
@@ -693,63 +564,6 @@ public class AddMoreIndices extends JFrame {
 				compareWaitLbl.setVisible(false);
 				compareBtn.setEnabled(true);
 				initializeCompare();
-			}
-		})).start();
-		
-	}
-
-	private void randomize(){
-		String lowerS = rndLowerBoundTxt.getText();
-		String higherS = rndHigherBoundTxt.getText();
-		String consS = rndConstantTxt.getText();
-		String comboS = (String) columnSelectCombo.getSelectedItem();
-		
-		if (lowerS == null || lowerS.compareTo("") == 0){
-			JOptionPane.showMessageDialog(AddMoreIndices.this, "Please enter the lower bound of randomization.");
-			return;
-		}
-		
-		if (higherS == null || higherS.compareTo("") == 0){
-			JOptionPane.showMessageDialog(AddMoreIndices.this, "Please enter the higher bound of randomization.");
-			return;
-		}
-		
-		if (consS == null || consS.compareTo("") == 0){
-			JOptionPane.showMessageDialog(AddMoreIndices.this, "Please enter the constant to be added.");
-			return;
-		}
-		
-		if (comboS == null || comboS.compareTo("") == 0){
-			JOptionPane.showMessageDialog(AddMoreIndices.this, "Please select a column.");
-			return;
-		}
-		
-		final double lower = Double.parseDouble(lowerS);
-		final double higher = Double.parseDouble(higherS);
-		final double constant = Double.parseDouble(consS);
-		final int column = Integer.parseInt(comboS);
-		
-		lblPleaseWait_1.setVisible(true);
-		randomizeBtn.setEnabled(false);
-		
-		(new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				try {
-					if (AddColumns.randomize(tableName, column, lower, higher, constant, info).compareTo(Messages.successMsg) == 0){
-						JOptionPane.showMessageDialog(AddMoreIndices.this, "Data added");
-					}else{
-						JOptionPane.showMessageDialog(AddMoreIndices.this, "There was some problem, data was not added!!!", "Error", JOptionPane.ERROR_MESSAGE);
-					}
-					
-					lblPleaseWait_1.setVisible(false);
-					randomizeBtn.setEnabled(true);
-					initializeRandomize();
-				} catch (IOException e) {
-					logger.error(e.getMessage());
-					return;
-				}
 			}
 		})).start();
 		
