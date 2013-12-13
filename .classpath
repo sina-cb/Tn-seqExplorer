@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="lib/poi-3.9-20121203.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io-2.4.jar"/>
+	<classpathentry kind="lib" path="lib/jtstand-desktop-1.2.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

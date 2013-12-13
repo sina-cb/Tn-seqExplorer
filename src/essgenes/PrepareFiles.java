@@ -46,7 +46,7 @@ public class PrepareFiles {
 		}
 
 		ArrayList<Integer> starts = new ArrayList<>();
-		for (int i = 0; i < positions.size(); i += step){
+ 		for (int i = 0; i < positions.get(positions.size() - 1); i += step){
 			int count = 0;
 			int num = 0;
 			for (int j = 0; j < positions.size(); j++){
@@ -76,23 +76,29 @@ public class PrepareFiles {
 		}
 		
 		ArrayList<String> boundaries = new ArrayList<>();
+		int count = 0;
 		for (int i = 0; i < starts.size(); i++){
-			int count = 0;
-			for (int j = i + 1; j < starts.size(); j++){
-				if (j > starts.size() || i + j > starts.size()){
-					break;
-				}
-				if (starts.get(j) < starts.get(i + count) + winLen){
-					count++;
-					continue;
-				}
+			count = 0;
+			for (int j = i + 1; j <= starts.size(); j++){
+				int start = 0;
+				int end = 0;
 				
-				int start = starts.get(i);
-				int end = starts.get(i + count) + winLen;
+				if (j >= starts.size() || i + count >= starts.size()){
+					start = starts.get(i);
+					end = starts.get(i + count) + winLen;
+				}else{
+					if (starts.get(j) < starts.get(i + count) + winLen){
+						count++;
+						continue;
+					}
+					start = starts.get(i);
+					end = starts.get(i + count) + winLen;
+				}
 				
 				boundaries.add(start + "..." + end);
-				i = i + count + 1;
+				break;
 			}
+			i = i + count;
 		}
 
 		JOptionPane.showMessageDialog(null, "Windows are found, please select a place to save the output file.");

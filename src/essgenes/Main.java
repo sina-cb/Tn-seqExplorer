@@ -6,6 +6,7 @@ package essgenes;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import GUI.LegalDisclaimer;
 import GUI.WorkspaceChooser;
 
 
@@ -39,10 +40,10 @@ public class Main {
 		catch (IllegalAccessException e) {
 			// handle exception
 		}
-
-		WorkspaceChooser ws = new WorkspaceChooser();
-		ws.setVisible(true);
-
+		
+		LegalDisclaimer ld = new LegalDisclaimer();
+		ld.setVisible(true);
+		
 	}
 
 }

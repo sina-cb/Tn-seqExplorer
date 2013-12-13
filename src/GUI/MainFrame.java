@@ -1136,7 +1136,7 @@ public class MainFrame extends JFrame {
 		
 		maxNumInsTxt = new JTextField();
 		maxNumInsTxt.setToolTipText("Enter the window length");
-		maxNumInsTxt.setText("20");
+		maxNumInsTxt.setText("3");
 		maxNumInsTxt.setColumns(10);
 		maxNumInsTxt.setBounds(561, 535, 118, 20);
 		panelInitialize.add(maxNumInsTxt);
@@ -1152,10 +1152,22 @@ public class MainFrame extends JFrame {
 		
 		maxNumInsBtn.setBounds(689, 534, 87, 23);
 		panelInitialize.add(maxNumInsBtn);
+		countOnlyUniqueRadio.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				maxNumInsTxt.setText("3");
+			}
+		});
 		countOnlyUniqueRadio.setSelected(true);
 
 		countOnlyUniqueRadio.setBounds(12, 510, 530, 23);
 		panelInitialize.add(countOnlyUniqueRadio);
+		countAllReadsRadio.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				maxNumInsTxt.setText("10");
+			}
+		});
 		
 		countAllReadsRadio.setBounds(12, 536, 530, 23);
 		panelInitialize.add(countAllReadsRadio);
