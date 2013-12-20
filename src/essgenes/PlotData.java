@@ -116,7 +116,7 @@ public class PlotData {
 		JFreeChart chart = createChart(dataset, title, !onlyUniqueInsertions, null, null, null, null);
 		
 		try {
-			saveToXls(xAxis, yAxis, info, libName, windowLen, windowStep);
+			saveToXls(xAxis, yAxis, info, libName, windowLen, windowStep, onlyUniqueInsertions);
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
@@ -124,10 +124,15 @@ public class PlotData {
 		return chart;
 	}
 	
-	private static void saveToXls(Vector<Integer> xAxis, Vector<Integer> yAxis, ProjectInfo info, String libName, int len, int step) throws IOException{
+	private static void saveToXls(Vector<Integer> xAxis, Vector<Integer> yAxis, ProjectInfo info, String libName, int len, int step, boolean unique) throws IOException{
 		
 		String fileName = libName + "_w" + len + "_s" + step;
-		String xlsPath = info.getPath() + fileName + ".xls";
+		String xlsPath = "";
+		
+		if (unique)
+			xlsPath = info.getPath() + fileName + " - Unique Insertions.xls";
+		else
+			xlsPath = info.getPath() + fileName + " - All Reads.xls";
 		File xlsFile = new File(xlsPath);
 		
 		BufferedWriter bw = new BufferedWriter(new FileWriter(xlsFile));
@@ -234,7 +239,7 @@ public class PlotData {
 	
 	public static JFreeChart plotColumns(String tableName, int firstCol, int secondCol, boolean logPlot, String title,boolean randomize, ProjectInfo info) throws IOException{
 		
-		File tableFile = new File(info.getPath() + tableName + ".table");
+		File tableFile = new File(info.getPath() + tableName + ".table.xls"); //REPLACE
 		BufferedReader br = new BufferedReader(new FileReader(tableFile));
 
 		String xAxisName = "Column " + firstCol + " (";

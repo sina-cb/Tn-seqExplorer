@@ -7,7 +7,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import GUI.LegalDisclaimer;
-import GUI.WorkspaceChooser;
 
 
 /**

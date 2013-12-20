@@ -114,9 +114,9 @@ public class MainFrame extends JFrame {
 	private JTextField winStepTxt;
 	private JButton plotBtn = new JButton("Plot");
 	private JLabel plotWaitLbl = new JLabel("Please wait...");
-	private JButton addNewIndicesBtn = new JButton("Add new essentiality indices to a data table");
+	private JButton addNewIndicesBtn = new JButton("Add new data to the selected table");
 	private JButton remoteHelpBtn = new JButton("Create SAM file manually");
-	private JButton maxNumInsBtn = new JButton("Count");
+	private JButton maxNumInsBtn = new JButton("Find essential regions");
 	private JRadioButton countOnlyUniqueRadio = new JRadioButton("Count only unique insertions");
 	private JRadioButton countAllReadsRadio = new JRadioButton("Count all sequence reads");
 
@@ -188,96 +188,7 @@ public class MainFrame extends JFrame {
 		applySequenceBtn.setFont(new Font("Tahoma", Font.BOLD, 13));
 		applySequenceBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				String seqLen = sequenceLenTxt.getText();
-				if (seqLen == null || seqLen.compareTo("") == 0){
-					JOptionPane.showMessageDialog(MainFrame.this, "Please Enter Your Sequence Number First!");
-					return;
-				}
-
-				int seqLenInt;
-				try{
-					seqLenInt = Integer.parseInt(seqLen);
-				}catch(NumberFormatException e){
-					JOptionPane.showMessageDialog(MainFrame.this, "Please Enter Your Sequence Number Correctly!");
-					return;
-				}
-
-				if (MainFrame.this.hasSeqNum){
-					BufferedReader br = null;
-					BufferedWriter bw = null;
-					File temp = null;
-					try{
-						temp = new File("temp");
-						br = new BufferedReader(new FileReader(projectInfo.getFile()));
-						bw = new BufferedWriter(new FileWriter(temp));
-
-						String line = br.readLine();
-
-						while(line != null){
-
-							if(!line.contains(Messages.projectSequenceLen)){
-								bw.write(line + "\n");
-							}else{
-								bw.write(Messages.projectSequenceLen + seqLenInt + "\n");
-								projectInfo.setSequenceLen(seqLenInt);
-							}
-
-							line = br.readLine();
-						}
-
-						br.close();
-						bw.close();
-
-						projectInfo.getFile().delete();
-						temp.renameTo(projectInfo.getFile());
-
-					}catch(IOException e){
-						logger.error(e.getMessage());
-						return;
-					}finally{
-						try{
-							if (bw != null){
-								bw.close();
-							}
-							if (br != null){
-								br.close();
-							}
-						}catch(IOException e){
-							logger.error(e.getMessage());
-							return;
-						}
-					}
-				}else{
-					BufferedWriter bw = null;
-					try{
-						bw = new BufferedWriter(new FileWriter(projectInfo.getFile(), true));
-						bw.append(Messages.projectSequenceLen + seqLen + "\n");
-						projectInfo.setSequenceLen(seqLenInt);
-					}catch(IOException e){
-						logger.error(e.getMessage());
-						return;
-					}finally{
-						try{
-							if(bw != null){
-								bw.close();
-							}
-						}catch(IOException e){
-							logger.error(e.getMessage());
-							return;
-						}
-					}
-				}
-
-				hasSeqNum = true;
-				JOptionPane.showMessageDialog(MainFrame.this, "New Sequence Length Has Been Applied!");
-				setSequenceLengthText(Integer.parseInt(seqLen));
-
-				if (hasGeneFile){
-					for (int i = 1; i < tabbedPane.getTabCount(); i++){
-						tabbedPane.setEnabledAt(i, true);
-					}
-					infoLbl.setVisible(false);
-				}
+				applySequenceNumber();
 			}
 		});
 		applySequenceBtn.setBounds(317, 30, 97, 25);
@@ -320,6 +231,36 @@ public class MainFrame extends JFrame {
 		downloadBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
+				String temp = (String) ftpSecondLevelCombo.getSelectedItem();
+				temp = temp.substring(temp.indexOf("(") + 1);
+				temp = temp.substring(0, temp.indexOf(")"));
+
+				int tempInt = Integer.parseInt(temp);
+				if (projectInfo.getSequenceLen() != 0 && projectInfo.getSequenceLen() != tempInt){
+
+					String msg = String.format("The sequence length in GenBank is %d.\nDo you want to use the GenBank length or the length you supplied manually?", tempInt);
+					int answer = JOptionPane.showOptionDialog(MainFrame.this, 
+							msg, 
+							"Warning", 
+							JOptionPane.YES_NO_OPTION, 
+							JOptionPane.WARNING_MESSAGE, 
+							null, 
+							new String[]{"GenBank", "Manual"}, // this is the array
+							"default");
+
+					if (answer == JOptionPane.YES_OPTION){
+						sequenceLenTxt.setText(tempInt + "");
+						applySequenceNumber();
+						
+					}else{
+						//Do Nothing
+					}
+
+				}else if (projectInfo.getSequenceLen() == 0 && projectInfo.getSequenceLen() != tempInt){
+					sequenceLenTxt.setText(tempInt + "");
+					applySequenceNumber();
+				}
+
 				downloadBtn.setText("Downloading");
 
 				(new Thread(new Runnable(){
@@ -353,16 +294,16 @@ public class MainFrame extends JFrame {
 								}
 							}
 
-							downloadBtn.setText("Downloaded");
-							downloadBtn.setEnabled(false);
-							ftpFirstLevelCombo.setEnabled(false);
-							ftpSecondLevelCombo.setEnabled(false);
+							downloadBtn.setText("Download");
+							downloadBtn.setEnabled(true);
+							ftpFirstLevelCombo.setEnabled(true);
+							ftpSecondLevelCombo.setEnabled(true);
 
 						} catch (IOException e) {
 							logger.error(e.getMessage());
 							return;
 						}
-						
+
 						prepareGeneFile();
 					}
 				})).start();
@@ -731,7 +672,7 @@ public class MainFrame extends JFrame {
 		lblNeedHelp.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				JOptionPane.showMessageDialog(MainFrame.this, "This will guide you to finding the protein-coding (.ptt file) and RNA-coding (.rnt file)\n"
+				JOptionPane.showMessageDialog(MainFrame.this, "This will guide you to finding the protein-coding (.ptt file) and RNA (.rnt file) gene\n"
 						+ "annotation at the FTP server of the National Center for Biotechnology Information\n"
 						+ "(ftp://ftp.ncbi.nih.gov/genomes/)");
 			}
@@ -785,12 +726,12 @@ public class MainFrame extends JFrame {
 		label_1.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		label_1.setBounds(120, 412, 88, 14);
 		panelMain.add(label_1);
-		
+
 		JLabel lblSequqenceLength = new JLabel("Sequqence length:");
 		lblSequqenceLength.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblSequqenceLength.setBounds(378, 555, 163, 22);
 		panelMain.add(lblSequqenceLength);
-		
+
 		sequenceLengthLbl.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		sequenceLengthLbl.setBounds(529, 550, 178, 33);
 		panelMain.add(sequenceLengthLbl);
@@ -824,7 +765,7 @@ public class MainFrame extends JFrame {
 					MainFrame.this.extractInsBtn.setEnabled(true);
 					MainFrame.this.samFilePathTxt.setEnabled(false);
 					MainFrame.this.browseForSamBtn.setEnabled(false);
-					
+
 					if(fileChooser.getSelectedFile().getName().contains(".inspo")){
 						doneLbl1.setVisible(true);
 						loadingLbl.setBounds(22, 239, 30, 16);
@@ -849,16 +790,16 @@ public class MainFrame extends JFrame {
 
 				if(samFilePathTxt.getText().endsWith(".inspo")){
 					String newPath = projectInfo.getPath() + PrepareFiles.prepareFileName(samFilePathTxt.getText(), ".inspo");
-					
+
 					File oldFile = new File(samFilePathTxt.getText());
 					File newFile = new File(newPath);
-					
+
 					FileChannel destination;
 					FileChannel source;
 					try {
 						destination = new FileOutputStream(newFile).getChannel();
 						source = new FileInputStream(oldFile).getChannel();
-						
+
 						if(destination != null && source != null){
 							destination.transferFrom(source, 0, source.size());
 						}
@@ -1042,36 +983,36 @@ public class MainFrame extends JFrame {
 		doneLbl4.setIcon(new ImageIcon(MainFrame.class.getResource("/resources/done.gif")));
 		doneLbl4.setBounds(21, 277, 23, 14);
 		panelInitialize.add(doneLbl4);
-		
+
 		JLabel lblNewLabel_2 = new JLabel("You can add and manage transposon insertion mutant libraries here. You need the .sam file from the ");
 		lblNewLabel_2.setBounds(10, 11, 803, 14);
 		panelInitialize.add(lblNewLabel_2);
-		
+
 		JLabel lblbwaHttpbiobwasourceforgenet = new JLabel("Barrows-Wheeler aligner. (bwa; http://bio-bwa.sourceforge.net/) to add a library to your project. If the ");
 		lblbwaHttpbiobwasourceforgenet.setBounds(10, 36, 803, 14);
 		panelInitialize.add(lblbwaHttpbiobwasourceforgenet);
-		
+
 		JLabel lblBeAbleTo = new JLabel("Barrows-Wheeler Aligner is installed on this computer you may be able to run it from this application. To ");
 		lblBeAbleTo.setBounds(8, 61, 805, 14);
 		panelInitialize.add(lblBeAbleTo);
-		
+
 		JLabel lblAndThenClick = new JLabel("add new library, provide the name for the library, navigate to the .sam file using the 'Browse' button, ");
 		lblAndThenClick.setBounds(10, 86, 801, 14);
 		panelInitialize.add(lblAndThenClick);
-		
+
 		JSeparator separator_9 = new JSeparator();
 		separator_9.setBounds(0, 136, 821, 2);
 		panelInitialize.add(separator_9);
-		
+
 		JLabel lblChooseALibrary = new JLabel("Choose a library:");
 		lblChooseALibrary.setBounds(12, 458, 286, 14);
 		panelInitialize.add(lblChooseALibrary);
 		plotLibraryCombo.setToolTipText("Select a libray to plot");
-		
+
 		plotLibraryCombo.setBounds(12, 483, 402, 20);
 		panelInitialize.add(plotLibraryCombo);
 		plotBtn.setToolTipText("Plot the selected library");
-		
+
 		plotBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				plotDataMethod();
@@ -1079,78 +1020,78 @@ public class MainFrame extends JFrame {
 		});
 		plotBtn.setBounds(689, 480, 87, 23);
 		panelInitialize.add(plotBtn);
-		
+
 		winLenTxt = new JTextField();
 		winLenTxt.setToolTipText("Enter the window length");
 		winLenTxt.setText("1000");
 		winLenTxt.setColumns(10);
 		winLenTxt.setBounds(424, 483, 118, 20);
 		panelInitialize.add(winLenTxt);
-		
+
 		winStepTxt = new JTextField();
 		winStepTxt.setToolTipText("Enter window step size");
 		winStepTxt.setText("100");
 		winStepTxt.setColumns(10);
 		winStepTxt.setBounds(561, 483, 118, 20);
 		panelInitialize.add(winStepTxt);
-		
+
 		JLabel lblWindowLength = new JLabel("Window length:");
 		lblWindowLength.setBounds(414, 468, 123, 14);
 		panelInitialize.add(lblWindowLength);
-		
+
 		JLabel label_5 = new JLabel("Step:");
 		label_5.setBounds(547, 468, 108, 14);
 		panelInitialize.add(label_5);
-		
+
 		JSeparator separator_10 = new JSeparator();
 		separator_10.setBounds(0, 420, 821, 2);
 		panelInitialize.add(separator_10);
-		
-		JLabel lblPlotTheDistribution = new JLabel("Plot the distribution of the number of unique insertions per window for a selected library.");
+
+		JLabel lblPlotTheDistribution = new JLabel("Plot the distribution of the number of unique insertions or all sequence reads per window for a selected library.");
 		lblPlotTheDistribution.setBounds(10, 433, 801, 14);
 		panelInitialize.add(lblPlotTheDistribution);
-		
+
 		plotWaitLbl.setIcon(new ImageIcon(MainFrame.class.getResource("/resources/load.gif")));
 		plotWaitLbl.setBounds(12, 606, 183, 14);
 		panelInitialize.add(plotWaitLbl);
-		
+
 		JLabel label_3 = new JLabel("(?)");
 		label_3.setToolTipText("Click me!");
 		label_3.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				JOptionPane.showMessageDialog(MainFrame.this, 
-						"This is the same plot as shown in Figure 1 of Sarmiento et al., PNAS 110:4726�4731, 2013. A strong peak at zero separated from a wider peak for larger\n"
-						+ "numbers of insertions indicates that the window size is suitable for detecting essential genes in the given library. Larger window sizes provide better\n"
-						+ "distinction between essential and non-essential genes but they can miss essential genes shorter than the window length." );
+						"This is the same plot as shown in Figure 1 of Sarmiento et al., PNAS 110:4726-4731, 2013. A strong peak at zero separated from a wider peak for larger\n"
+								+ "numbers of insertions indicates that the window size is suitable for detecting essential genes in the given library. Larger window sizes provide better\n"
+								+ "distinction between essential and non-essential genes but they can miss essential genes shorter than the window length." );
 			}
 		});
 		label_3.setForeground(Color.BLUE);
 		label_3.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		label_3.setBounds(781, 484, 30, 14);
 		panelInitialize.add(label_3);
-		
+
 		JLabel lblAndThenClick_1 = new JLabel("and then click 'Extract'.");
 		lblAndThenClick_1.setBounds(10, 111, 697, 14);
 		panelInitialize.add(lblAndThenClick_1);
-		
+
 		maxNumInsTxt = new JTextField();
 		maxNumInsTxt.setToolTipText("Enter the window length");
 		maxNumInsTxt.setText("3");
 		maxNumInsTxt.setColumns(10);
-		maxNumInsTxt.setBounds(561, 535, 118, 20);
+		maxNumInsTxt.setBounds(424, 535, 118, 20);
 		panelInitialize.add(maxNumInsTxt);
-		
+
 		JLabel lblMaxNumberOf = new JLabel("Max number of insertions/reads:");
-		lblMaxNumberOf.setBounds(547, 514, 183, 14);
+		lblMaxNumberOf.setBounds(410, 514, 183, 14);
 		panelInitialize.add(lblMaxNumberOf);
 		maxNumInsBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				maxNumInsrtions();
 			}
 		});
-		
-		maxNumInsBtn.setBounds(689, 534, 87, 23);
+
+		maxNumInsBtn.setBounds(561, 534, 215, 23);
 		panelInitialize.add(maxNumInsBtn);
 		countOnlyUniqueRadio.addMouseListener(new MouseAdapter() {
 			@Override
@@ -1160,7 +1101,7 @@ public class MainFrame extends JFrame {
 		});
 		countOnlyUniqueRadio.setSelected(true);
 
-		countOnlyUniqueRadio.setBounds(12, 510, 530, 23);
+		countOnlyUniqueRadio.setBounds(12, 510, 394, 23);
 		panelInitialize.add(countOnlyUniqueRadio);
 		countAllReadsRadio.addMouseListener(new MouseAdapter() {
 			@Override
@@ -1168,14 +1109,29 @@ public class MainFrame extends JFrame {
 				maxNumInsTxt.setText("10");
 			}
 		});
-		
-		countAllReadsRadio.setBounds(12, 536, 530, 23);
+
+		countAllReadsRadio.setBounds(12, 536, 402, 23);
 		panelInitialize.add(countAllReadsRadio);
 
 		ButtonGroup numberOfReads = new ButtonGroup();
 		numberOfReads.add(countOnlyUniqueRadio);
 		numberOfReads.add(countAllReadsRadio);
-		
+
+		JLabel label_7 = new JLabel("(?)");
+		label_7.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				JOptionPane.showMessageDialog(MainFrame.this, "This will identify the DNA segments that do not contain any window with more than the given number of\n"
+						+ "insertions/reads. These are potential essential regions of the chromosome. Use the plot created on this page as a\n"
+						+ "guidance to select the most appropriate the maximum number of insertions per window.");
+			}
+		});
+		label_7.setToolTipText("Click me!");
+		label_7.setForeground(Color.BLUE);
+		label_7.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		label_7.setBounds(781, 538, 30, 14);
+		panelInitialize.add(label_7);
+
 		JPanel panel = new JPanel();
 		tabbedPane.addTab("Manage Data Tables", null, panel, null);
 		panel.setLayout(null);
@@ -1196,7 +1152,7 @@ public class MainFrame extends JFrame {
 					return;
 				}
 
-				File newTable = new File(projectInfo.getPath() + name + ".table");
+				File newTable = new File(projectInfo.getPath() + name + ".table.xls"); //REPLACE
 				if (newTable.exists()){
 					JOptionPane.showMessageDialog(MainFrame.this, "A table with this name already exists. Try another name.");
 					return;
@@ -1262,8 +1218,8 @@ public class MainFrame extends JFrame {
 				}
 
 				String selectedTable = (String)dataTableCombo.getSelectedItem();
-				File oldFile = new File(projectInfo.getPath() + selectedTable + ".table");
-				File newFile = new File(projectInfo.getPath() + newName + ".table");
+				File oldFile = new File(projectInfo.getPath() + selectedTable + ".table.xls"); //REPLACE
+				File newFile = new File(projectInfo.getPath() + newName + ".table.xls"); //REPLACE
 
 				boolean done = oldFile.renameTo(newFile);
 
@@ -1281,7 +1237,7 @@ public class MainFrame extends JFrame {
 		dataTableRemoveBtn.setToolTipText("Remove the selected data table from the project");
 		dataTableRemoveBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				File table = new File(projectInfo.getPath() + dataTableCombo.getSelectedItem() + ".table");
+				File table = new File(projectInfo.getPath() + dataTableCombo.getSelectedItem() + ".table.xls"); //REPLACE
 
 				if(table.exists()){
 					if(!table.delete()){
@@ -1326,7 +1282,7 @@ public class MainFrame extends JFrame {
 		tableCancelChangeBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
-				File xlsFile = new File(projectInfo.getPath() + dataTableCombo.getSelectedItem() + ".xls");
+				File xlsFile = new File(projectInfo.getPath() + dataTableCombo.getSelectedItem() + " - temp.table.xls"); //REPLACE
 				if(xlsFile.delete()){
 
 					for (int i = 0; i < tabbedPane.getTabCount(); i++){
@@ -1356,11 +1312,11 @@ public class MainFrame extends JFrame {
 
 		tableCancelChangeBtn.setBounds(564, 166, 101, 23);
 		panel.add(tableCancelChangeBtn);
-		
+
 		JLabel lblNewLabel_3 = new JLabel("Create and manage spreadsheets with gene information.");
 		lblNewLabel_3.setBounds(10, 11, 475, 14);
 		panel.add(lblNewLabel_3);
-		
+
 		JLabel label_6 = new JLabel("(?)");
 		label_6.setToolTipText("Click me!");
 		label_6.addMouseListener(new MouseAdapter() {
@@ -1377,15 +1333,15 @@ public class MainFrame extends JFrame {
 		label_6.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		label_6.setBounds(453, 11, 30, 14);
 		panel.add(label_6);
-		
+
 		JSeparator separator_6 = new JSeparator();
 		separator_6.setBounds(0, 39, 823, 8);
 		panel.add(separator_6);
 		addNewIndicesBtn.setToolTipText("You can add extra data to your data tables in this subsection");
-		
+
 		addNewIndicesBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				AddMoreIndices addFrame = new AddMoreIndices((String) dataTableCombo.getSelectedItem(), projectInfo, MainFrame.this);
 				addFrame.setVisible(true);
 
@@ -1427,10 +1383,10 @@ public class MainFrame extends JFrame {
 			}
 		});
 		mnMenu.add(mntmExit);
-		
+
 		JMenu mnAbout = new JMenu("About");
 		menuBar.add(mnAbout);
-		
+
 		JMenuItem mntmAboutUs = new JMenuItem("About US");
 		mntmAboutUs.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -1473,9 +1429,9 @@ public class MainFrame extends JFrame {
 		bwaInstallBtn.setToolTipText("Install BWA program");
 		bwaInstallBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				installBWA();
-				
+
 			}
 		});
 
@@ -1498,12 +1454,12 @@ public class MainFrame extends JFrame {
 		ButtonGroup bwaGroup = new ButtonGroup();
 		bwaGroup.add(alreadyInstalledRadio);
 		bwaGroup.add(useScriptsRadio);
-		
+
 		JLabel lblNewLabel_1 = new JLabel(" on your machine .");
 		lblNewLabel_1.setBounds(20, 58, 246, 15);
 		panel_3.add(lblNewLabel_1);
 		remoteHelpBtn.setToolTipText("Help for creating a SAM file on your remote Linux machine");
-		
+
 		remoteHelpBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				remoteInstallHelp();
@@ -1511,11 +1467,11 @@ public class MainFrame extends JFrame {
 		});
 		remoteHelpBtn.setBounds(10, 342, 256, 25);
 		panel_3.add(remoteHelpBtn);
-		
+
 		JLabel lblSelectThefna = new JLabel("Select the 'FNA' File:");
 		lblSelectThefna.setBounds(10, 179, 200, 15);
 		panel_3.add(lblSelectThefna);
-		
+
 		fnaFilePath = new JTextField();
 		fnaFilePath.setEnabled(true);
 		fnaFilePath.setEditable(false);
@@ -1523,7 +1479,7 @@ public class MainFrame extends JFrame {
 		fnaFilePath.setBounds(220, 177, 487, 19);
 		panel_3.add(fnaFilePath);
 		fnaFilePath.setColumns(10);
-		
+
 		JButton fnaBrowseBtn = new JButton("Browse");
 		fnaBrowseBtn.setToolTipText("Select a FNA file");
 		fnaBrowseBtn.addActionListener(new ActionListener() {
@@ -1535,7 +1491,7 @@ public class MainFrame extends JFrame {
 				fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 				fileChooser.setFileFilter(new FileNameExtensionFilter("FNA Files (.fna)", "fna"));
 				int result = fileChooser.showOpenDialog(MainFrame.this);
-				
+
 				if (result == JFileChooser.APPROVE_OPTION){
 					fnaFilePath.setText(fileChooser.getSelectedFile().getAbsolutePath());
 				}else{
@@ -1545,11 +1501,11 @@ public class MainFrame extends JFrame {
 		});
 		fnaBrowseBtn.setBounds(716, 174, 97, 25);
 		panel_3.add(fnaBrowseBtn);
-		
+
 		JLabel lblSelectThefastq = new JLabel("Select the 'FASTQ' File:");
 		lblSelectThefastq.setBounds(10, 210, 200, 15);
 		panel_3.add(lblSelectThefastq);
-		
+
 		fastqFilePath = new JTextField();
 		fastqFilePath.setText("");
 		fastqFilePath.setEnabled(true);
@@ -1557,7 +1513,7 @@ public class MainFrame extends JFrame {
 		fastqFilePath.setColumns(10);
 		fastqFilePath.setBounds(220, 208, 487, 19);
 		panel_3.add(fastqFilePath);
-		
+
 		JButton fastqBrowseBtn = new JButton("Browse");
 		fastqBrowseBtn.setToolTipText("Select a FASTQ file");
 		fastqBrowseBtn.addActionListener(new ActionListener() {
@@ -1569,7 +1525,7 @@ public class MainFrame extends JFrame {
 				fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 				fileChooser.setFileFilter(new FileNameExtensionFilter("FASTQ Files (.fastq)", "fastq"));
 				int result = fileChooser.showOpenDialog(MainFrame.this);
-				
+
 				if (result == JFileChooser.APPROVE_OPTION){
 					fastqFilePath.setText(fileChooser.getSelectedFile().getAbsolutePath());
 				}else{
@@ -1579,7 +1535,7 @@ public class MainFrame extends JFrame {
 		});
 		fastqBrowseBtn.setBounds(716, 205, 97, 25);
 		panel_3.add(fastqBrowseBtn);
-		
+
 		newSamNameTxt = new JTextField();
 		newSamNameTxt.setToolTipText("Created SAM file name");
 		newSamNameTxt.setText("");
@@ -1587,11 +1543,11 @@ public class MainFrame extends JFrame {
 		newSamNameTxt.setColumns(10);
 		newSamNameTxt.setBounds(220, 262, 144, 19);
 		panel_3.add(newSamNameTxt);
-		
+
 		JLabel lblEnterNewSam = new JLabel("Enter new SAM file name:");
 		lblEnterNewSam.setBounds(10, 265, 200, 15);
 		panel_3.add(lblEnterNewSam);
-		
+
 		JButton btnRun = new JButton("Create SAM file");
 		btnRun.setToolTipText("Create the SAM file");
 		btnRun.addActionListener(new ActionListener() {
@@ -1605,11 +1561,11 @@ public class MainFrame extends JFrame {
 		});
 		btnRun.setBounds(638, 292, 175, 23);
 		panel_3.add(btnRun);
-		
+
 		JLabel lblCreateSamFile = new JLabel("Create SAM file in:");
 		lblCreateSamFile.setBounds(10, 236, 200, 15);
 		panel_3.add(lblCreateSamFile);
-		
+
 		samFilePath = new JTextField();
 		samFilePath.setText("");
 		samFilePath.setEnabled(true);
@@ -1617,7 +1573,7 @@ public class MainFrame extends JFrame {
 		samFilePath.setColumns(10);
 		samFilePath.setBounds(220, 234, 487, 19);
 		panel_3.add(samFilePath);
-		
+
 		JButton newSamBrowseBtn = new JButton("Browse");
 		newSamBrowseBtn.setToolTipText("Select a location to save the new SAM file");
 		newSamBrowseBtn.addActionListener(new ActionListener() {
@@ -1628,7 +1584,7 @@ public class MainFrame extends JFrame {
 				JFileChooser fileChooser = new JFileChooser(location);
 				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				int result = fileChooser.showOpenDialog(MainFrame.this);
-				
+
 				if (result == JFileChooser.APPROVE_OPTION){
 					samFilePath.setText(fileChooser.getSelectedFile().getAbsolutePath());
 				}else{
@@ -1638,6 +1594,21 @@ public class MainFrame extends JFrame {
 		});
 		newSamBrowseBtn.setBounds(716, 232, 97, 25);
 		panel_3.add(newSamBrowseBtn);
+
+		JLabel label_4 = new JLabel("(?)");
+		label_4.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JOptionPane.showMessageDialog(MainFrame.this, "The FASTQ file contains your sequence reads and you should have received it from Illumina or the sequencing facility\n"
+						+ "you used. The FNA file contains the genomic DNA sequence in fastA format and you can download it for complete\n"
+						+ "prokaryotic genomes from the NCBI ftp server at ftp://ftp.ncbi.nih.gov/genomes/Bacteria/");
+			}
+		});
+		label_4.setToolTipText("Click me!");
+		label_4.setForeground(Color.BLUE);
+		label_4.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		label_4.setBounds(10, 296, 30, 14);
+		panel_3.add(label_4);
 	}
 
 	private void maxNumInsrtions(){
@@ -1653,28 +1624,28 @@ public class MainFrame extends JFrame {
 			JOptionPane.showMessageDialog(MainFrame.this, "Please provide the maximum number of insertions", "Warning", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
-		
+
 		final int len = Integer.parseInt(winLenTxt.getText());
 		final int step = Integer.parseInt(winStepTxt.getText());
 		final int maxNumIns = Integer.parseInt(maxNumInsTxt.getText());
 		final boolean ifOnlyInsertions = countOnlyUniqueRadio.isSelected();
-		
+
 		plotWaitLbl.setVisible(true);
-		
+
 		(new Thread(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				try {		
 					String result = PrepareFiles.maxNumberOfInsertions((String) plotLibraryCombo.getSelectedItem(), len, step, maxNumIns, ifOnlyInsertions, MainFrame.this.projectInfo);
-					
+
 					if (result.compareTo(Messages.failMsg) != 0){
 						JOptionPane.showMessageDialog(null, "Success");
 					}else{
 						logger.error("There was some error while processing Max Number of Insertions");
 						JOptionPane.showMessageDialog(MainFrame.this, "There was some error while processing Max Number of Insertions", "Error", JOptionPane.ERROR_MESSAGE);
 					}
-					
+
 					plotWaitLbl.setVisible(false);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -1682,14 +1653,14 @@ public class MainFrame extends JFrame {
 			}
 		})).start();
 	}
-	
+
 	private void installBWA() {
 		Process p = null;
 		BufferedReader br = null;
 		try {
 			p = Runtime.getRuntime().exec("uname -a");
 			br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			
+
 			String line = "";
 			while((line = br.readLine()) != null){
 				if (line.toLowerCase().contains("ubuntu")){
@@ -1703,7 +1674,7 @@ public class MainFrame extends JFrame {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void installBWAUbuntu(){
 		URL programSource = MainFrame.class.getResource("/resources/bwa-0.7.5a.tar.bz2");
 		File programDest = new File("bwa-0.7.5a.tar.bz2");
@@ -1713,12 +1684,12 @@ public class MainFrame extends JFrame {
 
 		JOptionPane.showMessageDialog(null, "In order to install the library, you should enter your machine's root password.\n"
 				+ "The password is only used to install the library.", "Root Password", JOptionPane.WARNING_MESSAGE);
-		
+
 		try {
 			FileUtils.copyURLToFile(programSource, programDest);
 			FileUtils.copyURLToFile(shellSource, shellDest);
 			String cmd[] = {"gnome-terminal", "-x", "bash", "-c", 
-							  "echo 'Please Enter Your Root Password';"
+					"echo 'Please Enter Your Root Password';"
 							+ "su -m root -c 'sh shell.sh';"
 							+ "echo;"
 							+ "echo;"
@@ -1739,7 +1710,7 @@ public class MainFrame extends JFrame {
 			programDest.delete();
 		}
 	}
-	
+
 	private void installBWARedHat(){
 		URL programSource = MainFrame.class.getResource("/resources/bwa-0.7.5a.tar.bz2");
 		File programDest = new File("bwa-0.7.5a.tar.bz2");
@@ -1749,12 +1720,12 @@ public class MainFrame extends JFrame {
 
 		JOptionPane.showMessageDialog(null, "In order to install the library, you should enter your machine's root password.\n"
 				+ "The password is only used to install the library.", "Root Password", JOptionPane.WARNING_MESSAGE);
-		
+
 		try {
 			FileUtils.copyURLToFile(programSource, programDest);
 			FileUtils.copyURLToFile(shellSource, shellDest);
 			String cmd[] = {"gnome-terminal", "-x", "bash", "-c", 
-							  "echo 'Please Enter Your Root Password';"
+					"echo 'Please Enter Your Root Password';"
 							+ "su -m root -c 'sh shell.sh';"
 							+ "echo;"
 							+ "echo;"
@@ -1775,7 +1746,7 @@ public class MainFrame extends JFrame {
 			programDest.delete();
 		}
 	}
-	
+
 	private void renameLibrary(String newName, String selectedLib) {
 		if(newName != null && newName.compareTo("") != 0){
 
@@ -1858,32 +1829,32 @@ public class MainFrame extends JFrame {
 			initiateLibraryComboBox();
 		}
 	}
-	
+
 	private void createSamFile() throws IOException, InterruptedException{
-		
+
 		String fnafile = fnaFilePath.getText();
 		String fastqFile = fastqFilePath.getText();
 		String samName = newSamNameTxt.getText();
 		String samPath = samFilePath.getText();
-		
+
 		if (fnafile == null || fnafile.compareTo("") == 0){
 			JOptionPane.showMessageDialog(MainFrame.this, "Please select a FNA file.", "FNA File is needed", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
+
 		if (fastqFile == null || fastqFile.compareTo("") == 0){
 			JOptionPane.showMessageDialog(MainFrame.this, "Please select a FASTQ file.", "FASTQ File is needed", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
+
 		if (samName == null || samName.compareTo("") == 0){
 			JOptionPane.showMessageDialog(MainFrame.this, "Please enter the new SAM file's name.", "SAM file name is required", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
+
 		if (samPath == null || samPath.compareTo("") == 0){
 			int result = JOptionPane.showConfirmDialog(MainFrame.this, "Do you want the new SAM file to be created in your project folder?", "No location selected for SAM file", JOptionPane.YES_NO_OPTION);
-			
+
 			if(result == JOptionPane.YES_OPTION){
 				samPath = projectInfo.getPath();
 			}else{
@@ -1892,26 +1863,26 @@ public class MainFrame extends JFrame {
 		}else{
 			samPath = samPath + "/";
 		}
-		
+
 		String name1 = PrepareFiles.prepareOutputFilePath(fastqFile, projectInfo.getPath(), "");
 		String saiName = PrepareFiles.prepareOutputFilePath(fastqFile, projectInfo.getPath(), ".sai");
 		samName = samPath + samName + ".sam";
-		
+
 		File shellScript = new File(projectInfo.getPath() + "temp.sh");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(shellScript));
-		
+
 		String cmdTemp = String.format("bwa index -p \"%s\" \"%s\"\n", name1, fnafile);
 		bw.write(cmdTemp);
-		
+
 		cmdTemp = String.format("bwa aln -k 2 -n 0.001 -l 18 \"%s\" \"%s\" > \"%s\"\n", name1, fastqFile, saiName);
 		bw.write(cmdTemp);
-		
+
 		cmdTemp = String.format("bwa samse -f \"%s\" \"%s\" \"%s\" \"%s\"\n", samName, name1, saiName, fastqFile);
 		bw.write(cmdTemp);
 		bw.close();
-		
+
 		String cmd[] = {"gnome-terminal", "-x", "bash", "-c", 
-						  "echo 'Please wait till the SAM file gets created';"
+				"echo 'Please wait till the SAM file gets created';"
 						+ "sh \"" + shellScript.getAbsolutePath() + "\";"
 						+ "echo 'Press Any Key To Continue...';"
 						+ "read"};
@@ -1922,24 +1893,24 @@ public class MainFrame extends JFrame {
 		File dir = new File(location);
 		Process child = Runtime.getRuntime().exec(cmd, null, dir);
 		child.waitFor();
-		
+
 		shellScript.delete();
-		
+
 		File toDelete = new File(projectInfo.getPath() + PrepareFiles.prepareFileName(fastqFile, ".amb"));
 		toDelete.delete();
-		
+
 		toDelete = new File(projectInfo.getPath() + PrepareFiles.prepareFileName(fastqFile, ".ann"));
 		toDelete.delete();
-		
+
 		toDelete = new File(projectInfo.getPath() + PrepareFiles.prepareFileName(fastqFile, ".bwt"));
 		toDelete.delete();
-		
+
 		toDelete = new File(projectInfo.getPath() + PrepareFiles.prepareFileName(fastqFile, ".pac"));
 		toDelete.delete();
-		
+
 		toDelete = new File(projectInfo.getPath() + PrepareFiles.prepareFileName(fastqFile, ".sa"));
 		toDelete.delete();
-		
+
 		toDelete = new File(projectInfo.getPath() + PrepareFiles.prepareFileName(fastqFile, ".sai"));
 		toDelete.delete();
 	}
@@ -1948,22 +1919,22 @@ public class MainFrame extends JFrame {
 		String output = "" + num;
 		int counter = 0;
 		for (int index = output.length() - 1; index > 0; index--){
-		    counter++;
-		    if (counter % 3 == 0){
-		        counter = 0;
-		        output = output.substring(0,index) + "," + output.substring(index);
-		    }
+			counter++;
+			if (counter % 3 == 0){
+				counter = 0;
+				output = output.substring(0,index) + "," + output.substring(index);
+			}
 		}
-		
+
 		sequenceLengthLbl.setText(output);
 	}
-	
+
 	private void remoteInstallHelp() {
 		RemoteInstall remote = new RemoteInstall();
 		remote.setParentFrame(this);
 		remote.setVisible(true);
 	}
-	
+
 	private void clearTheForm(){
 		/*File tempFile = null;
 		if (samFilePathTxt.getText() != null && samFilePathTxt.getText().compareTo("") != 0){
@@ -1991,12 +1962,12 @@ public class MainFrame extends JFrame {
 				tempFile.delete();
 			}
 		}
-*/
+		 */
 		setToDefaultState();
 	}
-	
+
 	private void plotDataMethod(){
-		
+
 		if(winLenTxt.getText() == null || winLenTxt.getText().compareTo("") == 0){
 			JOptionPane.showMessageDialog(MainFrame.this, "Please provide the window length", "Warning", JOptionPane.WARNING_MESSAGE);
 		}
@@ -2007,7 +1978,7 @@ public class MainFrame extends JFrame {
 		final int len = Integer.parseInt(winLenTxt.getText());
 		final int step = Integer.parseInt(winStepTxt.getText());
 		plotWaitLbl.setVisible(true);
-		
+
 		final String title;
 		if (countOnlyUniqueRadio.isSelected()){
 			String temp = String.format("Library Name: %s (Counting unique insertions) | Window Length: %d | Window Steps: %d", (String) plotLibraryCombo.getSelectedItem(),
@@ -2018,7 +1989,7 @@ public class MainFrame extends JFrame {
 					len, step);
 			title = temp;
 		}
-		
+
 		(new Thread(new Runnable() {
 
 			@Override
@@ -2037,7 +2008,100 @@ public class MainFrame extends JFrame {
 				}
 			}
 		})).start();
-		
+
+	}
+
+	private void applySequenceNumber(){
+		String seqLen = sequenceLenTxt.getText();
+		if (seqLen == null || seqLen.compareTo("") == 0){
+			JOptionPane.showMessageDialog(MainFrame.this, "Please Enter Your Sequence Number First!");
+			return;
+		}
+
+		int seqLenInt;
+		try{
+			seqLenInt = Integer.parseInt(seqLen);
+		}catch(NumberFormatException e){
+			JOptionPane.showMessageDialog(MainFrame.this, "Please Enter Your Sequence Number Correctly!");
+			return;
+		}
+
+		if (MainFrame.this.hasSeqNum){
+			BufferedReader br = null;
+			BufferedWriter bw = null;
+			File temp = null;
+			try{
+				temp = new File("temp");
+				br = new BufferedReader(new FileReader(projectInfo.getFile()));
+				bw = new BufferedWriter(new FileWriter(temp));
+
+				String line = br.readLine();
+
+				while(line != null){
+
+					if(!line.contains(Messages.projectSequenceLen)){
+						bw.write(line + "\n");
+					}else{
+						bw.write(Messages.projectSequenceLen + seqLenInt + "\n");
+						projectInfo.setSequenceLen(seqLenInt);
+					}
+
+					line = br.readLine();
+				}
+
+				br.close();
+				bw.close();
+
+				projectInfo.getFile().delete();
+				temp.renameTo(projectInfo.getFile());
+
+			}catch(IOException e){
+				logger.error(e.getMessage());
+				return;
+			}finally{
+				try{
+					if (bw != null){
+						bw.close();
+					}
+					if (br != null){
+						br.close();
+					}
+				}catch(IOException e){
+					logger.error(e.getMessage());
+					return;
+				}
+			}
+		}else{
+			BufferedWriter bw = null;
+			try{
+				bw = new BufferedWriter(new FileWriter(projectInfo.getFile(), true));
+				bw.append(Messages.projectSequenceLen + seqLen + "\n");
+				projectInfo.setSequenceLen(seqLenInt);
+			}catch(IOException e){
+				logger.error(e.getMessage());
+				return;
+			}finally{
+				try{
+					if(bw != null){
+						bw.close();
+					}
+				}catch(IOException e){
+					logger.error(e.getMessage());
+					return;
+				}
+			}
+		}
+
+		hasSeqNum = true;
+		JOptionPane.showMessageDialog(MainFrame.this, "New Sequence Length Has Been Applied!");
+		setSequenceLengthText(Integer.parseInt(seqLen));
+
+		if (hasGeneFile){
+			for (int i = 1; i < tabbedPane.getTabCount(); i++){
+				tabbedPane.setEnabledAt(i, true);
+			}
+			infoLbl.setVisible(false);
+		}
 	}
 	
 	private void prepareGeneFile(){
@@ -2058,14 +2122,14 @@ public class MainFrame extends JFrame {
 
 				try {
 					PrepareFiles.processSelectedScaffold(imgFileTxt.getText(), (String) scaffoldCombo.getSelectedItem(), projectInfo);
-					
+
 					if (projectInfo.getGeneFile() != null){
 						JOptionPane.showMessageDialog(MainFrame.this, "Genes file was created successfully.");
 						geneFileNameLbl.setText(scaffoldCombo.getSelectedItem() + ".genes");
 					}else{
 						geneFileNameLbl.setText("ERROR");
 						hasGeneFile = false;
-						
+
 						for (int i = 1; i < tabbedPane.getTabCount(); i++){
 							tabbedPane.setEnabledAt(i, false);
 						}
@@ -2079,6 +2143,12 @@ public class MainFrame extends JFrame {
 		}else{
 			String pttPath = pttFileTxt.getText();
 			if (pttPath != null && pttPath.compareTo("") != 0){
+				
+				if (projectInfo.getSequenceLen() <= 0){
+					JOptionPane.showMessageDialog(this, "Please apply the sequence length first and try again");
+					return;
+				}
+				
 				geneFileNameLbl.setText("Preparing...");
 
 				(new Thread(new Runnable(){
@@ -2092,8 +2162,8 @@ public class MainFrame extends JFrame {
 							createGeneFile();
 
 							if (hasGeneFile){
-								geneFileNameLbl.setText(PrepareFiles.prepareFileName(projectInfo.getGeneFile().getAbsolutePath(), ".genes"));
-								JOptionPane.showMessageDialog(MainFrame.this, "Genes File Created Successfully");
+								geneFileNameLbl.setText(PrepareFiles.prepareFileName(projectInfo.getGeneFile().getAbsolutePath(), ""));
+								JOptionPane.showMessageDialog(MainFrame.this, "Genes File Created Successfully!");
 								PrepareFiles.deleteAllOtherGenesFiles(MainFrame.this.projectInfo.getGeneFile().getName(), MainFrame.this.projectInfo);
 
 								if (hasSeqNum){
@@ -2111,7 +2181,7 @@ public class MainFrame extends JFrame {
 							}else{
 								JOptionPane.showMessageDialog(MainFrame.this, "There was an error in creating your Genes File.");
 								geneFileNameLbl.setText("ERROR");
-								
+
 								for (int i = 1; i < tabbedPane.getTabCount(); i++){
 									tabbedPane.setEnabledAt(i, false);
 								}
@@ -2131,8 +2201,8 @@ public class MainFrame extends JFrame {
 	@SuppressWarnings("resource")
 	private void replaceXlsFile(){
 
-		File xlsFile = new File(projectInfo.getPath() + dataTableCombo.getSelectedItem() + ".xls");
-		File tablefile = new File(projectInfo.getPath() + dataTableCombo.getSelectedItem() + ".table");
+		File xlsFile = new File(projectInfo.getPath() + dataTableCombo.getSelectedItem() + " - temp.table.xls"); //REPLACE
+		File tablefile = new File(projectInfo.getPath() + dataTableCombo.getSelectedItem() + ".table.xls"); //REPLACE
 
 		if(!xlsFile.exists()){
 			logger.fatal("The XLS file could not be found!!!");
@@ -2146,9 +2216,6 @@ public class MainFrame extends JFrame {
 					source.close();
 					destination.close();
 
-					
-					
-					
 					if(!xlsFile.delete()){
 						JOptionPane.showMessageDialog(MainFrame.this, "Please close the spreadsheet application.", "Could not write into the file", JOptionPane.ERROR_MESSAGE);
 						return;
@@ -2170,18 +2237,28 @@ public class MainFrame extends JFrame {
 		BufferedWriter bw = null;
 		BufferedReader br = null;
 
-		xlsFile = new File("temp.table");
+		xlsFile = new File("temp.table.xls"); //REPLACE
 
 		try{
 			bw = new BufferedWriter(new FileWriter(xlsFile));
 			br = new BufferedReader(new FileReader(tablefile));
 
+			String tempLine = br.readLine();
+			if (tempLine.startsWith("start_coord")){
+				bw.write("\t\t\t\t\t\t\t\n");
+				bw.write("\t\t\t\t\t\t\t\n");
+				bw.write("\t\t\t\t\t\t\t\n");
+				bw.write("\t\t\t\t\t\t\t\n");
+			}
+
 			//bw.write("\n");
 			//bw.write("\n");
 			//bw.write("\n");
 			//bw.write("\n");
 
-			String tempLine = br.readLine();
+			br.close();
+			br = new BufferedReader(new FileReader(tablefile));
+			tempLine = br.readLine();
 			while(tempLine != null){
 				bw.write(tempLine + "\n");
 				tempLine = br.readLine();
@@ -2229,14 +2306,13 @@ public class MainFrame extends JFrame {
 
 		String selectedItem = (String)dataTableCombo.getSelectedItem();
 
-		String warningMsg = String.format("Please after editing the table save it as tab delimited file and "
-				+ "replace the %s.xls file\nin the project path. After saving the file you MUST press the \"Replace\" button to\n"
-				+ "let the application know about the changes.", selectedItem);
+		String warningMsg = String.format("You can make changes to the table such as manually add or remove genes (lines), change gene coordinates, or remove\n"
+				+ "previously added data columns, as long as the overall format is maintained. If you make changes to the table save it ...");
 
 		JOptionPane.showMessageDialog(MainFrame.this, warningMsg, "Warning", JOptionPane.WARNING_MESSAGE);
 
-		File selectedFile = new File(projectInfo.getPath() + selectedItem + ".table");
-		File xlsFile = new File(projectInfo.getPath() + selectedItem + ".xls");
+		File selectedFile = new File(projectInfo.getPath() + selectedItem + ".table.xls"); //REPLACE
+		File xlsFile = new File(projectInfo.getPath() + selectedItem + " - temp.table.xls"); //REPLACE
 
 		FileChannel destination = new FileOutputStream(xlsFile).getChannel();
 		FileChannel source = new FileInputStream(selectedFile).getChannel();
@@ -2278,12 +2354,14 @@ public class MainFrame extends JFrame {
 			for (Component c : ((JPanel)tabbedPane.getSelectedComponent()).getComponents()){
 				c.setEnabled(false);
 			}
-			
+
 			remoteHelpBtn.setEnabled(true);
 
 			JOptionPane.showMessageDialog(null, "Full functionality of this tab is only available when you are using Linux!!!\n"
-					+ "Now, you can only use the \"Create SAM file manually\" button to guide you install the BWA and do all other things\n"
-					+ "via SSH and SFTP!");
+					+ "You can still use the 'Create SAM file manually' button to guide you through installing and running BWA on a remote Linux server.\n"
+					+ "\nYou will need:\n"
+					+ "  (i) an user account on a remote Linux server\n"
+					+ "  (ii) SSH and SFTP client installed on your computer");
 
 		}else{
 			bwaInstallBtn.setEnabled(false);
@@ -2352,7 +2430,7 @@ public class MainFrame extends JFrame {
 
 			@Override
 			public boolean accept(File dir, String name) {
-				return (name.endsWith(".table") || name.endsWith(".Table"));
+				return (name.endsWith(".table.xls") || name.endsWith(".TABLE.XLS")); //REPLACE
 			}
 		});
 
@@ -2365,7 +2443,7 @@ public class MainFrame extends JFrame {
 
 			dataTableCombo.removeAllItems();
 			for (File t : tableFiles){
-				dataTableCombo.addItem(t.getName().substring(0, t.getName().length() - 6));
+				dataTableCombo.addItem(t.getName().substring(0, t.getName().length() - 10));
 			}
 		}else{
 			dataTableCombo.removeAllItems();
@@ -2417,7 +2495,7 @@ public class MainFrame extends JFrame {
 	private void initiateLibraryComboBox(){
 
 		BufferedReader br = null;
-		
+
 		plotWaitLbl.setVisible(false);
 
 		if(libraryComboBox != null){
@@ -2515,7 +2593,7 @@ public class MainFrame extends JFrame {
 			File projectDir = new File(projectInfo.getPath());
 			File[] matches = projectDir.listFiles(new FilenameFilter() {
 				public boolean accept(File arg0, String arg1) {
-					return (arg1.endsWith(".table"));
+					return (arg1.endsWith(".table.xls")); //REPLACE
 				}
 			});
 			dataTableCountLbl.setText(matches.length + "");
@@ -2583,11 +2661,11 @@ public class MainFrame extends JFrame {
 			String result = PrepareFiles.sortTheLocationsFile(MainFrame.this.samFilePathTxt.getText(), projectInfo.getPath());
 			if(result.compareTo(Messages.successMsg) == 0){
 				String tailLine = MyFileUtil.tail(new File(PrepareFiles.prepareOutputFilePath(MainFrame.this.samFilePathTxt.getText(), projectInfo.getPath(), ".inspos")));
-				
+
 				if (Integer.parseInt(tailLine) > projectInfo.getSequenceLen()){
 					File inspos = new File(PrepareFiles.prepareOutputFilePath(MainFrame.this.samFilePathTxt.getText(), projectInfo.getPath(), ".inspos"));
 					File inspo = new File(PrepareFiles.prepareOutputFilePath(MainFrame.this.samFilePathTxt.getText(), projectInfo.getPath(), ".inspo"));
-					
+
 					if(inspo.delete()){
 						if(inspos.delete()){
 							JOptionPane.showMessageDialog(MainFrame.this, ""
@@ -2602,15 +2680,15 @@ public class MainFrame extends JFrame {
 									+ "- Some of the input files are not formatted properly. Verify that all input files, including the\n\n"
 									+ "DNA sequence used for BWA, have the correct format."
 									+ "This error can also occur if you did not push 'apply' to enter the sequence length prior to continuing", "ERROR", JOptionPane.ERROR_MESSAGE);
-							
+
 							clearTheForm();
 							return;
 						}
 					}
-					
+
 					return;
 				}
-				
+
 				MainFrame.this.sortInsLbl.setForeground(Color.black);
 				MainFrame.this.countUniLbl.setForeground(Color.BLUE);
 
@@ -2632,7 +2710,7 @@ public class MainFrame extends JFrame {
 		public void run() {
 			String result = PrepareFiles.countUniqueLocations(MainFrame.this.samFilePathTxt.getText(), projectInfo.getPath());
 			if(result.compareTo(Messages.successMsg) == 0){
-				
+
 				MainFrame.this.sortUniLbl.setForeground(Color.BLUE);
 				MainFrame.this.countUniLbl.setForeground(Color.black);
 
@@ -2666,16 +2744,16 @@ public class MainFrame extends JFrame {
 					bw.write(PrepareFiles.prepareFileName(samFilePathTxt.getText(), ".inspos") + "\n");
 					bw.write(PrepareFiles.prepareFileName(samFilePathTxt.getText(), ".inspou") + "\n");
 					bw.write(PrepareFiles.prepareFileName(samFilePathTxt.getText(), ".inspous") + "\n");
-					
+
 					bw.close();
 
 					doneLbl4.setVisible(true);
 					loadingLbl.setVisible(false);
-					
+
 					String libraryName = JOptionPane.showInputDialog(MainFrame.this, "Enter the library's name:", 
 							PrepareFiles.prepareFileName(samFilePathTxt.getText(), ""));
 					renameLibrary(libraryName, PrepareFiles.prepareFileName(samFilePathTxt.getText(), ""));
-					
+
 					JOptionPane.showMessageDialog(MainFrame.this, "Library added to the project.");
 					libraryCountLbl.setText((Integer.parseInt(libraryCountLbl.getText()) + 1) + "");
 

@@ -95,13 +95,13 @@ public class PrepareFiles {
 					end = starts.get(i + count) + winLen;
 				}
 				
-				boundaries.add(start + "..." + end);
+				boundaries.add(start + ".." + end);
 				break;
 			}
 			i = i + count;
 		}
 
-		JOptionPane.showMessageDialog(null, "Windows are found, please select a place to save the output file.");
+		JOptionPane.showMessageDialog(null, "Windows are found. Choose a new file name to store the result.");
 		
 		Path currentRelativePath = Paths.get("");
 		String location = currentRelativePath.toAbsolutePath()
@@ -313,7 +313,10 @@ public class PrepareFiles {
 	public static String createGeneFile(String pttFilePath, String rntFilePath, String projectPath, ProjectInfo info) {
 
 		String geneFileName = prepareFileName(pttFilePath, ".genes");
-
+		if (geneFileName.contains(".ptt")){
+			geneFileName = geneFileName.substring(0, geneFileName.length() - 10 ) + ".genes";
+		}
+		
 		File genesFile = new File(projectPath + geneFileName);
 		File pttFile = new File(pttFilePath);
 
@@ -326,15 +329,16 @@ public class PrepareFiles {
 			bw = new BufferedWriter(new FileWriter(genesFile));
 			br = new BufferedReader(new FileReader(pttFile));
 			writeToGenesFile(bw, br, true);
-
+			br.close();
+			
 			if(rntFilePath != null && rntFilePath.compareTo("") != 0){
 				File rntFile = new File(rntFilePath);
 				br = new BufferedReader(new FileReader(rntFile));
 				writeToGenesFile(bw, br, false);
+				br.close();
 			}
 			
 			bw.close();
-			br.close();
 			
 			//First Sort it
 			File sorted = new File("sorted.genes");
@@ -357,6 +361,9 @@ public class PrepareFiles {
 				if(!sorted.renameTo(genesFile)){
 					logger.fatal("Not renamed!!!");
 				}
+			}else{
+				JOptionPane.showMessageDialog(null, "The old genes file is in use, please close the file and try again!");
+				return Messages.failMsg;
 			}
 			
 			//Then Write the Header to the File
@@ -388,15 +395,7 @@ public class PrepareFiles {
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 			return Messages.failMsg;
-		} finally {
-			try {
-				bw.close();
-				br.close();
-			} catch (IOException e) {
-				logger.error(e.getMessage());
-				return Messages.failMsg;
-			}
-		}
+		} 
 
 		return genesFile.getAbsolutePath();
 	}

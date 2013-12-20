@@ -12,10 +12,13 @@ import java.net.URISyntaxException;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+
+import java.awt.Font;
 
 public class RemoteInstall extends JFrame {
 
@@ -236,8 +239,8 @@ public class RemoteInstall extends JFrame {
 		txtBwaAlnk.setBounds(306, 161, 313, 20);
 		panel_1.add(txtBwaAlnk);
 		
-		JLabel lbltheParametersk = new JLabel("* The parameters -k -n and -l should not be change.");
-		lbltheParametersk.setBounds(20, 189, 471, 14);
+		JLabel lbltheParametersk = new JLabel("* You can modify the parameters ... if you understand their meaning adn you believe that other values may be more appropriate.");
+		lbltheParametersk.setBounds(20, 189, 757, 14);
 		panel_1.add(lbltheParametersk);
 		
 		JLabel lblFinalStep = new JLabel("5. Final step to create a SAM file is to run the next command.");
@@ -262,6 +265,21 @@ public class RemoteInstall extends JFrame {
 		JLabel lblYouCan_2 = new JLabel("7. Use the created SAM file to add new libraries to the project in the \"Manage Libraries\" tab.");
 		lblYouCan_2.setBounds(10, 292, 767, 14);
 		panel_1.add(lblYouCan_2);
+		
+		JLabel label_8 = new JLabel("(?)");
+		label_8.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				JOptionPane.showMessageDialog(RemoteInstall.this, "The FASTQ file contains your sequence reads and you should have received it from Illumina or the sequencing facility\n"
+						+ "you used. The FNA file contains the genomic DNA sequence in fastA format and you can download it for complete\n"
+						+ "prokaryotic genomes from the NCBI ftp server at ftp://ftp.ncbi.nih.gov/genomes/Bacteria/");
+			}
+		});
+		label_8.setToolTipText("Click me!");
+		label_8.setForeground(Color.BLUE);
+		label_8.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		label_8.setBounds(561, 31, 88, 25);
+		panel_1.add(label_8);
 	}
 	
 	private void setHandCursor(Component a){

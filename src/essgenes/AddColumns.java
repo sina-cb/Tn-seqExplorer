@@ -9,9 +9,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 import javax.swing.table.DefaultTableModel;
 
 import org.apache.log4j.Logger;
+
+import GUI.ProgressBarUpdater;
 
 public class AddColumns {
 
@@ -71,7 +74,7 @@ public class AddColumns {
 		}
 		
 		br.close();
-		File tableFile = new File(info.getPath() + tableName + ".table");
+		File tableFile = new File(info.getPath() + tableName + ".table.xls"); //REPLACE
 		br = new BufferedReader(new FileReader(tableFile));
 		
 		File newTableFile = new File(info.getPath() + tableName + ".new");
@@ -148,7 +151,7 @@ public class AddColumns {
 		return Messages.failMsg;
 	}
 	
-	public static String add(String libName, String tableName, int windowLen, int step, String adjustStartString, String adjustEndString, int seqLen, boolean ifUniqueInsertions, ProjectInfo info) throws IOException {
+	public static String add(String libName, String tableName, int windowLen, int step, String adjustStartString, String adjustEndString, int seqLen, boolean ifUniqueInsertions, JProgressBar progressBar, ProjectInfo info) throws IOException {
 	
 		int adjustStart;
 		double adjustStartPercent;
@@ -184,12 +187,18 @@ public class AddColumns {
 			numberOfReads.add(Integer.parseInt(line));
 			line = br.readLine();
 		}
+		br.close();
+		
+		int size = seqLen;
+		ProgressBarUpdater pbu = new ProgressBarUpdater(progressBar, size);
+		Thread thread = new Thread(pbu);
+		thread.start();
 		
 		ArrayList<Window> windows = new ArrayList<>();
-		for (int i = 1; i <= seqLen; i += step){
-			
+		for (int i = 1; i <= seqLen; i += step){	
 			Window temp = new Window();
 			temp.start = i;
+			pbu.setCurrent(i);
 			
 			int LL = i + windowLen - 1;
 			int N = 0;
@@ -222,23 +231,24 @@ public class AddColumns {
 					}
 				}
 			}
+			
 			temp.N = N;
 			windows.add(temp);
 		}
+		pbu.setCurrent(-1);
 		
-		br.close();
-		File tableFile = new File(info.getPath() + tableName + ".table");
+		File tableFile = new File(info.getPath() + tableName + ".table.xls"); //REPLACE
 		br = new BufferedReader(new FileReader(tableFile));
-		
+
 		File newTableFile = new File(info.getPath() + tableName + ".new");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(newTableFile));
 		
 		//Writing File Header at First
 		line = br.readLine();
 		if (ifUniqueInsertions){
-			bw.write(line + "\t" + libName + "(Counting Unique Insertions)\n");
+			bw.write(line + "\tEssentiality indices:" + libName + "(Counting Unique Insertions)\n");
 		}else{
-			bw.write(line + "\t" + libName + "(Counting All Reads)\n");
+			bw.write(line + "\tEssentiality indices:" + libName + "(Counting All Reads)\n");
 		}
 		
 		line = br.readLine();
@@ -298,14 +308,14 @@ public class AddColumns {
 						}
 					}else{
 						int LL = windows.size() + geneLen;
-						if(windows.get(LL).N > N){
+						if(LL < windows.size() && windows.get(LL).N > N){
 							N = windows.get(LL).N;
 						}
 					}
 				}
 			}else{				//Gene is smaller than the window
 				if(LJ >= windows.size()){
-					JOptionPane.showMessageDialog(null, "error");
+					JOptionPane.showMessageDialog(null, "Please check all the libraries and the sequence length and try again!");
 				}
 				N = windows.get(LJ).N;
 				for (geneLen = LI; geneLen <= LJ; ++geneLen){
@@ -442,7 +452,7 @@ public class AddColumns {
 
 	
 	public static DefaultTableModel getHeaderData(String tableName, ProjectInfo info) throws IOException {
-		File tableFile = new File(info.getPath() + tableName + ".table");
+		File tableFile = new File(info.getPath() + tableName + ".table.xls"); //REPLACE
 		BufferedReader br = new BufferedReader(new FileReader(tableFile));
 		
 		ArrayList<ArrayList<String>> data = new ArrayList<>();
@@ -526,7 +536,7 @@ public class AddColumns {
 
 	public static String compareColumns(String tableName, int firstColumn, int secondColumn, int maxIns, ProjectInfo info) throws IOException {
 
-		File tableFile = new File(info.getPath() + tableName + ".table");
+		File tableFile = new File(info.getPath() + tableName + ".table.xls"); //REPLACE
 		BufferedReader br = new BufferedReader(new FileReader(tableFile));
 
 		File newTableFile = new File(info.getPath() + tableName + ".new");
@@ -546,7 +556,7 @@ public class AddColumns {
 		bw.write(line + "\t" + "Compare" + "\n");
 
 		line = br.readLine();
-		bw.write(line + "\t" + firstColumn + " - " + secondColumn + "\n");
+		bw.write(line + "\t" + firstColumn + " _ " + secondColumn + "\n");
 
 		//Reading Main Data and Process it
 		line = br.readLine();

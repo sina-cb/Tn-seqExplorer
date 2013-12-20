@@ -81,7 +81,7 @@ public class WorkspaceChooser extends JFrame {
 		contentPane.add(lblYouCanHave);
 
 		JButton browseBtn = new JButton("Browse");
-		browseBtn.setToolTipText("Select a folder which you have an existing project in it");
+		browseBtn.setToolTipText("Select a folder for the new project");
 		browseBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Path currentRelativePath = Paths.get("");
@@ -164,14 +164,14 @@ public class WorkspaceChooser extends JFrame {
 				if(OSName.contains("Windows") || OSName.contains("windows")){
 					fileChooser = new FolderChooser();
 					fileChooser.setCurrentDirectory(new File(location));
-					fileChooser.setDialogTitle("Select a folder to store the new project in it");
+					fileChooser.setDialogTitle("Select a location for the new project.");
 					result = fileChooser.showSaveDialog(WorkspaceChooser.this);					
 				}else{
-					JOptionPane.showMessageDialog(WorkspaceChooser.this, "Select a folder to store the new project in it");
+					JOptionPane.showMessageDialog(WorkspaceChooser.this, "Select a location for the new project.");
 					fileChooser = new JFileChooser();
 					fileChooser.setCurrentDirectory(new File(location));
 					fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-					fileChooser.setDialogTitle("Select a folder to store the new project in it");
+					fileChooser.setDialogTitle("Select a location for the new project.");
 					result = fileChooser.showSaveDialog(WorkspaceChooser.this);
 				}
 				

@@ -1,24 +1,19 @@
 package GUI;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
 
 import org.jdesktop.swingx.JXLabel;
 
-import java.awt.Toolkit;
-
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
-import javax.swing.JButton;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
+@SuppressWarnings("serial")
 public class LegalDisclaimer extends JFrame {
 
 	private JPanel contentPane;
@@ -62,7 +57,7 @@ public class LegalDisclaimer extends JFrame {
 				LegalDisclaimer.this.dispose();
 			}
 		});
-		btnNewButton.setBounds(604, 116, 89, 23);
+		btnNewButton.setBounds(617, 125, 89, 23);
 		contentPane.add(btnNewButton);
 		
 		JButton btnCancel = new JButton("Cancel");
@@ -71,7 +66,7 @@ public class LegalDisclaimer extends JFrame {
 				System.exit(0);
 			}
 		});
-		btnCancel.setBounds(505, 116, 89, 23);
+		btnCancel.setBounds(518, 125, 89, 23);
 		contentPane.add(btnCancel);
 	}
 }
