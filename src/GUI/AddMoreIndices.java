@@ -690,7 +690,8 @@ public class AddMoreIndices extends JFrame {
 					if (AddColumns.compareColumns(tableName, first, second, maxIns, info).compareTo(Messages.successMsg) == 0){
 						JOptionPane.showMessageDialog(AddMoreIndices.this, "Data added");
 					}else{
-						JOptionPane.showMessageDialog(AddMoreIndices.this, "There was some problem, data was not added!!!", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(AddMoreIndices.this, "The data could not be written to the table.\n"
+								+ "Check to see if they are not in use by other programs!", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 					
 					compareWaitLbl.setVisible(false);

@@ -50,6 +50,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.log4j.Logger;
+import org.jdesktop.swingx.JXLabel;
 import org.jfree.chart.ChartPanel;
 
 import essgenes.Messages;
@@ -172,14 +173,14 @@ public class MainFrame extends JFrame {
 		tabbedPane.addTab("Main", null, panelMain, null);
 		panelMain.setLayout(null);
 
-		JLabel lblSequenceLength = new JLabel("Sequence Length:");
+		JLabel lblSequenceLength = new JLabel("Sequence Length (bp):");
 		lblSequenceLength.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblSequenceLength.setBounds(12, 31, 173, 20);
 		panelMain.add(lblSequenceLength);
 
 		sequenceLenTxt = new JTextField();
 		sequenceLenTxt.setToolTipText("Enter sequence length to be used in this project");
-		sequenceLenTxt.setBounds(157, 32, 150, 22);
+		sequenceLenTxt.setBounds(193, 33, 150, 22);
 		panelMain.add(sequenceLenTxt);
 		sequenceLenTxt.setColumns(10);
 
@@ -191,7 +192,7 @@ public class MainFrame extends JFrame {
 				applySequenceNumber();
 			}
 		});
-		applySequenceBtn.setBounds(317, 30, 97, 25);
+		applySequenceBtn.setBounds(353, 31, 97, 25);
 		panelMain.add(applySequenceBtn);
 
 		JSeparator separator = new JSeparator();
@@ -727,13 +728,13 @@ public class MainFrame extends JFrame {
 		label_1.setBounds(120, 412, 88, 14);
 		panelMain.add(label_1);
 
-		JLabel lblSequqenceLength = new JLabel("Sequqence length:");
+		JLabel lblSequqenceLength = new JLabel("Sequqence length (bp):");
 		lblSequqenceLength.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblSequqenceLength.setBounds(378, 555, 163, 22);
+		lblSequqenceLength.setBounds(378, 555, 204, 22);
 		panelMain.add(lblSequqenceLength);
 
 		sequenceLengthLbl.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		sequenceLengthLbl.setBounds(529, 550, 178, 33);
+		sequenceLengthLbl.setBounds(575, 550, 178, 33);
 		panelMain.add(sequenceLengthLbl);
 
 		JPanel panelInitialize = new JPanel();
@@ -984,22 +985,6 @@ public class MainFrame extends JFrame {
 		doneLbl4.setBounds(21, 277, 23, 14);
 		panelInitialize.add(doneLbl4);
 
-		JLabel lblNewLabel_2 = new JLabel("You can add and manage transposon insertion mutant libraries here. You need the .sam file from the ");
-		lblNewLabel_2.setBounds(10, 11, 803, 14);
-		panelInitialize.add(lblNewLabel_2);
-
-		JLabel lblbwaHttpbiobwasourceforgenet = new JLabel("Barrows-Wheeler aligner. (bwa; http://bio-bwa.sourceforge.net/) to add a library to your project. If the ");
-		lblbwaHttpbiobwasourceforgenet.setBounds(10, 36, 803, 14);
-		panelInitialize.add(lblbwaHttpbiobwasourceforgenet);
-
-		JLabel lblBeAbleTo = new JLabel("Barrows-Wheeler Aligner is installed on this computer you may be able to run it from this application. To ");
-		lblBeAbleTo.setBounds(8, 61, 805, 14);
-		panelInitialize.add(lblBeAbleTo);
-
-		JLabel lblAndThenClick = new JLabel("add new library, provide the name for the library, navigate to the .sam file using the 'Browse' button, ");
-		lblAndThenClick.setBounds(10, 86, 801, 14);
-		panelInitialize.add(lblAndThenClick);
-
 		JSeparator separator_9 = new JSeparator();
 		separator_9.setBounds(0, 136, 821, 2);
 		panelInitialize.add(separator_9);
@@ -1071,10 +1056,6 @@ public class MainFrame extends JFrame {
 		label_3.setBounds(781, 484, 30, 14);
 		panelInitialize.add(label_3);
 
-		JLabel lblAndThenClick_1 = new JLabel("and then click 'Extract'.");
-		lblAndThenClick_1.setBounds(10, 111, 697, 14);
-		panelInitialize.add(lblAndThenClick_1);
-
 		maxNumInsTxt = new JTextField();
 		maxNumInsTxt.setToolTipText("Enter the window length");
 		maxNumInsTxt.setText("3");
@@ -1121,9 +1102,10 @@ public class MainFrame extends JFrame {
 		label_7.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				JOptionPane.showMessageDialog(MainFrame.this, "This will identify the DNA segments that do not contain any window with more than the given number of\n"
-						+ "insertions/reads. These are potential essential regions of the chromosome. Use the plot created on this page as a\n"
-						+ "guidance to select the most appropriate the maximum number of insertions per window.");
+				JOptionPane.showMessageDialog(MainFrame.this, "This will identify chromosomal segments with low transposon insertion density,\n"
+						+ "possibly indicating that these segments may be essential. Specifically, it will list\n"
+						+ "starts and ends of the regions comprised of overlapping windows with no more\n"
+						+ "than the specified number of insertions or reads.");
 			}
 		});
 		label_7.setToolTipText("Click me!");
@@ -1131,6 +1113,27 @@ public class MainFrame extends JFrame {
 		label_7.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		label_7.setBounds(781, 538, 30, 14);
 		panelInitialize.add(label_7);
+		
+		JXLabel samDescLbl = new JXLabel("New label");
+		samDescLbl.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		samDescLbl.setText("You can add and manage transposon insertion mutant libraries here. You need the .sam file from the Barrows-Wheeler aligner. (bwa, http://bio-bwa.sourceforge.net/) to add a library to your project. SAM stands for Sequence Alignment/Map format. It is a TAB-delimited text format file that contains the alignment of the sequence reads to the genome. If the Barrows-Wheeler Aligner is installed on this computer you may be able to run it from this application. To add new library, provide the name for the library, navigate to the .sam file using the 'Browse' button, and then click 'Extract'.");
+		samDescLbl.setBounds(12, 11, 799, 94);
+		panelInitialize.add(samDescLbl);
+		samDescLbl.setLineWrap(true);
+		
+		JLabel label_8 = new JLabel("(?)");
+		label_8.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JOptionPane.showMessageDialog(MainFrame.this, "This will process the SAM file to extract number number of sequence reads\n"
+						+ "corresponding to every possible transposon location in the genome." );
+			}
+		});
+		label_8.setToolTipText("Click me!");
+		label_8.setForeground(Color.BLUE);
+		label_8.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		label_8.setBounds(12, 111, 30, 14);
+		panelInitialize.add(label_8);
 
 		JPanel panel = new JPanel();
 		tabbedPane.addTab("Manage Data Tables", null, panel, null);

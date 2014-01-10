@@ -137,6 +137,8 @@ public class PlotData {
 		
 		BufferedWriter bw = new BufferedWriter(new FileWriter(xlsFile));
 		
+		bw.write(String.format("%s\t%s\n", "Number of insertions within a window", "Number of windows with the given number of insertions"));
+		
 		for(int i = 0; i < xAxis.size(); i++){
 			bw.write(String.format("%d\t%d\n", xAxis.get(i), yAxis.get(i)));
 		}
