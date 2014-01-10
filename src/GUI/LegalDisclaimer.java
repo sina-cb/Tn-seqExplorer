@@ -24,14 +24,14 @@ public class LegalDisclaimer extends JFrame {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LegalDisclaimer.class.getResource("/resources/legaldisclaimer.png")));
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 722, 279);
+		setBounds(100, 100, 722, 220);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		setLocationRelativeTo(null);
 		
-		lblNewLabel.setBounds(120, 26, 558, 153);
+		lblNewLabel.setBounds(120, 11, 558, 116);
 		contentPane.add(lblNewLabel);
 		
 		String text = String.format("By using this software, you agree to the following:");
@@ -57,7 +57,7 @@ public class LegalDisclaimer extends JFrame {
 				LegalDisclaimer.this.dispose();
 			}
 		});
-		btnNewButton.setBounds(619, 208, 89, 23);
+		btnNewButton.setBounds(617, 153, 89, 23);
 		contentPane.add(btnNewButton);
 		
 		JButton btnCancel = new JButton("Cancel");
@@ -66,7 +66,7 @@ public class LegalDisclaimer extends JFrame {
 				System.exit(0);
 			}
 		});
-		btnCancel.setBounds(520, 208, 89, 23);
+		btnCancel.setBounds(517, 153, 89, 23);
 		contentPane.add(btnCancel);
 	}
 }
