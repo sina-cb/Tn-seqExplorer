@@ -175,12 +175,12 @@ public class MainFrame extends JFrame {
 
 		JLabel lblSequenceLength = new JLabel("Sequence Length (bp):");
 		lblSequenceLength.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblSequenceLength.setBounds(12, 31, 173, 20);
+		lblSequenceLength.setBounds(12, 31, 212, 20);
 		panelMain.add(lblSequenceLength);
 
 		sequenceLenTxt = new JTextField();
 		sequenceLenTxt.setToolTipText("Enter sequence length to be used in this project");
-		sequenceLenTxt.setBounds(193, 33, 150, 22);
+		sequenceLenTxt.setBounds(231, 33, 150, 22);
 		panelMain.add(sequenceLenTxt);
 		sequenceLenTxt.setColumns(10);
 
@@ -192,7 +192,7 @@ public class MainFrame extends JFrame {
 				applySequenceNumber();
 			}
 		});
-		applySequenceBtn.setBounds(353, 31, 97, 25);
+		applySequenceBtn.setBounds(391, 31, 97, 25);
 		panelMain.add(applySequenceBtn);
 
 		JSeparator separator = new JSeparator();
@@ -1687,10 +1687,13 @@ public class MainFrame extends JFrame {
 
 		JOptionPane.showMessageDialog(null, "In order to install the library, you should enter your machine's root password.\n"
 				+ "The password is only used to install the library.", "Root Password", JOptionPane.WARNING_MESSAGE);
-
+		
 		try {
 			FileUtils.copyURLToFile(programSource, programDest);
 			FileUtils.copyURLToFile(shellSource, shellDest);
+			
+			Thread.sleep(500);
+			
 			String cmd[] = {"gnome-terminal", "-x", "bash", "-c", 
 					"echo 'Please Enter Your Root Password';"
 							+ "su -m root -c 'sh shell.sh';"
@@ -1727,6 +1730,9 @@ public class MainFrame extends JFrame {
 		try {
 			FileUtils.copyURLToFile(programSource, programDest);
 			FileUtils.copyURLToFile(shellSource, shellDest);
+			
+			Thread.sleep(500);
+			
 			String cmd[] = {"gnome-terminal", "-x", "bash", "-c", 
 					"echo 'Please Enter Your Root Password';"
 							+ "su -m root -c 'sh shell.sh';"
@@ -1884,6 +1890,8 @@ public class MainFrame extends JFrame {
 		bw.write(cmdTemp);
 		bw.close();
 
+		Thread.sleep(500);
+		
 		String cmd[] = {"gnome-terminal", "-x", "bash", "-c", 
 				"echo 'Please wait till the SAM file gets created';"
 						+ "sh \"" + shellScript.getAbsolutePath() + "\";"
