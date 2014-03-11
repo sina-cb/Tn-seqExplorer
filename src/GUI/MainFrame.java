@@ -62,6 +62,9 @@ import essgenes.ProjectInfo;
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
 
+	public static final String ProgTitle = "Tn-seq explorer";
+	public static final String ProgVersion = "v1.0"; 
+	
 	private JLabel sequenceLengthLbl = new JLabel("0");
 	private JTextField sequenceLenTxt;
 	private JLabel libraryCountLbl = new JLabel("0");
@@ -2559,7 +2562,7 @@ public class MainFrame extends JFrame {
 			String line = br.readLine();
 			projectInfo.setName(line.substring(Messages.projectName.length()));
 
-			setTitle("Tn-seq explorer v0.1");
+			setTitle(ProgTitle + " " + ProgVersion);
 
 			line = br.readLine();
 			//projectInfo.setPath(pathTemp);
