@@ -239,7 +239,7 @@ public class PlotData {
 	
 	}
 	
-	public static JFreeChart plotColumns(String tableName, int firstCol, int secondCol, boolean logPlot, String title,boolean randomize, ProjectInfo info) throws IOException{
+	public static JFreeChart plotColumns(String tableName, int firstCol, int secondCol, boolean logPlot, String title, boolean randomize, ProjectInfo info) throws IOException{
 		
 		File tableFile = new File(info.getPath() + tableName + ".table.xls"); //REPLACE
 		BufferedReader br = new BufferedReader(new FileReader(tableFile));
