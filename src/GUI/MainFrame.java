@@ -1387,18 +1387,6 @@ public class MainFrame extends JFrame {
 		});
 		mnMenu.add(mntmExit);
 
-		JMenu mnAbout = new JMenu("About");
-		menuBar.add(mnAbout);
-
-		JMenuItem mntmAboutUs = new JMenuItem("About US");
-		mntmAboutUs.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				AboutFrame about = new AboutFrame();
-				about.setVisible(true);
-			}
-		});
-		mnAbout.add(mntmAboutUs);
-
 		JPanel panel_3 = new JPanel();
 		tabbedPane.addTab("BWA", null, panel_3, null);
 		panel_3.setLayout(null);
