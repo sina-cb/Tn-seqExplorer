@@ -16,7 +16,6 @@ import GUI.LegalDisclaimer;
 public class Main {
 
 	public static void main(String[] args) {
-
 		try {
 			
 			String OSName = System.getProperty("os.name");

@@ -96,6 +96,8 @@ public class PlotData {
 			currentPosition += windowStep; 
 		}
 		
+		Double bimodalityCoefficient = StatisticsHelper.bimodalityCoefficient(insertions);
+		title = title + "\n" + "Bimodality coefficient = " + bimodalityCoefficient; 
 		
 		Vector<Integer> xAxis = new Vector<Integer>();
 		Vector<Integer> yAxis = new Vector<Integer>();
