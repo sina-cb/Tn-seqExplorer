@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -808,6 +809,7 @@ public class AddMoreIndices extends JFrame {
 				line = br.readLine();
 			}
 
+			br.close();
 		}catch(IOException e){
 			logger.error(e.getMessage());
 			return;
@@ -820,6 +822,24 @@ public class AddMoreIndices extends JFrame {
 			}
 		}
 
+		try{
+			File winInfo = new File(info.getPath() + addLibraryCombo.getSelectedItem() + ".data");
+			if (winInfo.exists()){
+				br = new BufferedReader(new FileReader(winInfo));
+				String line = br.readLine();
+				int tempLen = Integer.parseInt(line.substring(line.indexOf("=") + 2, line.length()));
+				line = br.readLine();
+				int tempStep = Integer.parseInt(line.substring(line.indexOf("=") + 2, line.length()));
+				br.close();
+				
+				addWinLenTxt.setText(tempLen + "");
+				addStepTxt.setText(tempStep + "");
+				
+			}
+		}catch (IOException e){
+			logger.fatal(e.getMessage());
+		}
+		
 		addSeqLenTxt.setText(info.getSequenceLen() + "");
 		initializeProgressBar();
 	}

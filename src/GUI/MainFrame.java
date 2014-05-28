@@ -6,6 +6,8 @@ import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
@@ -42,29 +44,34 @@ import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.math3.util.Pair;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXLabel;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ChartUtilities;
 
 import essgenes.Messages;
 import essgenes.MyFileUtil;
 import essgenes.PlotData;
 import essgenes.PrepareFiles;
 import essgenes.ProjectInfo;
+import essgenes.StatisticsHelper;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
 
 	public static final String ProgTitle = "Tn-seq explorer";
 	public static final String ProgVersion = "v1.0"; 
-	
+
+	private JButton btnOptimal = new JButton("Find optimal Window Length");
 	private JLabel sequenceLengthLbl = new JLabel("0");
 	private JTextField sequenceLenTxt;
 	private JLabel libraryCountLbl = new JLabel("0");
@@ -182,6 +189,12 @@ public class MainFrame extends JFrame {
 		panelMain.add(lblSequenceLength);
 
 		sequenceLenTxt = new JTextField();
+		sequenceLenTxt.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent arg0) {
+				highlightAllTheText((JTextField) arg0.getComponent());
+			}
+		});
 		sequenceLenTxt.setToolTipText("Enter sequence length to be used in this project");
 		sequenceLenTxt.setBounds(231, 33, 150, 22);
 		panelMain.add(sequenceLenTxt);
@@ -995,6 +1008,11 @@ public class MainFrame extends JFrame {
 		JLabel lblChooseALibrary = new JLabel("Choose a library:");
 		lblChooseALibrary.setBounds(12, 458, 286, 14);
 		panelInitialize.add(lblChooseALibrary);
+		plotLibraryCombo.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent arg0) {
+				reloadWinInfo();
+			}
+		});
 		plotLibraryCombo.setToolTipText("Select a libray to plot");
 
 		plotLibraryCombo.setBounds(12, 483, 402, 20);
@@ -1006,21 +1024,31 @@ public class MainFrame extends JFrame {
 				plotDataMethod();
 			}
 		});
-		plotBtn.setBounds(689, 480, 87, 23);
+		plotBtn.setBounds(691, 516, 87, 23);
 		panelInitialize.add(plotBtn);
 
 		winLenTxt = new JTextField();
+		winLenTxt.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent arg0) {
+				highlightAllTheText((JTextField) arg0.getComponent());
+			}
+		});
 		winLenTxt.setToolTipText("Enter the window length");
-		winLenTxt.setText("1000");
 		winLenTxt.setColumns(10);
-		winLenTxt.setBounds(424, 483, 118, 20);
+		winLenTxt.setBounds(424, 483, 77, 20);
 		panelInitialize.add(winLenTxt);
 
 		winStepTxt = new JTextField();
+		winStepTxt.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent arg0) {
+				highlightAllTheText((JTextField) arg0.getComponent());
+			}
+		});
 		winStepTxt.setToolTipText("Enter window step size");
-		winStepTxt.setText("100");
 		winStepTxt.setColumns(10);
-		winStepTxt.setBounds(561, 483, 118, 20);
+		winStepTxt.setBounds(511, 483, 65, 20);
 		panelInitialize.add(winStepTxt);
 
 		JLabel lblWindowLength = new JLabel("Window length:");
@@ -1028,7 +1056,7 @@ public class MainFrame extends JFrame {
 		panelInitialize.add(lblWindowLength);
 
 		JLabel label_5 = new JLabel("Step:");
-		label_5.setBounds(547, 468, 108, 14);
+		label_5.setBounds(511, 468, 108, 14);
 		panelInitialize.add(label_5);
 
 		JSeparator separator_10 = new JSeparator();
@@ -1056,18 +1084,24 @@ public class MainFrame extends JFrame {
 		});
 		label_3.setForeground(Color.BLUE);
 		label_3.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_3.setBounds(781, 484, 30, 14);
+		label_3.setBounds(781, 520, 30, 14);
 		panelInitialize.add(label_3);
 
 		maxNumInsTxt = new JTextField();
+		maxNumInsTxt.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent arg0) {
+				highlightAllTheText((JTextField) arg0.getComponent());
+			}
+		});
 		maxNumInsTxt.setToolTipText("Enter the window length");
 		maxNumInsTxt.setText("3");
 		maxNumInsTxt.setColumns(10);
-		maxNumInsTxt.setBounds(424, 535, 118, 20);
+		maxNumInsTxt.setBounds(426, 551, 118, 20);
 		panelInitialize.add(maxNumInsTxt);
 
 		JLabel lblMaxNumberOf = new JLabel("Max number of insertions/reads:");
-		lblMaxNumberOf.setBounds(410, 514, 183, 14);
+		lblMaxNumberOf.setBounds(233, 554, 183, 14);
 		panelInitialize.add(lblMaxNumberOf);
 		maxNumInsBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -1075,7 +1109,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		maxNumInsBtn.setBounds(561, 534, 215, 23);
+		maxNumInsBtn.setBounds(563, 550, 215, 23);
 		panelInitialize.add(maxNumInsBtn);
 		countOnlyUniqueRadio.addMouseListener(new MouseAdapter() {
 			@Override
@@ -1085,7 +1119,7 @@ public class MainFrame extends JFrame {
 		});
 		countOnlyUniqueRadio.setSelected(true);
 
-		countOnlyUniqueRadio.setBounds(12, 510, 394, 23);
+		countOnlyUniqueRadio.setBounds(12, 516, 394, 23);
 		panelInitialize.add(countOnlyUniqueRadio);
 		countAllReadsRadio.addMouseListener(new MouseAdapter() {
 			@Override
@@ -1094,7 +1128,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		countAllReadsRadio.setBounds(12, 536, 402, 23);
+		countAllReadsRadio.setBounds(12, 542, 215, 23);
 		panelInitialize.add(countAllReadsRadio);
 
 		ButtonGroup numberOfReads = new ButtonGroup();
@@ -1114,7 +1148,7 @@ public class MainFrame extends JFrame {
 		label_7.setToolTipText("Click me!");
 		label_7.setForeground(Color.BLUE);
 		label_7.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_7.setBounds(781, 538, 30, 14);
+		label_7.setBounds(781, 554, 30, 14);
 		panelInitialize.add(label_7);
 		
 		JXLabel samDescLbl = new JXLabel("New label");
@@ -1137,6 +1171,21 @@ public class MainFrame extends JFrame {
 		label_8.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		label_8.setBounds(12, 111, 30, 14);
 		panelInitialize.add(label_8);
+		
+		btnOptimal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				findOptimalWinLength();
+			}
+		});
+		btnOptimal.setBounds(586, 482, 189, 23);
+		panelInitialize.add(btnOptimal);
+		
+		JLabel label_9 = new JLabel("(?)");
+		label_9.setToolTipText("Click me!");
+		label_9.setForeground(Color.BLUE);
+		label_9.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		label_9.setBounds(781, 486, 30, 14);
+		panelInitialize.add(label_9);
 
 		JPanel panel = new JPanel();
 		tabbedPane.addTab("Manage Data Tables", null, panel, null);
@@ -1531,6 +1580,12 @@ public class MainFrame extends JFrame {
 		panel_3.add(fastqBrowseBtn);
 
 		newSamNameTxt = new JTextField();
+		newSamNameTxt.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent arg0) {
+				highlightAllTheText((JTextField) arg0.getComponent());
+			}
+		});
 		newSamNameTxt.setToolTipText("Created SAM file name");
 		newSamNameTxt.setText("");
 		newSamNameTxt.setEnabled(true);
@@ -1605,6 +1660,97 @@ public class MainFrame extends JFrame {
 		panel_3.add(label_4);
 	}
 
+	private void findOptimalWinLength(){
+		(new Thread(new Runnable() {
+			@Override
+			public void run() {
+				JOptionPane.showMessageDialog(MainFrame.this, "The calculation might take a long time to complete.\nPlease be patient.");
+			}
+		})).start();
+		
+		
+		plotWaitLbl.setVisible(true);
+		
+		(new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {					
+					Pair<Integer, Integer> result = StatisticsHelper.findOptimalLength((String) plotLibraryCombo.getSelectedItem(), projectInfo, countOnlyUniqueRadio.isSelected());
+
+					final String title;
+					if (countOnlyUniqueRadio.isSelected()){
+						String temp = String.format("Library Name: %s (Counting unique insertions) | Window Length: %d | Window Steps: %d", (String) plotLibraryCombo.getSelectedItem(), result.getFirst(), result.getSecond());
+						title = temp;
+					} else{
+						String temp = String.format("Library Name: %s (Counting all reads) | Window Length: %d | Window Steps: %d", (String) plotLibraryCombo.getSelectedItem(), result.getFirst(), result.getSecond());
+						title = temp;
+					}
+					
+					ChartPanel panel = new ChartPanel(PlotData.plotData((String) plotLibraryCombo.getSelectedItem(), result.getFirst(), result.getSecond(), title, projectInfo, countOnlyUniqueRadio.isSelected()));
+					
+					ExtendedPlotViewer frame = new ExtendedPlotViewer(MainFrame.this);	
+					frame.setWinInfo(result.getFirst(), result.getSecond());
+					frame.setDataFile((String) plotLibraryCombo.getSelectedItem());
+					frame.setPlotName(title);
+					frame.setIfSelected(countOnlyUniqueRadio.isSelected());
+					frame.setProjectInfo(projectInfo);
+					frame.setCurrentInfo(result.getFirst(), result.getSecond());
+					frame.setVisible(true);
+					frame.addPlot(panel);	
+					
+					plotWaitLbl.setVisible(false);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		})).start();
+	}
+
+	public void setWinInfoAndSave(int winLen, int winStep){
+		winLenTxt.setText(winLen + "");
+		winStepTxt.setText(winStep + "");
+		
+		try{
+			//Save the results to a file
+			File winLenFile = new File(projectInfo.getPath() + (String)plotLibraryCombo.getSelectedItem() + ".data");
+			BufferedWriter bw = new BufferedWriter(new FileWriter(winLenFile));
+			bw.write("WinLen = " + winLen + "\n");
+			bw.write("WinStep = " + winStep + "\n");
+			bw.close();
+		}catch(IOException e){
+			logger.fatal(e.getMessage());
+		}
+	}
+	
+	public boolean checkIfApplied(int winLen, int winStep){
+		
+		if (winLenTxt.getText().equals("") || winStepTxt.getText().equals("")){
+			return false;
+		}
+		
+		if (Integer.parseInt(winLenTxt.getText()) != winLen){
+			return false;
+		}
+		
+		if (Integer.parseInt(winStepTxt.getText()) != winStep){
+			return false;
+		}
+		
+		return true;
+		
+	}
+	
+	private void highlightAllTheText(final JTextField textField){
+		SwingUtilities.invokeLater( new Runnable() {
+
+			@Override
+			public void run() {
+				textField.selectAll();		
+			}
+		});	
+	}
+	
 	private void maxNumInsrtions(){
 		if(winLenTxt.getText() == null || winLenTxt.getText().compareTo("") == 0){
 			JOptionPane.showMessageDialog(MainFrame.this, "Please provide the window length", "Warning", JOptionPane.WARNING_MESSAGE);
@@ -1788,6 +1934,9 @@ public class MainFrame extends JFrame {
 						temp.renameTo(new File(projectInfo.getPath() + newName + ".inspous"));
 						bw.write(newName + ".inspous" + "\n");
 
+						temp = new File(projectInfo.getPath() + selectedLib + ".data");
+						temp.renameTo(new File(projectInfo.getPath() + newName + ".data"));
+						
 						br.readLine();
 						br.readLine();
 						br.readLine();
@@ -1980,7 +2129,35 @@ public class MainFrame extends JFrame {
 		final int len = Integer.parseInt(winLenTxt.getText());
 		final int step = Integer.parseInt(winStepTxt.getText());
 		plotWaitLbl.setVisible(true);
-
+		int tempLen = 0;
+		int tempStep = 0;
+		
+		try{
+			File winInfo = new File(projectInfo.getPath() + (String)plotLibraryCombo.getSelectedItem() + ".data");
+			if (winInfo.exists()){
+				BufferedReader br = new BufferedReader(new FileReader(winInfo));
+				String line = br.readLine();
+				tempLen = Integer.parseInt(line.substring(line.indexOf("=") + 2, line.length()));
+				line = br.readLine();
+				tempStep = Integer.parseInt(line.substring(line.indexOf("=") + 2, line.length()));
+				br.close();
+				
+				if (tempLen != len || tempStep != step){
+					int result = JOptionPane.showConfirmDialog(this, "Window length and window step differes from the applied values. \nDo you want to apply the new values?");
+					
+					if (result == JOptionPane.YES_OPTION){
+						setWinInfoAndSave(len, step);
+					}else if (result == JOptionPane.NO_OPTION){
+						
+					}else{
+						return;
+					}
+				}
+			}
+		}catch (IOException e){
+			logger.fatal(e.getMessage());
+		}
+		
 		final String title;
 		if (countOnlyUniqueRadio.isSelected()){
 			String temp = String.format("Library Name: %s (Counting unique insertions) | Window Length: %d | Window Steps: %d", (String) plotLibraryCombo.getSelectedItem(),
@@ -1996,14 +2173,18 @@ public class MainFrame extends JFrame {
 
 			@Override
 			public void run() {
-				try {					
+				try {	
 					ChartPanel panel = new ChartPanel(PlotData.plotData((String) plotLibraryCombo.getSelectedItem(), len, step, title, projectInfo, countOnlyUniqueRadio.isSelected()));
-
+					
 					PlotViewer frame = new PlotViewer();					
 					frame.setPlotName(title);
 					frame.setVisible(true);
 					frame.addPlot(panel);
 
+					//TODO: Remove!!!
+					/*File randomFile = new File("C:\\Users\\Sina\\Desktop\\" + (String) plotLibraryCombo.getSelectedItem() + " len" + len + " step" + step + ".jpeg");
+					ChartUtilities.saveChartAsJPEG(randomFile, panel.getChart(), 800, 600);*/
+					
 					plotWaitLbl.setVisible(false);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -2521,13 +2702,17 @@ public class MainFrame extends JFrame {
 				line = br.readLine();
 				line = br.readLine();
 			}
+			
+			br.close();
 
 			if (libraryComboBox.getItemCount() == 0){
 				renameLibBtn.setEnabled(false);
 				removeLibBtn.setEnabled(false);
+				btnOptimal.setEnabled(false);
 			}else{
 				renameLibBtn.setEnabled(true);
 				removeLibBtn.setEnabled(true);
+				btnOptimal.setEnabled(true);
 			}
 
 		}catch(IOException e){
@@ -2543,8 +2728,31 @@ public class MainFrame extends JFrame {
 		}
 
 		initiatePlotLibraryComboBox();
+		
+		reloadWinInfo();
 	}
 
+	private void reloadWinInfo(){
+		
+		try{
+			File winInfo = new File(projectInfo.getPath() + (String)plotLibraryCombo.getSelectedItem() + ".data");
+			if (winInfo.exists()){
+				BufferedReader br = new BufferedReader(new FileReader(winInfo));
+				String line = br.readLine();
+				winLenTxt.setText(line.substring(line.indexOf("=") + 2, line.length()));
+				line = br.readLine();
+				winStepTxt.setText(line.substring(line.indexOf("=") + 2, line.length()));
+				br.close();
+			}else{
+				winLenTxt.setText("");
+				winStepTxt.setText("");
+			}
+		}catch (IOException e){
+			logger.fatal(e.getMessage());
+		}
+		
+	}
+	
 	private void reloadProjectFromFile(){
 		String pathTemp = projectInfo.getPath() + "project.pro";
 		projectInfo.createFile(pathTemp);

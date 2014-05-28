@@ -96,9 +96,6 @@ public class PlotData {
 			currentPosition += windowStep; 
 		}
 		
-		Double bimodalityCoefficient = StatisticsHelper.bimodalityCoefficient(insertions);
-		title = title + "\n" + "Bimodality coefficient = " + bimodalityCoefficient; 
-		
 		Vector<Integer> xAxis = new Vector<Integer>();
 		Vector<Integer> yAxis = new Vector<Integer>();
 		
@@ -113,6 +110,9 @@ public class PlotData {
 		for(int i = 0; i < yAxis.size(); i++){
 			xAxis.add(i);
 		}
+		
+		Double exponentialFitness = StatisticsHelper.exponentialLeastSquareFitting(xAxis, yAxis);
+		title = title + "\n" + "Exponential Regression, R2 = " + exponentialFitness;
 		
 		XYDataset dataset = createDataset(xAxis, yAxis);
 		JFreeChart chart = createChart(dataset, title, !onlyUniqueInsertions, null, null, null, null);
