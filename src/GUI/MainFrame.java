@@ -56,7 +56,6 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXLabel;
 import org.jfree.chart.ChartPanel;
-import org.jfree.chart.ChartUtilities;
 
 import essgenes.Messages;
 import essgenes.MyFileUtil;
@@ -69,7 +68,7 @@ import essgenes.StatisticsHelper;
 public class MainFrame extends JFrame {
 
 	public static final String ProgTitle = "Tn-seq explorer";
-	public static final String ProgVersion = "v1.0"; 
+	public static final String ProgVersion = "v1.1"; 
 
 	private JButton btnOptimal = new JButton("Find optimal Window Length");
 	private JLabel sequenceLengthLbl = new JLabel("0");
