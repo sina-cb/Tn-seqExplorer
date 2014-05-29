@@ -2180,7 +2180,7 @@ public class MainFrame extends JFrame {
 					frame.setVisible(true);
 					frame.addPlot(panel);
 
-					//TODO: Remove!!!
+					//TODO: These comments can be removed without any change.
 					/*File randomFile = new File("C:\\Users\\Sina\\Desktop\\" + (String) plotLibraryCombo.getSelectedItem() + " len" + len + " step" + step + ".jpeg");
 					ChartUtilities.saveChartAsJPEG(randomFile, panel.getChart(), 800, 600);*/
 					
