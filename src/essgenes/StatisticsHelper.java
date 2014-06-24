@@ -1,13 +1,17 @@
 package essgenes;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
+import org.apache.commons.math3.stat.descriptive.summary.Sum;
 import org.apache.commons.math3.util.Pair;
 import org.apache.log4j.Logger;
 
@@ -329,12 +333,25 @@ public class StatisticsHelper {
 		Double R2 = 1.0;
 		
 		Double threshold = lowerBoundThreshold;
-		while(R2 > threshold){
+		while(R2 > threshold || R2.equals(Double.NaN)){
 			logger.debug("Winlen == " + tempWinLen);
 			logger.debug("Winstep == " + tempWinStep);
 			
 			Pair<double[], double[]> data = processData(positions, numberOfInsertions, tempWinLen, tempWinStep, onlyUniqueInsertions);
+			data = modifyData(data.getFirst(), data.getSecond());
 			R2 = exponentialLeastSquareFitting(data.getFirst(), data.getSecond());
+			
+			if (R2.equals(Double.NaN)){
+				tempWinLen += winStep;
+				tempWinStep = 10 < (tempWinLen / 4) ? (tempWinLen / 4) : 10;
+				tempWinStep = tempWinStep > maxWinStepSize ? maxWinStepSize : tempWinStep;
+				
+				threshold = tempWinLen > 400 ? (threshold + thresholdStep) : threshold;
+				threshold = tempWinLen > 1400 ? higherBoundThreshold : threshold;
+				logger.debug("Threshhold #" + testCount + ": " + threshold);
+				
+				continue;
+			}
 			
 			testCount++;
 			
@@ -354,6 +371,49 @@ public class StatisticsHelper {
 		tempWinStep = 10 > (tempWinLen / 10) ? (tempWinLen / 10) : 10;
 		
 		return new Pair<>(tempWinLen, tempWinStep);
+	}
+	
+	static int count = 0;
+	private static Pair<double[], double[]> modifyData(double[] positions, double[] numberOfInsertions){
+		
+		double sum = (new Sum()).evaluate(numberOfInsertions);
+		double percentile = 2.0 / 100 * sum;
+		
+		double endSum = 0.0;
+		int index = 1;
+		while (endSum < percentile){
+			endSum += numberOfInsertions[numberOfInsertions.length - index];
+			index++;
+		}
+		
+		Vector<Double> newPositions = new Vector<>();
+		Vector<Double> newNumOfInsertions = new Vector<>();
+		
+		try {
+			count++;
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("C:\\Users\\Sina\\Desktop\\test" + count + ".xls")));
+			count++;
+			BufferedWriter bw2 = new BufferedWriter(new FileWriter(new File("C:\\Users\\Sina\\Desktop\\test" + count + ".xls")));
+			
+			for (int i = 0; i < numberOfInsertions.length - index; i++){
+				newPositions.add(positions[i]);
+				newNumOfInsertions.add(numberOfInsertions[i]);
+				
+				bw.write(positions[i] + "\t" + numberOfInsertions[i] + "\n");
+			}
+			
+			for (int i = 0; i < numberOfInsertions.length; i++){
+				bw2.write(positions[i] + "\t" + numberOfInsertions[i] + "\n");
+			}
+			
+			bw.close();
+			bw2.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return new Pair<double[], double[]>(Doubles.toArray(newPositions), Doubles.toArray(newNumOfInsertions));
 	}
 	
 	private static Pair<double[], double[]> processData(List<Integer> positions, List<Integer> numberOfInsertions, int windowLen, int windowStep, boolean onlyUniqueInsertions){

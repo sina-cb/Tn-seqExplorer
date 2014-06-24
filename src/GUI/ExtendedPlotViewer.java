@@ -159,7 +159,7 @@ public class ExtendedPlotViewer extends JFrame {
 	private void checkIfApplied(){
 		
 		if (!((MainFrame)parent).checkIfApplied(Integer.parseInt(winLenTxt.getText()), Integer.parseInt(winStepTxt.getText()))){
-			int result = JOptionPane.showConfirmDialog(this, "The new values has not been applied. \nDo you want to keep the changes?");
+			int result = JOptionPane.showConfirmDialog(this, "The new values have not been applied. \nDo you want to keep the changes?");
 			if (result == JOptionPane.YES_OPTION){
 				((MainFrame)parent).setWinInfoAndSave(Integer.parseInt(winLenTxt.getText()), Integer.parseInt(winStepTxt.getText()));
 				this.setVisible(false);

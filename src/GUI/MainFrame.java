@@ -508,7 +508,7 @@ public class MainFrame extends JFrame {
 										bacteriaName = line.substring(0, line.indexOf(" -"));
 										lengthString = line.substring(line.indexOf("..") + 2);
 
-										String itemString = String.format("%s: %s (%s)", fileName, bacteriaName, lengthString);
+										String itemString = String.format("%s: %s (%s bp)", fileName, bacteriaName, lengthString);
 										ftpSecondLevelCombo.addItem(itemString);
 
 										ftp.disconnect();
@@ -1180,6 +1180,17 @@ public class MainFrame extends JFrame {
 		panelInitialize.add(btnOptimal);
 		
 		JLabel label_9 = new JLabel("(?)");
+		label_9.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JOptionPane.showMessageDialog(MainFrame.this, "The program will attempt to find the optimal window size by analyzing the distribution of insertions\n"
+						+ "among the sequence windows. Depending on the character of the data, this procedure may not always\n"
+						+ "work and you should verify that the function should be bimodal, separating windows overlapping with\n"
+						+ "essential and nonessential genes. You can manually change the window size and explore the distribution\n"
+						+ "for different window sizes using the 'Plot' button below. This feature is intended to be used only with\n"
+						+ "unique insertions.");
+			}
+		});
 		label_9.setToolTipText("Click me!");
 		label_9.setForeground(Color.BLUE);
 		label_9.setFont(new Font("Tahoma", Font.PLAIN, 11));
@@ -1660,13 +1671,24 @@ public class MainFrame extends JFrame {
 	}
 
 	private void findOptimalWinLength(){
+		if (countAllReadsRadio.isSelected()){
+			int res = JOptionPane.showConfirmDialog(MainFrame.this, "This feature cannot be used when counting all reads.\n"
+					+ "Do you want to continue with unique insertions?", "feature cannot be used", JOptionPane.YES_NO_OPTION);
+
+			if (res == JOptionPane.YES_OPTION){
+				countOnlyUniqueRadio.setSelected(true);
+			}else{
+				return;
+			}
+		}
+		
 		(new Thread(new Runnable() {
+
 			@Override
 			public void run() {
 				JOptionPane.showMessageDialog(MainFrame.this, "The calculation might take a long time to complete.\nPlease be patient.");
 			}
 		})).start();
-		
 		
 		plotWaitLbl.setVisible(true);
 		
@@ -2275,7 +2297,7 @@ public class MainFrame extends JFrame {
 		}
 
 		hasSeqNum = true;
-		JOptionPane.showMessageDialog(MainFrame.this, "New Sequence Length Has Been Applied!");
+		JOptionPane.showMessageDialog(MainFrame.this, "New sequence length has been applied!");
 		setSequenceLengthText(Integer.parseInt(seqLen));
 
 		if (hasGeneFile){
