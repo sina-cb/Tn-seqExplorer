@@ -139,6 +139,7 @@ public class MainFrame extends JFrame {
 	private JTextField newSamNameTxt;
 	private JTextField samFilePath;
 	private JTextField maxNumInsTxt;
+	private Thread second_thread = null;
 
 	/**
 	 * Create the frame.
@@ -470,6 +471,7 @@ public class MainFrame extends JFrame {
 		});
 
 		ftpFirstLevelCombo.addItemListener(new ItemListener(){
+			@SuppressWarnings("deprecation")
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 
@@ -477,10 +479,27 @@ public class MainFrame extends JFrame {
 					ftpSecondLevelCombo.removeAllItems();
 					ftpSecondLevelCombo.addItem("Retieving Files List, Please Wait");
 
-					(new Thread(new Runnable(){
+					if (second_thread != null){
+						second_thread.run();
+						second_thread.stop();
+						second_thread = null;
+					}
+					
+					second_thread = new Thread(new Runnable(){
+						private FTPClient ftp = null;
 						@Override
 						public void run() {
-							FTPClient ftp = new FTPClient();
+							if (ftp != null){
+								try {
+									ftp.disconnect();
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+								return;
+							}
+							
+							ftp = new FTPClient();
+							
 							try {
 								ftp.connect("ftp.ncbi.nih.gov");
 								ftp.enterLocalPassiveMode();
@@ -513,7 +532,6 @@ public class MainFrame extends JFrame {
 										ftpSecondLevelCombo.addItem(itemString);
 
 										ftp.disconnect();
-
 									}
 								}
 
@@ -525,7 +543,9 @@ public class MainFrame extends JFrame {
 								return;
 							}							
 						}
-					})).start();	
+					});	
+					
+					second_thread.start();
 				}
 			}
 		});
