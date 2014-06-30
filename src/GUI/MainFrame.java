@@ -70,7 +70,7 @@ public class MainFrame extends JFrame {
 	public static final String ProgTitle = "Tn-seq explorer";
 	public static final String ProgVersion = "v1.1"; 
 
-	private JButton btnOptimal = new JButton("Find optimal Window Length");
+	private JButton btnOptimal = new JButton("Recommend optimal Window Length");
 	private JLabel sequenceLengthLbl = new JLabel("0");
 	private JTextField sequenceLenTxt;
 	private JLabel libraryCountLbl = new JLabel("0");
@@ -250,6 +250,7 @@ public class MainFrame extends JFrame {
 				String temp = (String) ftpSecondLevelCombo.getSelectedItem();
 				temp = temp.substring(temp.indexOf("(") + 1);
 				temp = temp.substring(0, temp.indexOf(")"));
+				temp = temp.replaceAll(" bp", "");
 
 				int tempInt = Integer.parseInt(temp);
 				if (projectInfo.getSequenceLen() != 0 && projectInfo.getSequenceLen() != tempInt){
@@ -267,7 +268,7 @@ public class MainFrame extends JFrame {
 					if (answer == JOptionPane.YES_OPTION){
 						sequenceLenTxt.setText(tempInt + "");
 						applySequenceNumber();
-						
+
 					}else{
 						//Do Nothing
 					}
@@ -752,6 +753,8 @@ public class MainFrame extends JFrame {
 		sequenceLengthLbl.setBounds(575, 550, 178, 33);
 		panelMain.add(sequenceLengthLbl);
 
+		ButtonGroup numberOfReads = new ButtonGroup();
+
 		JPanel panelInitialize = new JPanel();
 		tabbedPane.addTab("Manage Libraries", null, panelInitialize, null);
 		panelInitialize.setLayout(null);
@@ -923,6 +926,9 @@ public class MainFrame extends JFrame {
 							temp = new File(projectInfo.getPath() + selectedLib + ".inspous");
 							temp.delete();
 
+							temp = new File(projectInfo.getPath() + selectedLib + ".data");
+							temp.delete();
+
 							br.readLine();
 							br.readLine();
 							br.readLine();
@@ -1035,7 +1041,7 @@ public class MainFrame extends JFrame {
 		});
 		winLenTxt.setToolTipText("Enter the window length");
 		winLenTxt.setColumns(10);
-		winLenTxt.setBounds(424, 483, 77, 20);
+		winLenTxt.setBounds(424, 483, 56, 20);
 		panelInitialize.add(winLenTxt);
 
 		winStepTxt = new JTextField();
@@ -1047,15 +1053,15 @@ public class MainFrame extends JFrame {
 		});
 		winStepTxt.setToolTipText("Enter window step size");
 		winStepTxt.setColumns(10);
-		winStepTxt.setBounds(511, 483, 65, 20);
+		winStepTxt.setBounds(490, 483, 65, 20);
 		panelInitialize.add(winStepTxt);
 
 		JLabel lblWindowLength = new JLabel("Window length:");
-		lblWindowLength.setBounds(414, 468, 123, 14);
+		lblWindowLength.setBounds(392, 468, 123, 14);
 		panelInitialize.add(lblWindowLength);
 
 		JLabel label_5 = new JLabel("Step:");
-		label_5.setBounds(511, 468, 108, 14);
+		label_5.setBounds(490, 468, 108, 14);
 		panelInitialize.add(label_5);
 
 		JSeparator separator_10 = new JSeparator();
@@ -1129,8 +1135,6 @@ public class MainFrame extends JFrame {
 
 		countAllReadsRadio.setBounds(12, 542, 215, 23);
 		panelInitialize.add(countAllReadsRadio);
-
-		ButtonGroup numberOfReads = new ButtonGroup();
 		numberOfReads.add(countOnlyUniqueRadio);
 		numberOfReads.add(countAllReadsRadio);
 
@@ -1149,14 +1153,14 @@ public class MainFrame extends JFrame {
 		label_7.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		label_7.setBounds(781, 554, 30, 14);
 		panelInitialize.add(label_7);
-		
+
 		JXLabel samDescLbl = new JXLabel("New label");
 		samDescLbl.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		samDescLbl.setText("You can add and manage transposon insertion mutant libraries here. You need the .sam file from the Barrows-Wheeler aligner. (bwa, http://bio-bwa.sourceforge.net/) to add a library to your project. SAM stands for Sequence Alignment/Map format. It is a TAB-delimited text format file that contains the alignment of the sequence reads to the genome. If the Barrows-Wheeler Aligner is installed on this computer you may be able to run it from this application. To add new library, provide the name for the library, navigate to the .sam file using the 'Browse' button, and then click 'Extract'.");
 		samDescLbl.setBounds(12, 11, 799, 94);
 		panelInitialize.add(samDescLbl);
 		samDescLbl.setLineWrap(true);
-		
+
 		JLabel label_8 = new JLabel("(?)");
 		label_8.addMouseListener(new MouseAdapter() {
 			@Override
@@ -1170,25 +1174,25 @@ public class MainFrame extends JFrame {
 		label_8.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		label_8.setBounds(12, 111, 30, 14);
 		panelInitialize.add(label_8);
-		
+
 		btnOptimal.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				findOptimalWinLength();
 			}
 		});
-		btnOptimal.setBounds(586, 482, 189, 23);
+		btnOptimal.setBounds(565, 482, 210, 23);
 		panelInitialize.add(btnOptimal);
-		
+
 		JLabel label_9 = new JLabel("(?)");
 		label_9.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				JOptionPane.showMessageDialog(MainFrame.this, "The program will attempt to find the optimal window size by analyzing the distribution of insertions\n"
 						+ "among the sequence windows. Depending on the character of the data, this procedure may not always\n"
-						+ "work and you should verify that the function should be bimodal, separating windows overlapping with\n"
-						+ "essential and nonessential genes. You can manually change the window size and explore the distribution\n"
-						+ "for different window sizes using the 'Plot' button below. This feature is intended to be used only with\n"
-						+ "unique insertions.");
+								+ "work and you should verify that the function should be bimodal, separating windows overlapping with\n"
+										+ "essential and nonessential genes. You can manually change the window size and explore the distribution\n"
+										+ "for different window sizes using the 'Plot' button below. This feature is intended to be used only with\n"
+										+ "unique insertions.");
 			}
 		});
 		label_9.setToolTipText("Click me!");
@@ -1196,6 +1200,11 @@ public class MainFrame extends JFrame {
 		label_9.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		label_9.setBounds(781, 486, 30, 14);
 		panelInitialize.add(label_9);
+		loadingLbl.setVisible(false);
+		doneLbl1.setVisible(false);
+		doneLbl2.setVisible(false);
+		doneLbl3.setVisible(false);
+		doneLbl4.setVisible(false);
 
 		JPanel panel = new JPanel();
 		tabbedPane.addTab("Manage Data Tables", null, panel, null);
@@ -1414,11 +1423,6 @@ public class MainFrame extends JFrame {
 		});
 		addNewIndicesBtn.setBounds(10, 165, 433, 23);
 		panel.add(addNewIndicesBtn);
-		loadingLbl.setVisible(false);
-		doneLbl1.setVisible(false);
-		doneLbl2.setVisible(false);
-		doneLbl3.setVisible(false);
-		doneLbl4.setVisible(false);
 
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -1681,7 +1685,7 @@ public class MainFrame extends JFrame {
 				return;
 			}
 		}
-		
+
 		(new Thread(new Runnable() {
 
 			@Override
@@ -1689,9 +1693,9 @@ public class MainFrame extends JFrame {
 				JOptionPane.showMessageDialog(MainFrame.this, "The calculation might take a long time to complete.\nPlease be patient.");
 			}
 		})).start();
-		
+
 		plotWaitLbl.setVisible(true);
-		
+
 		(new Thread(new Runnable() {
 
 			@Override
@@ -1707,9 +1711,9 @@ public class MainFrame extends JFrame {
 						String temp = String.format("Library Name: %s (Counting all reads) | Window Length: %d | Window Steps: %d", (String) plotLibraryCombo.getSelectedItem(), result.getFirst(), result.getSecond());
 						title = temp;
 					}
-					
+
 					ChartPanel panel = new ChartPanel(PlotData.plotData((String) plotLibraryCombo.getSelectedItem(), result.getFirst(), result.getSecond(), title, projectInfo, countOnlyUniqueRadio.isSelected()));
-					
+
 					ExtendedPlotViewer frame = new ExtendedPlotViewer(MainFrame.this);	
 					frame.setWinInfo(result.getFirst(), result.getSecond());
 					frame.setDataFile((String) plotLibraryCombo.getSelectedItem());
@@ -1719,7 +1723,7 @@ public class MainFrame extends JFrame {
 					frame.setCurrentInfo(result.getFirst(), result.getSecond());
 					frame.setVisible(true);
 					frame.addPlot(panel);	
-					
+
 					plotWaitLbl.setVisible(false);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -1731,7 +1735,7 @@ public class MainFrame extends JFrame {
 	public void setWinInfoAndSave(int winLen, int winStep){
 		winLenTxt.setText(winLen + "");
 		winStepTxt.setText(winStep + "");
-		
+
 		try{
 			//Save the results to a file
 			File winLenFile = new File(projectInfo.getPath() + (String)plotLibraryCombo.getSelectedItem() + ".data");
@@ -1743,25 +1747,25 @@ public class MainFrame extends JFrame {
 			logger.fatal(e.getMessage());
 		}
 	}
-	
+
 	public boolean checkIfApplied(int winLen, int winStep){
-		
+
 		if (winLenTxt.getText().equals("") || winStepTxt.getText().equals("")){
 			return false;
 		}
-		
+
 		if (Integer.parseInt(winLenTxt.getText()) != winLen){
 			return false;
 		}
-		
+
 		if (Integer.parseInt(winStepTxt.getText()) != winStep){
 			return false;
 		}
-		
+
 		return true;
-		
+
 	}
-	
+
 	private void highlightAllTheText(final JTextField textField){
 		SwingUtilities.invokeLater( new Runnable() {
 
@@ -1771,7 +1775,7 @@ public class MainFrame extends JFrame {
 			}
 		});	
 	}
-	
+
 	private void maxNumInsrtions(){
 		if(winLenTxt.getText() == null || winLenTxt.getText().compareTo("") == 0){
 			JOptionPane.showMessageDialog(MainFrame.this, "Please provide the window length", "Warning", JOptionPane.WARNING_MESSAGE);
@@ -1845,13 +1849,13 @@ public class MainFrame extends JFrame {
 
 		JOptionPane.showMessageDialog(null, "In order to install the library, you should enter your machine's root password.\n"
 				+ "The password is only used to install the library.", "Root Password", JOptionPane.WARNING_MESSAGE);
-		
+
 		try {
 			FileUtils.copyURLToFile(programSource, programDest);
 			FileUtils.copyURLToFile(shellSource, shellDest);
-			
+
 			Thread.sleep(500);
-			
+
 			String cmd[] = {"gnome-terminal", "-x", "bash", "-c", 
 					"echo 'Please Enter Your Root Password';"
 							+ "su -m root -c 'sh shell.sh';"
@@ -1888,9 +1892,9 @@ public class MainFrame extends JFrame {
 		try {
 			FileUtils.copyURLToFile(programSource, programDest);
 			FileUtils.copyURLToFile(shellSource, shellDest);
-			
+
 			Thread.sleep(500);
-			
+
 			String cmd[] = {"gnome-terminal", "-x", "bash", "-c", 
 					"echo 'Please Enter Your Root Password';"
 							+ "su -m root -c 'sh shell.sh';"
@@ -1957,7 +1961,7 @@ public class MainFrame extends JFrame {
 
 						temp = new File(projectInfo.getPath() + selectedLib + ".data");
 						temp.renameTo(new File(projectInfo.getPath() + newName + ".data"));
-						
+
 						br.readLine();
 						br.readLine();
 						br.readLine();
@@ -2052,7 +2056,7 @@ public class MainFrame extends JFrame {
 		bw.close();
 
 		Thread.sleep(500);
-		
+
 		String cmd[] = {"gnome-terminal", "-x", "bash", "-c", 
 				"echo 'Please wait till the SAM file gets created';"
 						+ "sh \"" + shellScript.getAbsolutePath() + "\";"
@@ -2142,9 +2146,11 @@ public class MainFrame extends JFrame {
 
 		if(winLenTxt.getText() == null || winLenTxt.getText().compareTo("") == 0){
 			JOptionPane.showMessageDialog(MainFrame.this, "Please provide the window length", "Warning", JOptionPane.WARNING_MESSAGE);
+			return;
 		}
 		if(winStepTxt.getText() == null || winStepTxt.getText().compareTo("") == 0){
 			JOptionPane.showMessageDialog(MainFrame.this, "Please provide the window step length", "Warning", JOptionPane.WARNING_MESSAGE);
+			return;
 		}
 
 		final int len = Integer.parseInt(winLenTxt.getText());
@@ -2152,7 +2158,7 @@ public class MainFrame extends JFrame {
 		plotWaitLbl.setVisible(true);
 		int tempLen = 0;
 		int tempStep = 0;
-		
+
 		try{
 			File winInfo = new File(projectInfo.getPath() + (String)plotLibraryCombo.getSelectedItem() + ".data");
 			if (winInfo.exists()){
@@ -2162,14 +2168,14 @@ public class MainFrame extends JFrame {
 				line = br.readLine();
 				tempStep = Integer.parseInt(line.substring(line.indexOf("=") + 2, line.length()));
 				br.close();
-				
+
 				if (tempLen != len || tempStep != step){
 					int result = JOptionPane.showConfirmDialog(this, "Window length and window step differes from the applied values. \nDo you want to apply the new values?");
-					
+
 					if (result == JOptionPane.YES_OPTION){
 						setWinInfoAndSave(len, step);
 					}else if (result == JOptionPane.NO_OPTION){
-						
+
 					}else{
 						return;
 					}
@@ -2178,7 +2184,7 @@ public class MainFrame extends JFrame {
 		}catch (IOException e){
 			logger.fatal(e.getMessage());
 		}
-		
+
 		final String title;
 		if (countOnlyUniqueRadio.isSelected()){
 			String temp = String.format("Library Name: %s (Counting unique insertions) | Window Length: %d | Window Steps: %d", (String) plotLibraryCombo.getSelectedItem(),
@@ -2196,7 +2202,7 @@ public class MainFrame extends JFrame {
 			public void run() {
 				try {	
 					ChartPanel panel = new ChartPanel(PlotData.plotData((String) plotLibraryCombo.getSelectedItem(), len, step, title, projectInfo, countOnlyUniqueRadio.isSelected()));
-					
+
 					PlotViewer frame = new PlotViewer();					
 					frame.setPlotName(title);
 					frame.setVisible(true);
@@ -2205,7 +2211,7 @@ public class MainFrame extends JFrame {
 					//TODO: These comments can be removed without any change.
 					/*File randomFile = new File("C:\\Users\\Sina\\Desktop\\" + (String) plotLibraryCombo.getSelectedItem() + " len" + len + " step" + step + ".jpeg");
 					ChartUtilities.saveChartAsJPEG(randomFile, panel.getChart(), 800, 600);*/
-					
+
 					plotWaitLbl.setVisible(false);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -2307,7 +2313,7 @@ public class MainFrame extends JFrame {
 			infoLbl.setVisible(false);
 		}
 	}
-	
+
 	private void prepareGeneFile(){
 		if(imgRadioBtn.isSelected()){
 			int choice = JOptionPane.YES_OPTION;
@@ -2347,12 +2353,12 @@ public class MainFrame extends JFrame {
 		}else{
 			String pttPath = pttFileTxt.getText();
 			if (pttPath != null && pttPath.compareTo("") != 0){
-				
+
 				if (projectInfo.getSequenceLen() <= 0){
 					JOptionPane.showMessageDialog(this, "Please apply the sequence length first and try again");
 					return;
 				}
-				
+
 				geneFileNameLbl.setText("Preparing...");
 
 				(new Thread(new Runnable(){
@@ -2723,7 +2729,7 @@ public class MainFrame extends JFrame {
 				line = br.readLine();
 				line = br.readLine();
 			}
-			
+
 			br.close();
 
 			if (libraryComboBox.getItemCount() == 0){
@@ -2749,12 +2755,12 @@ public class MainFrame extends JFrame {
 		}
 
 		initiatePlotLibraryComboBox();
-		
+
 		reloadWinInfo();
 	}
 
 	private void reloadWinInfo(){
-		
+
 		try{
 			File winInfo = new File(projectInfo.getPath() + (String)plotLibraryCombo.getSelectedItem() + ".data");
 			if (winInfo.exists()){
@@ -2771,9 +2777,9 @@ public class MainFrame extends JFrame {
 		}catch (IOException e){
 			logger.fatal(e.getMessage());
 		}
-		
+
 	}
-	
+
 	private void reloadProjectFromFile(){
 		String pathTemp = projectInfo.getPath() + "project.pro";
 		projectInfo.createFile(pathTemp);

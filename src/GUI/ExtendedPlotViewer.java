@@ -22,6 +22,7 @@ import org.jfree.data.Range;
 
 import essgenes.PlotData;
 import essgenes.ProjectInfo;
+import javax.swing.ImageIcon;
 
 @SuppressWarnings("serial")
 public class ExtendedPlotViewer extends JFrame {
@@ -41,6 +42,7 @@ public class ExtendedPlotViewer extends JFrame {
 	private Integer currentWinStep;
 	private boolean countOnlyUnique;
 	private ProjectInfo projectInfo;
+	private JLabel waitLbl = new JLabel("Please wait...");
 	
 	/**
 	 * Create the frame.
@@ -154,6 +156,12 @@ public class ExtendedPlotViewer extends JFrame {
 		});
 		applyBtn.setBounds(690, 612, 163, 23);
 		contentPane.add(applyBtn);
+		
+		waitLbl.setIcon(new ImageIcon(ExtendedPlotViewer.class.getResource("/resources/load.gif")));
+		waitLbl.setBounds(10, 616, 183, 14);
+		waitLbl.setVisible(false);
+		
+		contentPane.add(waitLbl);
 	}
 	
 	private void checkIfApplied(){
@@ -185,61 +193,72 @@ public class ExtendedPlotViewer extends JFrame {
 	
 	public void replot(){
 
-		int newWinLen = Integer.parseInt(winLenTxt.getText());
-		int newWinStep = Integer.parseInt(winStepTxt.getText());
+		waitLbl.setVisible(true);
 		
-		final String title;
-		if (countOnlyUnique){
-			String temp = String.format("Library Name: %s (Counting unique insertions) | Window Length: %d | Window Steps: %d", dataFile, newWinLen, newWinStep);
-			title = temp;
-		} else{
-			String temp = String.format("Library Name: %s (Counting all reads) | Window Length: %d | Window Steps: %d", dataFile, newWinLen, newWinStep);
-			title = temp;
-		}
+		(new Thread(new Runnable() {
+			@Override
+			public void run() {
+				int newWinLen = Integer.parseInt(winLenTxt.getText());
+				int newWinStep = Integer.parseInt(winStepTxt.getText());
+
+				final String title;
+				if (countOnlyUnique){
+					String temp = String.format("Library Name: %s (Counting unique insertions) | Window Length: %d | Window Steps: %d", dataFile, newWinLen, newWinStep);
+					title = temp;
+				} else{
+					String temp = String.format("Library Name: %s (Counting all reads) | Window Length: %d | Window Steps: %d", dataFile, newWinLen, newWinStep);
+					title = temp;
+				}
+
+				if (newWinLen != currentWinLen || newWinStep != currentWinStep){
+					ChartPanel panel = new ChartPanel(PlotData.plotData(dataFile, newWinLen, newWinStep, title, projectInfo, countOnlyUnique));
+					ExtendedPlotViewer.this.addPlot(panel);
+					currentWinLen = newWinLen;
+					currentWinStep = newWinStep;
+
+				}else{
+					Double xStart = null;
+
+					if (xStartTxt.getText() != null || xStartTxt.getText().compareTo("") != 0){
+						xStart = Double.parseDouble(xStartTxt.getText());
+					}
+
+					Double xEnd = null;
+
+					if (xEndTxt.getText() != null || xEndTxt.getText().compareTo("") != 0){
+						xEnd = Double.parseDouble(xEndTxt.getText());
+					}
+
+					Double yStart = null;
+
+					if (yStartTxt.getText() != null || yStartTxt.getText().compareTo("") != 0){
+						yStart = Double.parseDouble(yStartTxt.getText());
+					}
+
+					Double yEnd = null;
+
+					if (yEndTxt.getText() != null || yEndTxt.getText().compareTo("") != 0){
+						yEnd = Double.parseDouble(yEndTxt.getText());
+					}
+
+					ChartPanel panel = (ChartPanel) plotPanel.getComponent(0);
+					JFreeChart chart = panel.getChart();
+					XYPlot plot = chart.getXYPlot();
+
+					if (xStart != null && xEnd != null){
+						plot.getDomainAxis().setRange(xStart, xEnd);
+					}
+
+					if (yStart != null && yEnd != null){
+						plot.getRangeAxis().setRange(yStart, yEnd);
+					}
+				}
+				
+				waitLbl.setVisible(false);
+			}
+		})).start();
 		
-		if (newWinLen != currentWinLen || newWinStep != currentWinStep){
-			ChartPanel panel = new ChartPanel(PlotData.plotData(dataFile, newWinLen, newWinStep, title, projectInfo, countOnlyUnique));
-			this.addPlot(panel);
-			currentWinLen = newWinLen;
-			currentWinStep = newWinStep;
-			
-		}else{
-			Double xStart = null;
-			
-			if (xStartTxt.getText() != null || xStartTxt.getText().compareTo("") != 0){
-				xStart = Double.parseDouble(xStartTxt.getText());
-			}
-			
-			Double xEnd = null;
-			
-			if (xEndTxt.getText() != null || xEndTxt.getText().compareTo("") != 0){
-				xEnd = Double.parseDouble(xEndTxt.getText());
-			}
-			
-			Double yStart = null;
-			
-			if (yStartTxt.getText() != null || yStartTxt.getText().compareTo("") != 0){
-				yStart = Double.parseDouble(yStartTxt.getText());
-			}
-			
-			Double yEnd = null;
-			
-			if (yEndTxt.getText() != null || yEndTxt.getText().compareTo("") != 0){
-				yEnd = Double.parseDouble(yEndTxt.getText());
-			}
-			
-			ChartPanel panel = (ChartPanel) plotPanel.getComponent(0);
-			JFreeChart chart = panel.getChart();
-			XYPlot plot = chart.getXYPlot();
-			
-			if (xStart != null && xEnd != null){
-				plot.getDomainAxis().setRange(xStart, xEnd);
-			}
-			
-			if (yStart != null && yEnd != null){
-				plot.getRangeAxis().setRange(yStart, yEnd);
-			}
-		}
+		JOptionPane.showMessageDialog(this, "The replotting process might take some time. \nPlease be patient.");
 		
 	}
 	
@@ -284,5 +303,4 @@ public class ExtendedPlotViewer extends JFrame {
 	public void setProjectInfo(ProjectInfo projectInfo) {
 		this.projectInfo = projectInfo;
 	}
-	
 }

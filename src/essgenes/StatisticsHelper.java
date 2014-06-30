@@ -1,10 +1,7 @@
 package essgenes;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -373,9 +370,7 @@ public class StatisticsHelper {
 		return new Pair<>(tempWinLen, tempWinStep);
 	}
 	
-	static int count = 0;
 	private static Pair<double[], double[]> modifyData(double[] positions, double[] numberOfInsertions){
-		
 		double sum = (new Sum()).evaluate(numberOfInsertions);
 		double percentile = 2.0 / 100 * sum;
 		
@@ -389,28 +384,9 @@ public class StatisticsHelper {
 		Vector<Double> newPositions = new Vector<>();
 		Vector<Double> newNumOfInsertions = new Vector<>();
 		
-		try {
-			count++;
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("C:\\Users\\Sina\\Desktop\\test" + count + ".xls")));
-			count++;
-			BufferedWriter bw2 = new BufferedWriter(new FileWriter(new File("C:\\Users\\Sina\\Desktop\\test" + count + ".xls")));
-			
-			for (int i = 0; i < numberOfInsertions.length - index; i++){
-				newPositions.add(positions[i]);
-				newNumOfInsertions.add(numberOfInsertions[i]);
-				
-				bw.write(positions[i] + "\t" + numberOfInsertions[i] + "\n");
-			}
-			
-			for (int i = 0; i < numberOfInsertions.length; i++){
-				bw2.write(positions[i] + "\t" + numberOfInsertions[i] + "\n");
-			}
-			
-			bw.close();
-			bw2.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		for (int i = 0; i < numberOfInsertions.length - index; i++){
+			newPositions.add(positions[i]);
+			newNumOfInsertions.add(numberOfInsertions[i]);
 		}
 		
 		return new Pair<double[], double[]>(Doubles.toArray(newPositions), Doubles.toArray(newNumOfInsertions));
