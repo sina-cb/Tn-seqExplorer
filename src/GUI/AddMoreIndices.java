@@ -41,6 +41,8 @@ import essgenes.AddColumns;
 import essgenes.Messages;
 import essgenes.PlotData;
 import essgenes.ProjectInfo;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 @SuppressWarnings("serial")
 public class AddMoreIndices extends JFrame {
@@ -227,6 +229,28 @@ public class AddMoreIndices extends JFrame {
 		JLabel lblChooseALibrary = new JLabel("Choose a library:");
 		lblChooseALibrary.setBounds(10, 63, 137, 14);
 		panel.add(lblChooseALibrary);
+		addLibraryCombo.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent arg0) {
+				BufferedReader br = null;
+				try{
+					File winInfo = new File(info.getPath() + addLibraryCombo.getSelectedItem() + ".data");
+					if (winInfo.exists()){
+						br = new BufferedReader(new FileReader(winInfo));
+						String line = br.readLine();
+						int tempLen = Integer.parseInt(line.substring(line.indexOf("=") + 2, line.length()));
+						line = br.readLine();
+						int tempStep = Integer.parseInt(line.substring(line.indexOf("=") + 2, line.length()));
+						br.close();
+						
+						addWinLenTxt.setText(tempLen + "");
+						addStepTxt.setText(tempStep + "");
+						
+					}
+				}catch (IOException e){
+					logger.fatal(e.getMessage());
+				}	
+			}
+		});
 		addLibraryCombo.setToolTipText("Choose a library to use for adding datat to the table");
 
 		addLibraryCombo.setBounds(157, 60, 361, 20);
