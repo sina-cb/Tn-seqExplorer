@@ -7,10 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.JFrame;
+
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.summary.Sum;
 import org.apache.commons.math3.util.Pair;
 import org.apache.log4j.Logger;
+
+import GUI.MainFrame;
 
 import com.google.common.primitives.Doubles;
 
@@ -276,7 +280,7 @@ public class StatisticsHelper {
 		return mean;
 	}
 
-	public static Pair<Integer, Integer> findOptimalLength(String libName, ProjectInfo info, boolean onlyUniqueInsertions) {
+	public static Pair<Integer, Integer> findOptimalLength(String libName, ProjectInfo info, boolean onlyUniqueInsertions, JFrame parent) {
 
 		double maxTests = 200;
 		int maxWinStepSize = 100;
@@ -330,9 +334,12 @@ public class StatisticsHelper {
 		Double R2 = 1.0;
 		
 		Double threshold = lowerBoundThreshold;
+		((MainFrame)parent).makeWinlenLblVisible(true);
 		while(R2 > threshold || R2.equals(Double.NaN)){
 			logger.debug("Winlen == " + tempWinLen);
 			logger.debug("Winstep == " + tempWinStep);
+			
+			((MainFrame)parent).changeWinLenTo("Testing Window length = " + tempWinLen);
 			
 			Pair<double[], double[]> data = processData(positions, numberOfInsertions, tempWinLen, tempWinStep, onlyUniqueInsertions);
 			data = modifyData(data.getFirst(), data.getSecond());

@@ -70,6 +70,7 @@ public class MainFrame extends JFrame {
 	public static final String ProgTitle = "Tn-seq explorer";
 	public static final String ProgVersion = "v1.1"; 
 
+	private JLabel winlenLbl = new JLabel("Testing Winlen = 500");
 	private JButton btnOptimal = new JButton("Recommend optimal Window Length");
 	private JLabel sequenceLengthLbl = new JLabel("0");
 	private JTextField sequenceLenTxt;
@@ -1220,6 +1221,11 @@ public class MainFrame extends JFrame {
 		label_9.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		label_9.setBounds(781, 486, 30, 14);
 		panelInitialize.add(label_9);
+		winlenLbl.setIcon(new ImageIcon(MainFrame.class.getResource("/resources/load.gif")));
+		winlenLbl.setVisible(false);
+		
+		winlenLbl.setBounds(563, 486, 215, 14);
+		panelInitialize.add(winlenLbl);
 		loadingLbl.setVisible(false);
 		doneLbl1.setVisible(false);
 		doneLbl2.setVisible(false);
@@ -1721,8 +1727,10 @@ public class MainFrame extends JFrame {
 			@Override
 			public void run() {
 				try {					
-					Pair<Integer, Integer> result = StatisticsHelper.findOptimalLength((String) plotLibraryCombo.getSelectedItem(), projectInfo, countOnlyUniqueRadio.isSelected());
+					Pair<Integer, Integer> result = StatisticsHelper.findOptimalLength((String) plotLibraryCombo.getSelectedItem(), projectInfo, countOnlyUniqueRadio.isSelected(), MainFrame.this);
 
+					changeWinLenTo("Plotting...");
+					
 					final String title;
 					if (countOnlyUniqueRadio.isSelected()){
 						String temp = String.format("Library Name: %s (Counting unique insertions) | Window Length: %d | Window Steps: %d", (String) plotLibraryCombo.getSelectedItem(), result.getFirst(), result.getSecond());
@@ -1745,6 +1753,7 @@ public class MainFrame extends JFrame {
 					frame.addPlot(panel);	
 
 					plotWaitLbl.setVisible(false);
+					(MainFrame.this).makeWinlenLblVisible(false);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -3031,4 +3040,14 @@ public class MainFrame extends JFrame {
 			}
 		}
 	}
+	
+	public void changeWinLenTo(String txt){
+		winlenLbl.setText(txt);
+	}
+	
+	public void makeWinlenLblVisible(boolean isVisible){
+		btnOptimal.setVisible(!isVisible);
+		winlenLbl.setVisible(isVisible);
+	}
+	
 }
