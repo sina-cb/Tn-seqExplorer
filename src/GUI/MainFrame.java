@@ -2578,9 +2578,8 @@ public class MainFrame extends JFrame {
 	}
 
 	private void initializeBWAPanel(){
-
 		String OSName = System.getProperty("os.name");
-
+		
 		if(OSName.contains("Windows") || OSName.contains("windows")){
 			for (Component c : ((JPanel)tabbedPane.getSelectedComponent()).getComponents()){
 				c.setEnabled(false);
