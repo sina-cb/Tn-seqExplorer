@@ -329,7 +329,7 @@ public class StatisticsHelper {
 		}
 		
 		int testCount = 0;
-		int tempWinLen = 50;
+		int tempWinLen = 100;
 		int tempWinStep = 10 < (tempWinLen / 4) ? (tempWinLen / 4) : 10;
 		Double R2 = 1.0;
 		

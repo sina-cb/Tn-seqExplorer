@@ -1716,7 +1716,7 @@ public class MainFrame extends JFrame {
 
 			@Override
 			public void run() {
-				JOptionPane.showMessageDialog(MainFrame.this, "The calculation might take a long time to complete.\nPlease be patient.");
+				JOptionPane.showMessageDialog(MainFrame.this, "The calculation might take a few minutes to complete.\nPlease be patient.");
 			}
 		})).start();
 
