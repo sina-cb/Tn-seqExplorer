@@ -1883,11 +1883,10 @@ public class MainFrame extends JFrame {
 			FileUtils.copyURLToFile(programSource, programDest);
 			FileUtils.copyURLToFile(shellSource, shellDest);
 
-			Thread.sleep(500);
-
+			String shellPath = shellDest.getAbsolutePath().replaceAll("\\s+","\\\\ ");
 			String cmd[] = {"gnome-terminal", "-x", "bash", "-c", 
 					"echo 'Please Enter Your Root Password';"
-							+ "su -m root -c 'sh shell.sh';"
+							+ "su -m root -c 'sh " + shellPath + "';"
 							+ "echo;"
 							+ "echo;"
 							+ "echo 'Press Any Key To Continue...';"
@@ -1902,18 +1901,15 @@ public class MainFrame extends JFrame {
 		} catch (IOException | InterruptedException e1) {
 			logger.error(e1.getMessage());
 			return;
-		}finally{
-			shellDest.delete();
-			programDest.delete();
 		}
 	}
 
 	private void installBWARedHat(){
 		URL programSource = MainFrame.class.getResource("/resources/bwa-0.7.5a.tar.bz2");
-		File programDest = new File("bwa-0.7.5a.tar.bz2");
+		File programDest = new File(projectInfo.getPath() + "bwa-0.7.5a.tar.bz2");
 
 		URL shellSource = MainFrame.class.getResource("/resources/install-bwa-redhat.sh");
-		File shellDest = new File("shell.sh");
+		File shellDest = new File(projectInfo.getPath() + "shell.sh");
 
 		JOptionPane.showMessageDialog(null, "In order to install the library, you should enter your machine's root password.\n"
 				+ "The password is only used to install the library.", "Root Password", JOptionPane.WARNING_MESSAGE);
@@ -1921,12 +1917,11 @@ public class MainFrame extends JFrame {
 		try {
 			FileUtils.copyURLToFile(programSource, programDest);
 			FileUtils.copyURLToFile(shellSource, shellDest);
-
-			Thread.sleep(500);
-
+			
+			String shellPath = shellDest.getAbsolutePath().replaceAll("\\s+","\\\\ ");
 			String cmd[] = {"gnome-terminal", "-x", "bash", "-c", 
 					"echo 'Please Enter Your Root Password';"
-							+ "su -m root -c 'sh shell.sh';"
+							+ "su -m root -c 'sh " + shellPath + "';"
 							+ "echo;"
 							+ "echo;"
 							+ "echo 'Press Any Key To Continue...';"
@@ -1941,9 +1936,6 @@ public class MainFrame extends JFrame {
 		} catch (IOException | InterruptedException e1) {
 			logger.error(e1.getMessage());
 			return;
-		}finally{
-			shellDest.delete();
-			programDest.delete();
 		}
 	}
 
