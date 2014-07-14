@@ -2091,7 +2091,7 @@ public class MainFrame extends JFrame {
 		Process child = Runtime.getRuntime().exec(cmd, null, dir);
 		child.waitFor();
 
-		shellScript.delete();
+		/*shellScript.delete();
 
 		File toDelete = new File(projectInfo.getPath() + PrepareFiles.prepareFileName(fastqFile, ".amb"));
 		toDelete.delete();
@@ -2109,7 +2109,7 @@ public class MainFrame extends JFrame {
 		toDelete.delete();
 
 		toDelete = new File(projectInfo.getPath() + PrepareFiles.prepareFileName(fastqFile, ".sai"));
-		toDelete.delete();
+		toDelete.delete();*/
 	}
 
 	private void setSequenceLengthText(int num){
