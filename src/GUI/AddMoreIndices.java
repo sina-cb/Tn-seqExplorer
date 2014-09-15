@@ -37,10 +37,13 @@ import org.jdesktop.swingx.JXLabel;
 import org.jfree.chart.ChartPanel;
 
 import CustomGUIComponent.BoldCellRenderer;
+import CustomGUIComponent.IntegerInputVerifier;
+import CustomGUIComponent.PercentageInputVerifier;
 import essgenes.AddColumns;
 import essgenes.Messages;
 import essgenes.PlotData;
 import essgenes.ProjectInfo;
+
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 
@@ -54,6 +57,9 @@ public class AddMoreIndices extends JFrame {
 	@SuppressWarnings("unused")
 	private JFrame parentFrame = null;
 
+	private JLabel errorMsg3Lbl = new JLabel("Enter a valid value.");
+	private JLabel errorMsg2Lbl = new JLabel("Please enter a valid value in the red fields.");
+	private JLabel errorMsg1Lbl = new JLabel("Please enter a valid value in the red fields.");
 	private JPanel contentPane;
 	private JTextField addWinLenTxt;
 	private JTextField addStepTxt;
@@ -261,6 +267,7 @@ public class AddMoreIndices extends JFrame {
 		addWinLenTxt.setText("1000");
 		addWinLenTxt.setColumns(10);
 		addWinLenTxt.setBounds(157, 122, 86, 20);
+		addWinLenTxt.setInputVerifier(new IntegerInputVerifier(errorMsg1Lbl, addMoreColumnsBtn));
 		panel.add(addWinLenTxt);
 
 		addStepTxt = new JTextField();
@@ -268,6 +275,7 @@ public class AddMoreIndices extends JFrame {
 		addStepTxt.setText("10");
 		addStepTxt.setColumns(10);
 		addStepTxt.setBounds(432, 122, 86, 20);
+		addStepTxt.setInputVerifier(new IntegerInputVerifier(errorMsg1Lbl, addMoreColumnsBtn));
 		panel.add(addStepTxt);
 
 		JLabel lblWindowLength = new JLabel("Window length:");
@@ -282,6 +290,7 @@ public class AddMoreIndices extends JFrame {
 		adjustStartTxt.setToolTipText("You can also omit percent sign and use regular number");
 		adjustStartTxt.setText("-5%");
 		adjustStartTxt.setColumns(10);
+		adjustStartTxt.setInputVerifier(new PercentageInputVerifier(errorMsg1Lbl, addMoreColumnsBtn));
 		adjustStartTxt.setBounds(157, 153, 86, 20);
 		panel.add(adjustStartTxt);
 
@@ -294,6 +303,7 @@ public class AddMoreIndices extends JFrame {
 		adjustEndTxt.setText("-20%");
 		adjustEndTxt.setColumns(10);
 		adjustEndTxt.setBounds(432, 153, 86, 20);
+		adjustEndTxt.setInputVerifier(new PercentageInputVerifier(errorMsg1Lbl, addMoreColumnsBtn));
 		panel.add(adjustEndTxt);
 
 		JLabel lblAdjustGeneEnd = new JLabel("Adjust gene end:");
@@ -422,6 +432,11 @@ public class AddMoreIndices extends JFrame {
 		progressBar.setBounds(10, 287, 185, 14);
 		panel.add(progressBar);
 		
+		errorMsg1Lbl.setForeground(Color.RED);
+		errorMsg1Lbl.setBounds(10, 262, 434, 14);
+		errorMsg1Lbl.setVisible(false);
+		panel.add(errorMsg1Lbl);
+		
 		JPanel panel_3 = new JPanel();
 		tabbedPane.addTab("Add insertion counts", null, panel_3, null);
 		panel_3.setLayout(null);
@@ -443,6 +458,7 @@ public class AddMoreIndices extends JFrame {
 		countInsAdjStartTxt.setText("-5%");
 		countInsAdjStartTxt.setColumns(10);
 		countInsAdjStartTxt.setBounds(157, 60, 86, 20);
+		countInsAdjStartTxt.setInputVerifier(new PercentageInputVerifier(errorMsg2Lbl, countInsBtn));
 		panel_3.add(countInsAdjStartTxt);
 		
 		JLabel lblTest = new JLabel("Adjust gene end:");
@@ -454,6 +470,7 @@ public class AddMoreIndices extends JFrame {
 		countInsAdjEndTxt.setText("-20%");
 		countInsAdjEndTxt.setColumns(10);
 		countInsAdjEndTxt.setBounds(432, 60, 86, 20);
+		countInsAdjEndTxt.setInputVerifier(new PercentageInputVerifier(errorMsg2Lbl, countInsBtn));
 		panel_3.add(countInsAdjEndTxt);
 		
 		countInsBtn.addActionListener(new ActionListener() {
@@ -518,6 +535,11 @@ public class AddMoreIndices extends JFrame {
 		JLabel lblThisToolAdds = new JLabel("This tool adds a new data column with the count of insertions or read counts in each gene.");
 		lblThisToolAdds.setBounds(10, 11, 536, 14);
 		panel_3.add(lblThisToolAdds);
+		
+		errorMsg2Lbl.setForeground(Color.RED);
+		errorMsg2Lbl.setBounds(10, 257, 384, 14);
+		errorMsg2Lbl.setVisible(false);
+		panel_3.add(errorMsg2Lbl);
 
 		JPanel compareScrollPanel = new JPanel();
 		tabbedPane.addTab("Compare data", null, compareScrollPanel, null);
@@ -543,6 +565,7 @@ public class AddMoreIndices extends JFrame {
 		
 		compareMaxInsTxt = new JTextField();
 		compareMaxInsTxt.setBounds(237, 189, 103, 20);
+		compareMaxInsTxt.setInputVerifier(new IntegerInputVerifier(errorMsg3Lbl, compareBtn));
 		compareScrollPanel.add(compareMaxInsTxt);
 		compareMaxInsTxt.setColumns(10);
 		
@@ -612,6 +635,11 @@ public class AddMoreIndices extends JFrame {
 		label_5.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		label_5.setBounds(512, 248, 88, 14);
 		compareScrollPanel.add(label_5);
+		
+		errorMsg3Lbl.setForeground(Color.RED);
+		errorMsg3Lbl.setBounds(368, 192, 178, 14);
+		errorMsg3Lbl.setVisible(false);
+		compareScrollPanel.add(errorMsg3Lbl);
 	}
 
 	private void plotColumns(){

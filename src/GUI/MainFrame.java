@@ -57,6 +57,7 @@ import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXLabel;
 import org.jfree.chart.ChartPanel;
 
+import CustomGUIComponent.IntegerInputVerifier;
 import essgenes.Messages;
 import essgenes.MyFileUtil;
 import essgenes.PlotData;
@@ -68,8 +69,11 @@ import essgenes.StatisticsHelper;
 public class MainFrame extends JFrame {
 
 	public static final String ProgTitle = "Tn-seq explorer";
-	public static final String ProgVersion = "v1.1"; 
-
+	public static final String ProgVersion = "v1.1";
+	
+	private JLabel errorMsgLbl = new JLabel("Please enter a valid Integer value in the red fields.");
+	private JButton applySequenceBtn = new JButton("Apply");
+	private JLabel lblPleaseEnterAn = new JLabel("Please enter a valid Integer value.");
 	private JLabel winlenLbl = new JLabel("Testing Winlen = 500");
 	private JButton btnOptimal = new JButton("Recommend optimal Window Length");
 	private JLabel sequenceLengthLbl = new JLabel("0");
@@ -200,8 +204,9 @@ public class MainFrame extends JFrame {
 		sequenceLenTxt.setBounds(231, 33, 150, 22);
 		panelMain.add(sequenceLenTxt);
 		sequenceLenTxt.setColumns(10);
+		
+		sequenceLenTxt.setInputVerifier(new IntegerInputVerifier(lblPleaseEnterAn, applySequenceBtn));
 
-		JButton applySequenceBtn = new JButton("Apply");
 		applySequenceBtn.setToolTipText("Apply the entered sequence length");
 		applySequenceBtn.setFont(new Font("Tahoma", Font.BOLD, 13));
 		applySequenceBtn.addActionListener(new ActionListener() {
@@ -773,6 +778,11 @@ public class MainFrame extends JFrame {
 		sequenceLengthLbl.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		sequenceLengthLbl.setBounds(575, 550, 178, 33);
 		panelMain.add(sequenceLengthLbl);
+		
+		lblPleaseEnterAn.setForeground(Color.RED);
+		lblPleaseEnterAn.setBounds(498, 37, 293, 14);
+		lblPleaseEnterAn.setVisible(false);
+		panelMain.add(lblPleaseEnterAn);
 
 		ButtonGroup numberOfReads = new ButtonGroup();
 
@@ -1063,6 +1073,7 @@ public class MainFrame extends JFrame {
 		winLenTxt.setToolTipText("Enter the window length");
 		winLenTxt.setColumns(10);
 		winLenTxt.setBounds(424, 483, 56, 20);
+		winLenTxt.setInputVerifier(new IntegerInputVerifier(errorMsgLbl, plotBtn));
 		panelInitialize.add(winLenTxt);
 
 		winStepTxt = new JTextField();
@@ -1075,6 +1086,7 @@ public class MainFrame extends JFrame {
 		winStepTxt.setToolTipText("Enter window step size");
 		winStepTxt.setColumns(10);
 		winStepTxt.setBounds(490, 483, 65, 20);
+		winStepTxt.setInputVerifier(new IntegerInputVerifier(errorMsgLbl, plotBtn));
 		panelInitialize.add(winStepTxt);
 
 		JLabel lblWindowLength = new JLabel("Window length:");
@@ -1124,6 +1136,7 @@ public class MainFrame extends JFrame {
 		maxNumInsTxt.setText("3");
 		maxNumInsTxt.setColumns(10);
 		maxNumInsTxt.setBounds(426, 551, 118, 20);
+		maxNumInsTxt.setInputVerifier(new IntegerInputVerifier(errorMsgLbl, maxNumInsBtn));
 		panelInitialize.add(maxNumInsTxt);
 
 		JLabel lblMaxNumberOf = new JLabel("Max number of insertions/reads:");
@@ -1226,6 +1239,11 @@ public class MainFrame extends JFrame {
 		
 		winlenLbl.setBounds(563, 486, 215, 14);
 		panelInitialize.add(winlenLbl);
+		
+		errorMsgLbl.setForeground(Color.RED);
+		errorMsgLbl.setBounds(279, 606, 455, 14);
+		errorMsgLbl.setVisible(false);
+		panelInitialize.add(errorMsgLbl);
 		loadingLbl.setVisible(false);
 		doneLbl1.setVisible(false);
 		doneLbl2.setVisible(false);
@@ -3040,5 +3058,4 @@ public class MainFrame extends JFrame {
 		btnOptimal.setVisible(!isVisible);
 		winlenLbl.setVisible(isVisible);
 	}
-	
 }
