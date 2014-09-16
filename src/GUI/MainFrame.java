@@ -70,7 +70,12 @@ public class MainFrame extends JFrame {
 
 	public static final String ProgTitle = "Tn-seq explorer";
 	public static final String ProgVersion = "v1.2";
-	
+
+	private JLabel label_10 = new JLabel("(?)");
+	private JLabel lblReads = new JLabel("reads.");
+	private JButton btnAnotherPlot = new JButton("Distribution of reads per unique insertion");
+	private JLabel lblWindowLength = new JLabel("Window length:");
+	private JLabel lblRemoveUniqueInsertions = new JLabel("Remove unique insertions with no more than");
 	private JLabel errorMsgLbl = new JLabel("Please enter a valid Integer value in the red fields.");
 	private JButton applySequenceBtn = new JButton("Apply");
 	private JLabel lblPleaseEnterAn = new JLabel("Please enter a valid Integer value.");
@@ -1097,7 +1102,6 @@ public class MainFrame extends JFrame {
 		winStepTxt.setInputVerifier(new IntegerInputVerifier(errorMsgLbl, plotBtn));
 		panelInitialize.add(winStepTxt);
 
-		JLabel lblWindowLength = new JLabel("Window length:");
 		lblWindowLength.setBounds(392, 468, 123, 14);
 		panelInitialize.add(lblWindowLength);
 
@@ -1166,7 +1170,7 @@ public class MainFrame extends JFrame {
 		});
 		countOnlyUniqueRadio.setSelected(true);
 
-		countOnlyUniqueRadio.setBounds(12, 516, 361, 23);
+		countOnlyUniqueRadio.setBounds(12, 516, 249, 23);
 		panelInitialize.add(countOnlyUniqueRadio);
 		countAllReadsRadio.addMouseListener(new MouseAdapter() {
 			@Override
@@ -1253,8 +1257,7 @@ public class MainFrame extends JFrame {
 		errorMsgLbl.setVisible(false);
 		panelInitialize.add(errorMsgLbl);
 		
-		JLabel lblRemoveUniqueInsertions = new JLabel("Remove unique insertions with no more than");
-		lblRemoveUniqueInsertions.setBounds(475, 214, 289, 14);
+		lblRemoveUniqueInsertions.setBounds(475, 214, 336, 14);
 		panelInitialize.add(lblRemoveUniqueInsertions);
 		
 		removeUniqueInsertionsTxt = new JTextField();
@@ -1264,12 +1267,9 @@ public class MainFrame extends JFrame {
 		removeUniqueInsertionsTxt.setColumns(10);
 		removeUniqueInsertionsTxt.setInputVerifier(new IntegerInputVerifier(errorMsgLbl, extractInsBtn));
 
-		
-		JLabel lblReads = new JLabel("reads.");
 		lblReads.setBounds(760, 215, 46, 14);
 		panelInitialize.add(lblReads);
 		
-		JLabel label_10 = new JLabel("(?)");
 		label_10.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -1286,20 +1286,29 @@ public class MainFrame extends JFrame {
 		label_10.setBounds(797, 215, 30, 14);
 		panelInitialize.add(label_10);
 		
-		JButton btnAnotherPlot = new JButton("Distribution of reads per unique insertion");
 		btnAnotherPlot.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				anotherPlot();
 			}
 		});
-		btnAnotherPlot.setBounds(392, 514, 257, 23);
+		btnAnotherPlot.setBounds(422, 514, 227, 23);
 		panelInitialize.add(btnAnotherPlot);
 		
 		JLabel label_11 = new JLabel("(?)");
+		label_11.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JOptionPane.showMessageDialog(MainFrame.this, "Assuming that unique insertions represent different mutants, if each mutant had\n"
+						+ "an equal chance to be represented by a sequence read in the sequencing experiment,\n"
+						+ "the number of reads per unique insertion would follow approximately a normal\n"
+						+ "distribution. However, this is rarely the case with real data. This option allows you\n"
+						+ "to investigate how the distribution of reads differs from the random expectation.");
+			}
+		});
 		label_11.setToolTipText("Click me!");
 		label_11.setForeground(Color.BLUE);
 		label_11.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_11.setBounds(658, 520, 30, 14);
+		label_11.setBounds(662, 520, 30, 14);
 		panelInitialize.add(label_11);
 		loadingLbl.setVisible(false);
 		doneLbl1.setVisible(false);
@@ -2877,6 +2886,23 @@ public class MainFrame extends JFrame {
 		initiatePlotLibraryComboBox();
 
 		reloadWinInfo();
+		
+		//TODO: Check this!!!
+		String OSName = System.getProperty("os.name");
+		if(!(OSName.contains("Windows") || OSName.contains("windows"))){
+			lblRemoveUniqueInsertions.setBounds(450, 214, 336, 14);
+			lblWindowLength.setBounds((int) lblWindowLength.getBounds().getX() - 20, (int) lblWindowLength.getBounds().getY(), (int) lblWindowLength.getBounds().getWidth(), (int) lblWindowLength.getBounds().getHeight());
+
+			lblReads.setBounds((int) lblReads.getBounds().getX() - 20, (int) lblReads.getBounds().getY() + 20, (int) lblReads.getBounds().getWidth(), (int) lblReads.getBounds().getHeight());
+			removeUniqueInsertionsTxt.setBounds((int) removeUniqueInsertionsTxt.getBounds().getX() - 20, (int) removeUniqueInsertionsTxt.getBounds().getY() + 20, 
+					(int) removeUniqueInsertionsTxt.getBounds().getWidth(), (int) removeUniqueInsertionsTxt.getBounds().getHeight());
+			label_10.setBounds((int) label_10.getBounds().getX(), (int) label_10.getBounds().getY() + 20, (int) label_10.getBounds().getWidth(), (int) label_10.getBounds().getHeight());
+			
+			btnAnotherPlot.setSize(btnAnotherPlot.getWidth() + 60, btnAnotherPlot.getHeight());
+			btnAnotherPlot.setText(btnAnotherPlot.getText().replace("unique ", ""));
+			btnAnotherPlot.setBounds((int) btnAnotherPlot.getBounds().getX() - 80, (int) btnAnotherPlot.getBounds().getY(), (int) btnAnotherPlot.getBounds().getWidth(), (int) btnAnotherPlot.getBounds().getHeight());
+		}	
+		
 	}
 
 	private void reloadWinInfo(){
