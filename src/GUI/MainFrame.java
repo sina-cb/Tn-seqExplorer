@@ -71,6 +71,7 @@ public class MainFrame extends JFrame {
 	public static final String ProgTitle = "Tn-seq explorer";
 	public static final String ProgVersion = "v1.2";
 
+	private boolean if_initialize_step_1 = true;
 	private JLabel label_10 = new JLabel("(?)");
 	private JLabel lblReads = new JLabel("reads.");
 	private JButton btnAnotherPlot = new JButton("Distribution of reads per unique insertion");
@@ -1970,15 +1971,16 @@ public class MainFrame extends JFrame {
 			String shellPath = shellDest.getAbsolutePath().replaceAll("\\s+","\\\\ ");
 			String cmd[] = {"gnome-terminal", "-x", "bash", "-c", 
 					"echo 'Please Enter Your Root Password';"
+							+ "pwd;"
 							+ "su -m root -c 'sh " + shellPath + "';"
 							+ "echo;"
 							+ "echo;"
 							+ "echo 'Press Any Key To Continue...';"
 							+ "read"};
 
-			Path currentRelativePath = Paths.get("");
-			String location = currentRelativePath.toAbsolutePath()
-					.toString();
+			//Path currentRelativePath = Paths.get("");
+			//String location = currentRelativePath.toAbsolutePath().toString();
+			String location = shellDest.getAbsolutePath().substring(0, shellPath.length() - 10);
 			File dir = new File(location);
 			Process child = Runtime.getRuntime().exec(cmd, null, dir);
 			child.waitFor();
@@ -2005,15 +2007,16 @@ public class MainFrame extends JFrame {
 			String shellPath = shellDest.getAbsolutePath().replaceAll("\\s+","\\\\ ");
 			String cmd[] = {"gnome-terminal", "-x", "bash", "-c", 
 					"echo 'Please Enter Your Root Password';"
+							+ "pwd;"
 							+ "su -m root -c 'sh " + shellPath + "';"
 							+ "echo;"
 							+ "echo;"
 							+ "echo 'Press Any Key To Continue...';"
 							+ "read"};
 
-			Path currentRelativePath = Paths.get("");
-			String location = currentRelativePath.toAbsolutePath()
-					.toString();
+			//Path currentRelativePath = Paths.get("");
+			//String location = currentRelativePath.toAbsolutePath().toString();
+			String location = shellDest.getAbsolutePath().substring(0, shellPath.length() - 10);
 			File dir = new File(location);
 			Process child = Runtime.getRuntime().exec(cmd, null, dir);
 			child.waitFor();
@@ -2890,17 +2893,21 @@ public class MainFrame extends JFrame {
 		//TODO: Check this!!!
 		String OSName = System.getProperty("os.name");
 		if(!(OSName.contains("Windows") || OSName.contains("windows"))){
-			lblRemoveUniqueInsertions.setBounds(450, 214, 336, 14);
-			lblWindowLength.setBounds((int) lblWindowLength.getBounds().getX() - 20, (int) lblWindowLength.getBounds().getY(), (int) lblWindowLength.getBounds().getWidth(), (int) lblWindowLength.getBounds().getHeight());
-
-			lblReads.setBounds((int) lblReads.getBounds().getX() - 20, (int) lblReads.getBounds().getY() + 20, (int) lblReads.getBounds().getWidth(), (int) lblReads.getBounds().getHeight());
-			removeUniqueInsertionsTxt.setBounds((int) removeUniqueInsertionsTxt.getBounds().getX() - 20, (int) removeUniqueInsertionsTxt.getBounds().getY() + 20, 
-					(int) removeUniqueInsertionsTxt.getBounds().getWidth(), (int) removeUniqueInsertionsTxt.getBounds().getHeight());
-			label_10.setBounds((int) label_10.getBounds().getX(), (int) label_10.getBounds().getY() + 20, (int) label_10.getBounds().getWidth(), (int) label_10.getBounds().getHeight());
-			
-			btnAnotherPlot.setSize(btnAnotherPlot.getWidth() + 60, btnAnotherPlot.getHeight());
-			btnAnotherPlot.setText(btnAnotherPlot.getText().replace("unique ", ""));
-			btnAnotherPlot.setBounds((int) btnAnotherPlot.getBounds().getX() - 80, (int) btnAnotherPlot.getBounds().getY(), (int) btnAnotherPlot.getBounds().getWidth(), (int) btnAnotherPlot.getBounds().getHeight());
+			if (if_initialize_step_1){
+				lblRemoveUniqueInsertions.setBounds(450, 214, 336, 14);
+				lblWindowLength.setBounds((int) lblWindowLength.getBounds().getX() - 20, (int) lblWindowLength.getBounds().getY(), (int) lblWindowLength.getBounds().getWidth(), (int) lblWindowLength.getBounds().getHeight());
+	
+				lblReads.setBounds((int) lblReads.getBounds().getX() - 20, (int) lblReads.getBounds().getY() + 20, (int) lblReads.getBounds().getWidth(), (int) lblReads.getBounds().getHeight());
+				removeUniqueInsertionsTxt.setBounds((int) removeUniqueInsertionsTxt.getBounds().getX() - 20, (int) removeUniqueInsertionsTxt.getBounds().getY() + 20, 
+						(int) removeUniqueInsertionsTxt.getBounds().getWidth(), (int) removeUniqueInsertionsTxt.getBounds().getHeight());
+				label_10.setBounds((int) label_10.getBounds().getX(), (int) label_10.getBounds().getY() + 20, (int) label_10.getBounds().getWidth(), (int) label_10.getBounds().getHeight());
+				
+				btnAnotherPlot.setSize(btnAnotherPlot.getWidth() + 60, btnAnotherPlot.getHeight());
+				btnAnotherPlot.setText(btnAnotherPlot.getText().replace("unique ", ""));
+				btnAnotherPlot.setBounds((int) btnAnotherPlot.getBounds().getX() - 80, (int) btnAnotherPlot.getBounds().getY(), (int) btnAnotherPlot.getBounds().getWidth(), (int) btnAnotherPlot.getBounds().getHeight());
+				
+				if_initialize_step_1 = false;
+			}
 		}	
 		
 	}
