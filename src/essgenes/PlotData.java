@@ -31,6 +31,84 @@ public class PlotData {
 
 	private static Logger logger = Logger.getLogger(PlotData.class.getName());
 	
+	public static JFreeChart anotherPlot(String libName, String title, ProjectInfo info, boolean onlyUniqueInsertions){
+		
+		File input = new File(info.getPath() + libName + ".inspous");
+		ArrayList<Integer> counts_Y = new ArrayList<>();
+		ArrayList<Integer> positions_X = new ArrayList<>();
+		
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(input));
+			
+			String line = br.readLine();
+			
+			line = line.substring(line.indexOf("\t") + 1);
+			line = line.substring(line.indexOf("\t") + 1);
+			int numberOfReads = Integer.parseInt(line);
+			
+			for (int i = 0; i < numberOfReads + 1; i++){
+				counts_Y.add(0);
+				positions_X.add(i);
+			}
+
+			while (line != null){
+				counts_Y.set(numberOfReads, counts_Y.get(numberOfReads) + 1);
+
+				line = br.readLine();
+				
+				if (line != null){
+					line = line.substring(line.indexOf("\t") + 1);
+					line = line.substring(line.indexOf("\t") + 1);
+					numberOfReads = Integer.parseInt(line);
+				}
+			}
+			br.close();
+			
+		} catch (IOException e) {
+			logger.error(e.getStackTrace());
+		}
+		
+		XYSeries series = new XYSeries("data");
+		
+		for (int i = 0; i < positions_X.size(); i++){
+			series.add(positions_X.get(i), counts_Y.get(i));
+		}
+		
+		XYSeriesCollection dataset = new XYSeriesCollection(series);
+		
+
+		JFreeChart chart = ChartFactory.createXYBarChart(
+				"XY Series plot",
+				"X", 
+				false,
+				"Y", 
+				dataset,
+				PlotOrientation.VERTICAL,
+				true,
+				true,
+				false
+				);
+		
+		XYPlot plot = (XYPlot) chart.getPlot();
+		plot.getDomainAxis().setLowerBound(-10);
+		
+        /*final IntervalMarker target = new IntervalMarker(400.0, 700.0);
+        target.setLabel("Target Range");
+        target.setLabelFont(new Font("SansSerif", Font.ITALIC, 11));
+        target.setLabelAnchor(RectangleAnchor.LEFT);
+        target.setLabelTextAnchor(TextAnchor.CENTER_LEFT);
+        target.setPaint(new Color(222, 222, 255, 128));
+        plot.addRangeMarker(target, Layer.BACKGROUND);*/
+		
+		/*try {
+			saveToXls(xAxis, yAxis, info, libName, onlyUniqueInsertions);
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+		}*/
+		
+		return chart;
+	}
+	
 	public static JFreeChart plotData(String libName, int windowLen, int windowStep, String title, ProjectInfo info, boolean onlyUniqueInsertions){
 		
 		BufferedReader br = null;

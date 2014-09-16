@@ -566,7 +566,7 @@ public class PrepareFiles {
 		return Messages.successMsg;
 	}
 
-	public static String countUniqueLocations(String samFilePath, String outPath){
+	public static String countUniqueLocations(String samFilePath, String outPath, Integer uniqueLimit){
 
 		String sortedPath = prepareOutputFilePath(samFilePath, outPath, ".inspos");
 		String uniquePath = prepareOutputFilePath(samFilePath, outPath, ".inspou");
@@ -598,13 +598,13 @@ public class PrepareFiles {
 						currentUniqueNumber *= -1;
 					}
 
-					bw.write(currentUniqueNumber + "\t" + sign + "\t" + count + "\n");
+					if (uniqueLimit != 0 && count > uniqueLimit)
+						bw.write(currentUniqueNumber + "\t" + sign + "\t" + count + "\n");
 
 					currentUniqueNumber = current;
 					count = 1;
 				}
 
-				bw.flush();
 				line = br.readLine();
 			}
 
@@ -614,7 +614,8 @@ public class PrepareFiles {
 				currentUniqueNumber *= -1;
 			}
 
-			bw.write(currentUniqueNumber + "\t" + sign + "\t" + count + "\n");
+			if (uniqueLimit != 0 && count > uniqueLimit)
+				bw.write(currentUniqueNumber + "\t" + sign + "\t" + count + "\n");
 
 		}catch(IOException e){
 			logger.error(e.getMessage());
@@ -699,7 +700,11 @@ public class PrepareFiles {
 
 		List<File> filesList = ExternalSort.sortInBatch(new File(inputFile), comparator, maxTempFiles, cs, tempFileStore, distinct, headersize, useGZip);
 		if(verbose) {
-			logger.info("created " + filesList.size() + " tmp files");
+			try{
+				logger.info("created " + filesList.size() + " tmp files");
+			}catch(Exception e){
+				e.printStackTrace();
+			}
 		}
 
 		ExternalSort.mergeSortedFiles(filesList, new File(outputFile), comparator, cs, distinct, false, useGZip);

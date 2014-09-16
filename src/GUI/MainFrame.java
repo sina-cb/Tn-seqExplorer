@@ -145,6 +145,7 @@ public class MainFrame extends JFrame {
 	private JTextField samFilePath;
 	private JTextField maxNumInsTxt;
 	private Thread second_thread = null;
+	private JTextField removeUniqueInsertionsTxt;
 
 	/**
 	 * Create the frame.
@@ -838,6 +839,13 @@ public class MainFrame extends JFrame {
 				MainFrame.this.extractInsBtn.setEnabled(false);
 				MainFrame.this.extractInsBtn.setText("Wait");
 
+				if (samFilePathTxt.getText() == null || samFilePathTxt.getText().equals("")){
+					JOptionPane.showMessageDialog(MainFrame.this, "Select an input file and try again.");
+					setToDefaultState();
+					return;
+				}
+
+				Integer uniqueInsertionsLimit = Integer.parseInt(removeUniqueInsertionsTxt.getText());
 				if(samFilePathTxt.getText().endsWith(".inspo")){
 					String newPath = projectInfo.getPath() + PrepareFiles.prepareFileName(samFilePathTxt.getText(), ".inspo");
 
@@ -867,13 +875,13 @@ public class MainFrame extends JFrame {
 					loadingLbl.setBounds(22, 239, 30, 16);
 					loadingLbl.setVisible(true);
 					samFilePathTxt.setText(newPath);
-					SortInsertions run = new SortInsertions();
+					SortInsertions run = new SortInsertions(uniqueInsertionsLimit);
 					Thread runThread = new Thread(run);
 					runThread.start();
 				}else{
 					loadingLbl.setBounds(22, 219, 30, 16);
 					loadingLbl.setVisible(true);
-					ExtractInsertions run = new ExtractInsertions();
+					ExtractInsertions run = new ExtractInsertions(uniqueInsertionsLimit);
 					Thread runThread = new Thread(run);
 					runThread.start();
 				}
@@ -1244,6 +1252,48 @@ public class MainFrame extends JFrame {
 		errorMsgLbl.setBounds(279, 606, 455, 14);
 		errorMsgLbl.setVisible(false);
 		panelInitialize.add(errorMsgLbl);
+		
+		JLabel lblRemoveUniqueInsertions = new JLabel("Remove unique insertions with no more than");
+		lblRemoveUniqueInsertions.setBounds(475, 214, 289, 14);
+		panelInitialize.add(lblRemoveUniqueInsertions);
+		
+		removeUniqueInsertionsTxt = new JTextField();
+		removeUniqueInsertionsTxt.setText("0");
+		removeUniqueInsertionsTxt.setBounds(710, 211, 38, 20);
+		panelInitialize.add(removeUniqueInsertionsTxt);
+		removeUniqueInsertionsTxt.setColumns(10);
+		removeUniqueInsertionsTxt.setInputVerifier(new IntegerInputVerifier(errorMsgLbl, extractInsBtn));
+
+		
+		JLabel lblReads = new JLabel("reads.");
+		lblReads.setBounds(760, 215, 46, 14);
+		panelInitialize.add(lblReads);
+		
+		JLabel label_10 = new JLabel("(?)");
+		label_10.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JOptionPane.showMessageDialog(MainFrame.this, "Some unique insertions may be represented by a single read (or only a\n"
+						+ "few reads). These could result from sequence reads that were incorrectly\n"
+						+ "mapped to the genome, or from other artifacts. You can use this\n"
+						+ "parameter to remove such unique insertions and the associated reads\n"
+						+ "from the data.");
+			}
+		});
+		label_10.setToolTipText("Click me!");
+		label_10.setForeground(Color.BLUE);
+		label_10.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		label_10.setBounds(797, 215, 30, 14);
+		panelInitialize.add(label_10);
+		
+		JButton btnAnotherPlot = new JButton("Another Plot");
+		btnAnotherPlot.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				anotherPlot();
+			}
+		});
+		btnAnotherPlot.setBounds(516, 516, 136, 23);
+		panelInitialize.add(btnAnotherPlot);
 		loadingLbl.setVisible(false);
 		doneLbl1.setVisible(false);
 		doneLbl2.setVisible(false);
@@ -2181,6 +2231,42 @@ public class MainFrame extends JFrame {
 		setToDefaultState();
 	}
 
+	private void anotherPlot(){
+		plotWaitLbl.setVisible(true);
+
+		final String title;
+		if (countOnlyUniqueRadio.isSelected()){
+			String temp = String.format("Library Name: %s ANOTHER PLOT (Counting unique insertions)", (String) plotLibraryCombo.getSelectedItem());
+			title = temp;
+		} else{
+			String temp = String.format("Library Name: %s ANOTHER PLOT (Counting all reads)", (String) plotLibraryCombo.getSelectedItem());
+			title = temp;
+		}
+
+		(new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {	
+					ChartPanel panel = new ChartPanel(PlotData.anotherPlot((String) plotLibraryCombo.getSelectedItem(), title, projectInfo, countOnlyUniqueRadio.isSelected()));
+
+					PlotViewer frame = new PlotViewer();					
+					frame.setPlotName(title);
+					frame.setVisible(true);
+					frame.addPlot(panel);
+
+					//TODO: These comments can be removed without any change.
+					/*File randomFile = new File("C:\\Users\\Sina\\Desktop\\" + (String) plotLibraryCombo.getSelectedItem() + " len" + len + " step" + step + ".jpeg");
+					ChartUtilities.saveChartAsJPEG(randomFile, panel.getChart(), 800, 600);*/
+
+					plotWaitLbl.setVisible(false);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		})).start();
+	}
+	
 	private void plotDataMethod(){
 
 		if(winLenTxt.getText() == null || winLenTxt.getText().compareTo("") == 0){
@@ -2908,6 +2994,11 @@ public class MainFrame extends JFrame {
 
 	// 1
 	private class ExtractInsertions implements Runnable{
+		private int uniqueInsertionsLimit;
+		public ExtractInsertions(int uniqueInsertionsLimit) {
+			this.uniqueInsertionsLimit = uniqueInsertionsLimit;
+		}
+		
 		@Override
 		public void run() {
 			String result = PrepareFiles.findTheLocationsInTheSamFile(MainFrame.this.samFilePathTxt.getText(), 
@@ -2920,7 +3011,7 @@ public class MainFrame extends JFrame {
 				doneLbl1.setVisible(true);
 				loadingLbl.setBounds(22, 239, 30, 16);
 
-				SortInsertions run = new SortInsertions();
+				SortInsertions run = new SortInsertions(uniqueInsertionsLimit);
 				Thread runThread = new Thread(run);
 				runThread.start();
 			}else{
@@ -2931,6 +3022,12 @@ public class MainFrame extends JFrame {
 
 	// 2
 	private class SortInsertions implements Runnable{
+		
+		private int uniqueInsertionsLimit;
+		public SortInsertions(int uniqueInsertionsLimit) {
+			this.uniqueInsertionsLimit = uniqueInsertionsLimit;
+		}
+		
 		@Override
 		public void run() {
 			String result = PrepareFiles.sortTheLocationsFile(MainFrame.this.samFilePathTxt.getText(), projectInfo.getPath());
@@ -2970,7 +3067,7 @@ public class MainFrame extends JFrame {
 				doneLbl2.setVisible(true);
 				loadingLbl.setBounds(22, 258, 30, 16);
 
-				CountUnique run = new CountUnique();
+				CountUnique run = new CountUnique(uniqueInsertionsLimit);
 				Thread runThread = new Thread(run);
 				runThread.start();
 			}else{
@@ -2981,9 +3078,16 @@ public class MainFrame extends JFrame {
 
 	// 3
 	private class CountUnique implements Runnable{
+		
+		private int uniqueInsertionsLimit;
+		
+		public CountUnique(int uniqueInsertionsLimit){
+			this.uniqueInsertionsLimit = uniqueInsertionsLimit;
+		}
+		
 		@Override
 		public void run() {
-			String result = PrepareFiles.countUniqueLocations(MainFrame.this.samFilePathTxt.getText(), projectInfo.getPath());
+			String result = PrepareFiles.countUniqueLocations(MainFrame.this.samFilePathTxt.getText(), projectInfo.getPath(), uniqueInsertionsLimit);
 			if(result.compareTo(Messages.successMsg) == 0){
 
 				MainFrame.this.sortUniLbl.setForeground(Color.BLUE);

@@ -16,6 +16,10 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.Range;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.RowSpec;
 
 @SuppressWarnings("serial")
 public class PlotViewer extends JFrame {
@@ -26,6 +30,7 @@ public class PlotViewer extends JFrame {
 	private JTextField xEndTxt;
 	private JTextField yStartTxt;
 	private JTextField yEndTxt;
+	private JPanel parametersPanel = new JPanel();
 	
 	/**
 	 * Create the frame.
@@ -48,58 +53,75 @@ public class PlotViewer extends JFrame {
 		lblResultPlot.setBounds(10, 11, 96, 14);
 		contentPane.add(lblResultPlot);
 		
+		parametersPanel.setBounds(10, 527, 700, 89);
+		contentPane.add(parametersPanel);
+		parametersPanel.setLayout(new FormLayout(new ColumnSpec[] {
+				ColumnSpec.decode("116px"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("max(47dlu;default)"),
+				ColumnSpec.decode("67px"),
+				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+				ColumnSpec.decode("59px"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				FormFactory.DEFAULT_COLSPEC,
+				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+				ColumnSpec.decode("74px"),
+				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+				ColumnSpec.decode("58px"),
+				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+				ColumnSpec.decode("86px"),
+				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+				ColumnSpec.decode("80px"),},
+			new RowSpec[] {
+				FormFactory.LINE_GAP_ROWSPEC,
+				RowSpec.decode("20px"),
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.LINE_GAP_ROWSPEC,
+				RowSpec.decode("23px"),}));
+		
 		JLabel lblChangePlotRanges = new JLabel("Change plot ranges:");
-		lblChangePlotRanges.setBounds(10, 527, 216, 14);
-		contentPane.add(lblChangePlotRanges);
+		parametersPanel.add(lblChangePlotRanges, "1, 2, left, center");
 		
 		JLabel lblXAxisStart = new JLabel("X Axis start:");
-		lblXAxisStart.setBounds(20, 552, 111, 14);
-		contentPane.add(lblXAxisStart);
+		parametersPanel.add(lblXAxisStart, "3, 4, left, center");
 		
 		xStartTxt = new JTextField();
+		parametersPanel.add(xStartTxt, "4, 4, left, top");
 		xStartTxt.setText("0.0");
-		xStartTxt.setBounds(140, 549, 86, 20);
-		contentPane.add(xStartTxt);
 		xStartTxt.setColumns(10);
 		
 		JLabel lblXAxisEnd = new JLabel("X Axis end:");
-		lblXAxisEnd.setBounds(20, 580, 111, 14);
-		contentPane.add(lblXAxisEnd);
+		parametersPanel.add(lblXAxisEnd, "8, 4, left, center");
 		
 		xEndTxt = new JTextField();
+		parametersPanel.add(xEndTxt, "10, 4, left, top");
 		xEndTxt.setText("2000.0");
 		xEndTxt.setColumns(10);
-		xEndTxt.setBounds(140, 577, 86, 20);
-		contentPane.add(xEndTxt);
 		
 		JLabel lblYAxisStart = new JLabel("Y Axis start:");
-		lblYAxisStart.setBounds(283, 555, 111, 14);
-		contentPane.add(lblYAxisStart);
+		parametersPanel.add(lblYAxisStart, "3, 6, left, center");
 		
 		yStartTxt = new JTextField();
+		parametersPanel.add(yStartTxt, "4, 6, left, top");
 		yStartTxt.setText("0.0");
 		yStartTxt.setColumns(10);
-		yStartTxt.setBounds(403, 552, 86, 20);
-		contentPane.add(yStartTxt);
 		
 		JLabel lblYAxisEnd = new JLabel("Y Axis end:");
-		lblYAxisEnd.setBounds(283, 577, 111, 14);
-		contentPane.add(lblYAxisEnd);
+		parametersPanel.add(lblYAxisEnd, "8, 6, left, center");
 		
 		yEndTxt = new JTextField();
+		parametersPanel.add(yEndTxt, "10, 6, right, center");
 		yEndTxt.setText("300.0");
 		yEndTxt.setColumns(10);
-		yEndTxt.setBounds(403, 574, 86, 20);
-		contentPane.add(yEndTxt);
 		
 		JButton replotBtn = new JButton("Re-Plot");
+		parametersPanel.add(replotBtn, "16, 6, left, top");
 		replotBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				replot();
 			}
 		});
-		replotBtn.setBounds(623, 576, 89, 23);
-		contentPane.add(replotBtn);
 	}
 	
 	public void replot(){
@@ -148,13 +170,19 @@ public class PlotViewer extends JFrame {
 		
 		//Initializing the default values for ranges
 		JFreeChart chart1 = chart.getChart();
-		XYPlot plot = chart1.getXYPlot();
-		Range range = plot.getDomainAxis().getRange();
-		xStartTxt.setText(range.getLowerBound() + "");
-		xEndTxt.setText(range.getUpperBound() + "");
-		range = plot.getRangeAxis().getRange();
-		yStartTxt.setText(range.getLowerBound() + "");
-		yEndTxt.setText(range.getUpperBound() + "");
+		if (chart1.getPlot() instanceof XYPlot){
+			XYPlot plot = chart1.getXYPlot();
+			Range range = plot.getDomainAxis().getRange();
+			xStartTxt.setText(range.getLowerBound() + "");
+			xEndTxt.setText(range.getUpperBound() + "");
+			range = plot.getRangeAxis().getRange();
+			yStartTxt.setText(range.getLowerBound() + "");
+			yEndTxt.setText(range.getUpperBound() + "");
+		}else{
+			for (int i = 0; i < parametersPanel.getComponentCount(); i++){
+				parametersPanel.getComponent(i).setEnabled(false);
+			}
+		}
 	}
 	
 	public void setPlotName(String title){
