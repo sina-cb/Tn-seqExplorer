@@ -69,7 +69,7 @@ import essgenes.StatisticsHelper;
 public class MainFrame extends JFrame {
 
 	public static final String ProgTitle = "Tn-seq explorer";
-	public static final String ProgVersion = "v1.1";
+	public static final String ProgVersion = "v1.2";
 	
 	private JLabel errorMsgLbl = new JLabel("Please enter a valid Integer value in the red fields.");
 	private JButton applySequenceBtn = new JButton("Apply");
@@ -1166,7 +1166,7 @@ public class MainFrame extends JFrame {
 		});
 		countOnlyUniqueRadio.setSelected(true);
 
-		countOnlyUniqueRadio.setBounds(12, 516, 394, 23);
+		countOnlyUniqueRadio.setBounds(12, 516, 361, 23);
 		panelInitialize.add(countOnlyUniqueRadio);
 		countAllReadsRadio.addMouseListener(new MouseAdapter() {
 			@Override
@@ -1286,14 +1286,21 @@ public class MainFrame extends JFrame {
 		label_10.setBounds(797, 215, 30, 14);
 		panelInitialize.add(label_10);
 		
-		JButton btnAnotherPlot = new JButton("Another Plot");
+		JButton btnAnotherPlot = new JButton("Distribution of reads per unique insertion");
 		btnAnotherPlot.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				anotherPlot();
 			}
 		});
-		btnAnotherPlot.setBounds(516, 516, 136, 23);
+		btnAnotherPlot.setBounds(392, 514, 257, 23);
 		panelInitialize.add(btnAnotherPlot);
+		
+		JLabel label_11 = new JLabel("(?)");
+		label_11.setToolTipText("Click me!");
+		label_11.setForeground(Color.BLUE);
+		label_11.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		label_11.setBounds(658, 520, 30, 14);
+		panelInitialize.add(label_11);
 		loadingLbl.setVisible(false);
 		doneLbl1.setVisible(false);
 		doneLbl2.setVisible(false);
@@ -2234,14 +2241,7 @@ public class MainFrame extends JFrame {
 	private void anotherPlot(){
 		plotWaitLbl.setVisible(true);
 
-		final String title;
-		if (countOnlyUniqueRadio.isSelected()){
-			String temp = String.format("Library Name: %s ANOTHER PLOT (Counting unique insertions)", (String) plotLibraryCombo.getSelectedItem());
-			title = temp;
-		} else{
-			String temp = String.format("Library Name: %s ANOTHER PLOT (Counting all reads)", (String) plotLibraryCombo.getSelectedItem());
-			title = temp;
-		}
+		final String title = String.format("Library Name: %s, Distribution of reads per unique insertion", (String) plotLibraryCombo.getSelectedItem());
 
 		(new Thread(new Runnable() {
 
@@ -2254,10 +2254,6 @@ public class MainFrame extends JFrame {
 					frame.setPlotName(title);
 					frame.setVisible(true);
 					frame.addPlot(panel);
-
-					//TODO: These comments can be removed without any change.
-					/*File randomFile = new File("C:\\Users\\Sina\\Desktop\\" + (String) plotLibraryCombo.getSelectedItem() + " len" + len + " step" + step + ".jpeg");
-					ChartUtilities.saveChartAsJPEG(randomFile, panel.getChart(), 800, 600);*/
 
 					plotWaitLbl.setVisible(false);
 				} catch (Exception e) {

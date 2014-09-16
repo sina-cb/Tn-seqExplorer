@@ -78,10 +78,10 @@ public class PlotData {
 		
 
 		JFreeChart chart = ChartFactory.createXYBarChart(
-				"XY Series plot",
-				"X", 
+				title,
+				"Number of sequence reads", 
 				false,
-				"Y", 
+				"Number of unique insertions with the given number of reads", 
 				dataset,
 				PlotOrientation.VERTICAL,
 				true,
@@ -91,6 +91,12 @@ public class PlotData {
 		
 		XYPlot plot = (XYPlot) chart.getPlot();
 		plot.getDomainAxis().setLowerBound(-10);
+		
+		try {
+			saveToXls(positions_X, counts_Y, info, libName);
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+		}
 		
         /*final IntervalMarker target = new IntervalMarker(400.0, 700.0);
         target.setLabel("Target Range");
@@ -202,6 +208,26 @@ public class PlotData {
 		}
 		
 		return chart;
+	}
+	
+	private static void saveToXls(ArrayList<Integer> xAxis, ArrayList<Integer> yAxis, ProjectInfo info, String libName) throws IOException{
+		String fileName = libName + " (DORPUI)";
+		String xlsPath = info.getPath() + fileName + ".xls";
+		
+		File xlsFile = new File(xlsPath);
+		BufferedWriter bw = new BufferedWriter(new FileWriter(xlsFile));
+		
+		bw.write(String.format("%s\t%s\n", "Number of sequence reads", "Number of unique insertions with the given number of reads"));
+		
+		for(int i = 0; i < xAxis.size(); i++){
+			bw.write(String.format("%d\t%d\n", xAxis.get(i), yAxis.get(i)));
+		}
+		
+		bw.close();
+		
+		String msg = String.format("An Excel file containg all the data for this chart has been created at this location: %s", xlsPath);
+		JOptionPane.showMessageDialog(null, msg);
+		
 	}
 	
 	private static void saveToXls(Vector<Integer> xAxis, Vector<Integer> yAxis, ProjectInfo info, String libName, int len, int step, boolean unique) throws IOException{
