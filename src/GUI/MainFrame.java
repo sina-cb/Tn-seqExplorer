@@ -1967,10 +1967,10 @@ public class MainFrame extends JFrame {
 
 	private void installBWAUbuntu(){
 		URL programSource = MainFrame.class.getResource("/resources/bwa-0.7.5a.tar.bz2");
-		File programDest = new File("bwa-0.7.5a.tar.bz2");
+		File programDest = new File(projectInfo.getPath() + "bwa-0.7.5a.tar.bz2");
 
 		URL shellSource = MainFrame.class.getResource("/resources/install-bwa-ubuntu.sh");
-		File shellDest = new File("shell.sh");
+		File shellDest = new File(projectInfo.getPath() + "shell.sh");
 
 		JOptionPane.showMessageDialog(null, "In order to install the library, you should enter your machine's root password.\n"
 				+ "The password is only used to install the library.", "Root Password", JOptionPane.WARNING_MESSAGE);
