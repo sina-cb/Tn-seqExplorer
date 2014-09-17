@@ -267,7 +267,7 @@ public class AddMoreIndices extends JFrame {
 		addWinLenTxt.setText("1000");
 		addWinLenTxt.setColumns(10);
 		addWinLenTxt.setBounds(157, 122, 86, 20);
-		addWinLenTxt.setInputVerifier(new IntegerInputVerifier(errorMsg1Lbl, addMoreColumnsBtn));
+		addWinLenTxt.setInputVerifier(new IntegerInputVerifier(errorMsg1Lbl));
 		panel.add(addWinLenTxt);
 
 		addStepTxt = new JTextField();
@@ -275,7 +275,7 @@ public class AddMoreIndices extends JFrame {
 		addStepTxt.setText("10");
 		addStepTxt.setColumns(10);
 		addStepTxt.setBounds(432, 122, 86, 20);
-		addStepTxt.setInputVerifier(new IntegerInputVerifier(errorMsg1Lbl, addMoreColumnsBtn));
+		addStepTxt.setInputVerifier(new IntegerInputVerifier(errorMsg1Lbl));
 		panel.add(addStepTxt);
 
 		JLabel lblWindowLength = new JLabel("Window length:");
@@ -565,7 +565,7 @@ public class AddMoreIndices extends JFrame {
 		
 		compareMaxInsTxt = new JTextField();
 		compareMaxInsTxt.setBounds(237, 189, 103, 20);
-		compareMaxInsTxt.setInputVerifier(new IntegerInputVerifier(errorMsg3Lbl, compareBtn));
+		compareMaxInsTxt.setInputVerifier(new IntegerInputVerifier(errorMsg3Lbl));
 		compareScrollPanel.add(compareMaxInsTxt);
 		compareMaxInsTxt.setColumns(10);
 		
@@ -723,10 +723,8 @@ public class AddMoreIndices extends JFrame {
 			return;
 		}
 		
-		final int maxIns = Integer.parseInt(maxInsString);
 		final int first = Integer.parseInt(firstCol);
 		final int second = Integer.parseInt(secondCol);
-		
 		if (first == second){
 			JOptionPane.showMessageDialog(AddMoreIndices.this, "Please select different columns to compare.");
 			return;
@@ -740,6 +738,8 @@ public class AddMoreIndices extends JFrame {
 			@Override
 			public void run() {
 				try {
+					int maxIns = Integer.parseInt(compareMaxInsTxt.getText());
+					
 					if (AddColumns.compareColumns(tableName, first, second, maxIns, info).compareTo(Messages.successMsg) == 0){
 						JOptionPane.showMessageDialog(AddMoreIndices.this, "Data added");
 					}else{
@@ -752,6 +752,11 @@ public class AddMoreIndices extends JFrame {
 					initializeCompare();
 				} catch (IOException e) {
 					logger.error(e.getMessage());
+					return;
+				}catch (NumberFormatException e) {
+					JOptionPane.showMessageDialog(AddMoreIndices.this, "Please enter valid numbers for the highlighted fields.");
+					compareWaitLbl.setVisible(false);
+					compareBtn.setEnabled(true);
 					return;
 				}
 			}
@@ -801,8 +806,6 @@ public class AddMoreIndices extends JFrame {
 	private void addBtnAction(){
 
 		final String libraryName = (String) addLibraryCombo.getSelectedItem();
-		final int windowLen = Integer.parseInt(addWinLenTxt.getText());
-		final int step = Integer.parseInt(addStepTxt.getText());
 		final String adjStart = adjustStartTxt.getText();
 		final String adjEnd = adjustEndTxt.getText();
 		final int seqLen = info.getSequenceLen();
@@ -816,6 +819,19 @@ public class AddMoreIndices extends JFrame {
 			@Override
 			public void run() {
 				try {
+					int windowLen = 0;
+					int step = 0;
+					try{
+						windowLen = Integer.parseInt(addWinLenTxt.getText());
+						step = Integer.parseInt(addStepTxt.getText());
+					}catch(NumberFormatException e){
+						JOptionPane.showMessageDialog(AddMoreIndices.this, "Please enter valid numbers for the highlighted fields.");
+						progressBar.setVisible(false);
+						lblPleaseWait.setVisible(false);
+						addMoreColumnsBtn.setEnabled(true);
+						return;
+					}
+					
 					if (AddColumns.add(libraryName, tableName, windowLen, step, adjStart, adjEnd, seqLen, newDataUniqueInsertionRadio.isSelected(), progressBar, info).compareTo(Messages.successMsg) == 0){
 						progressBar.setVisible(false);
 						lblPleaseWait.setVisible(false);

@@ -598,8 +598,13 @@ public class PrepareFiles {
 						currentUniqueNumber *= -1;
 					}
 
-					if (uniqueLimit != 0 && count > uniqueLimit)
+					if (uniqueLimit != 0){
+						if (count > uniqueLimit){
+							bw.write(currentUniqueNumber + "\t" + sign + "\t" + count + "\n");
+						}
+					}else{
 						bw.write(currentUniqueNumber + "\t" + sign + "\t" + count + "\n");
+					}
 
 					currentUniqueNumber = current;
 					count = 1;
@@ -614,8 +619,14 @@ public class PrepareFiles {
 				currentUniqueNumber *= -1;
 			}
 
-			if (uniqueLimit != 0 && count > uniqueLimit)
+			if (uniqueLimit != 0){
+				if (count > uniqueLimit){
+					bw.write(currentUniqueNumber + "\t" + sign + "\t" + count + "\n");
+				}
+			}else{
 				bw.write(currentUniqueNumber + "\t" + sign + "\t" + count + "\n");
+			}
+				
 
 		}catch(IOException e){
 			logger.error(e.getMessage());

@@ -191,607 +191,607 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		JPanel panelMain = new JPanel();
-		tabbedPane.addTab("Main", null, panelMain, null);
-		panelMain.setLayout(null);
-
-		JLabel lblSequenceLength = new JLabel("Sequence Length (bp):");
-		lblSequenceLength.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblSequenceLength.setBounds(12, 31, 212, 20);
-		panelMain.add(lblSequenceLength);
-
-		sequenceLenTxt = new JTextField();
-		sequenceLenTxt.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusGained(FocusEvent arg0) {
-				highlightAllTheText((JTextField) arg0.getComponent());
-			}
-		});
-		sequenceLenTxt.setToolTipText("Enter sequence length to be used in this project");
-		sequenceLenTxt.setBounds(231, 33, 150, 22);
-		panelMain.add(sequenceLenTxt);
-		sequenceLenTxt.setColumns(10);
-		
-		sequenceLenTxt.setInputVerifier(new IntegerInputVerifier(lblPleaseEnterAn, applySequenceBtn));
-
-		applySequenceBtn.setToolTipText("Apply the entered sequence length");
-		applySequenceBtn.setFont(new Font("Tahoma", Font.BOLD, 13));
-		applySequenceBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				applySequenceNumber();
-			}
-		});
-		applySequenceBtn.setBounds(391, 31, 97, 25);
-		panelMain.add(applySequenceBtn);
-
-		JSeparator separator = new JSeparator();
-		separator.setBounds(0, 62, 823, 2);
-		panelMain.add(separator);
-
-		JLabel lblProjectInformation = new JLabel("Project Information:");
-		lblProjectInformation.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblProjectInformation.setBounds(12, 550, 144, 20);
-		panelMain.add(lblProjectInformation);
-
-		JLabel lblLibrariesCount = new JLabel("Libraries count:");
-		lblLibrariesCount.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblLibrariesCount.setBounds(166, 555, 163, 22);
-		panelMain.add(lblLibrariesCount);
-
-		libraryCountLbl.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		libraryCountLbl.setBounds(317, 550, 51, 33);
-		panelMain.add(libraryCountLbl);
-
-		JLabel lblDataTablesCount = new JLabel("Data tables count:");
-		lblDataTablesCount.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblDataTablesCount.setBounds(166, 592, 163, 22);
-		panelMain.add(lblDataTablesCount);
-
-		dataTableCountLbl.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		dataTableCountLbl.setBounds(317, 587, 51, 33);
-		panelMain.add(dataTableCountLbl);
-
-		ftpFirstLevelCombo.setBounds(12, 110, 695, 22);
-
-		panelMain.add(ftpFirstLevelCombo);
-		ftpSecondLevelCombo.setEnabled(false);
-
-		ftpSecondLevelCombo.setBounds(12, 145, 695, 22);
-		panelMain.add(ftpSecondLevelCombo);
-		downloadBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-
-				String temp = (String) ftpSecondLevelCombo.getSelectedItem();
-				temp = temp.substring(temp.indexOf("(") + 1);
-				temp = temp.substring(0, temp.indexOf(")"));
-				temp = temp.replaceAll(" bp", "");
-
-				int tempInt = Integer.parseInt(temp);
-				if (projectInfo.getSequenceLen() != 0 && projectInfo.getSequenceLen() != tempInt){
-
-					String msg = String.format("The sequence length in GenBank is %d.\nDo you want to use the GenBank length or the length you supplied manually?", tempInt);
-					int answer = JOptionPane.showOptionDialog(MainFrame.this, 
-							msg, 
-							"Warning", 
-							JOptionPane.YES_NO_OPTION, 
-							JOptionPane.WARNING_MESSAGE, 
-							null, 
-							new String[]{"GenBank", "Manual"}, // this is the array
-							"default");
-
-					if (answer == JOptionPane.YES_OPTION){
-						sequenceLenTxt.setText(tempInt + "");
-						applySequenceNumber();
-
-					}else{
-						//Do Nothing
-					}
-
-				}else if (projectInfo.getSequenceLen() == 0 && projectInfo.getSequenceLen() != tempInt){
-					sequenceLenTxt.setText(tempInt + "");
-					applySequenceNumber();
-				}
-
-				downloadBtn.setText("Downloading");
-
-				(new Thread(new Runnable(){
-					@Override
-					public void run() {
-						FTPClient ftp = new FTPClient();
-						try {
-							ftp.connect("ftp.ncbi.nih.gov");
-							ftp.enterLocalPassiveMode();
-							ftp.login("anonymous", "");
-							String ftpDir = "/genomes/Bacteria/" + ftpFirstLevelCombo.getSelectedItem() + "/";
-							FTPFile[] files = ftp.listFiles(ftpDir);
-
-							for (FTPFile t : files){
-								String fileName = (String)ftpSecondLevelCombo.getSelectedItem();
-								fileName = fileName.substring(0, fileName.indexOf(":"));
-
-								if(t.getName().contains(fileName)){
-									if(t.getName().endsWith("ptt")){
-										File pttTemp = new File(projectInfo.getPath() + t.getName());
-										FileOutputStream fos = new FileOutputStream(pttTemp);
-										ftp.retrieveFile(ftpDir + t.getName(), fos);
-										pttFileTxt.setText(pttTemp.getAbsolutePath());
-									}else if(t.getName().endsWith("rnt")){
-										File rntTemp = new File(projectInfo.getPath() + t.getName());
-										FileOutputStream fos = new FileOutputStream(rntTemp);
-										ftp.retrieveFile(ftpDir + t.getName(), fos);
-										rntFileTxt.setText(rntTemp.getAbsolutePath());
-									}
-
-								}
-							}
-
-							downloadBtn.setText("Download");
-							downloadBtn.setEnabled(true);
-							ftpFirstLevelCombo.setEnabled(true);
-							ftpSecondLevelCombo.setEnabled(true);
-
-						} catch (IOException e) {
-							logger.error(e.getMessage());
-							return;
-						}
-
-						prepareGeneFile();
-					}
-				})).start();
-
-			}
-		});
-
-		downloadBtn.setBounds(716, 144, 97, 25);
-		panelMain.add(downloadBtn);
-
-		JLabel lblPttFile = new JLabel("PTT File:");
-		lblPttFile.setBounds(12, 235, 79, 16);
-		panelMain.add(lblPttFile);
-
-		JLabel lblRntFile = new JLabel("RNT File:");
-		lblRntFile.setBounds(12, 267, 79, 16);
-		panelMain.add(lblRntFile);
-
-		pttFileTxt = new JTextField();
-		pttFileTxt.setBounds(85, 232, 622, 22);
-		panelMain.add(pttFileTxt);
-		pttFileTxt.setColumns(10);
-
-		rntFileTxt = new JTextField();
-		rntFileTxt.setColumns(10);
-		rntFileTxt.setBounds(85, 264, 622, 22);
-		panelMain.add(rntFileTxt);
-		pttBrowseBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-
-				Path currentRelativePath = Paths.get("");
-				String location = currentRelativePath.toAbsolutePath()
-						.toString();
-				JFileChooser fileChooser = new JFileChooser(location);
-				fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-				fileChooser.setFileFilter(new FileNameExtensionFilter("PTT Files (.ptt)", "ptt"));
-				int result = fileChooser.showOpenDialog(MainFrame.this);
-
-				if(result == JFileChooser.APPROVE_OPTION){
-					pttFileTxt.setText(fileChooser.getSelectedFile().getAbsolutePath());
-				}else{
-					return;
-				}
-
-			}
-		});
-
-		pttBrowseBtn.setBounds(716, 231, 97, 25);
-		panelMain.add(pttBrowseBtn);
-		rntBrowseBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				Path currentRelativePath = Paths.get("");
-				String location = currentRelativePath.toAbsolutePath()
-						.toString();
-				JFileChooser fileChooser = new JFileChooser(location);
-				fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-				fileChooser.setFileFilter(new FileNameExtensionFilter("RNT Files (.rnt)", "rnt"));
-				int result = fileChooser.showOpenDialog(MainFrame.this);
-
-				if(result == JFileChooser.APPROVE_OPTION){
-					rntFileTxt.setText(fileChooser.getSelectedFile().getAbsolutePath());
-				}else{
-					return;
-				}
-			}
-		});
-
-		rntBrowseBtn.setBounds(716, 263, 97, 25);
-		panelMain.add(rntBrowseBtn);
-
-		JLabel lblOr = new JLabel("Or");
-		lblOr.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblOr.setBounds(12, 168, 51, 35);
-		panelMain.add(lblOr);
-		btnPrepareGeneFile.setToolTipText("Process files and create the .gene file");
-		btnPrepareGeneFile.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {				
-
-				prepareGeneFile();
-			}
-		});
-
-		btnPrepareGeneFile.setFont(new Font("Tahoma", Font.BOLD, 13));
-		btnPrepareGeneFile.setBounds(339, 450, 182, 25);
-		panelMain.add(btnPrepareGeneFile);
-
-		JSeparator separator_3 = new JSeparator();
-		separator_3.setBounds(52, 187, 771, 2);
-		panelMain.add(separator_3);
-
-		buttonGroup.add(databaseRadioBtn);
-		databaseRadioBtn.setToolTipText("Automatically download from the NCBI FTP Server");
-		databaseRadioBtn.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		databaseRadioBtn.setBounds(10, 76, 404, 25);
-		panelMain.add(databaseRadioBtn);	
-
-		databaseRadioBtn.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				ftpFirstLevelCombo.setEnabled(true);
-				ftpSecondLevelCombo.setEnabled(true);
-				downloadBtn.setEnabled(true);
-
-				pttBrowseBtn.setEnabled(false);
-				pttFileTxt.setEnabled(false);
-				rntBrowseBtn.setEnabled(false);
-				rntFileTxt.setEnabled(false);
-
-				ftpFirstLevelCombo.removeAllItems();
-				ftpFirstLevelCombo.addItem("Retrieving Bacterias List, Please Wait...");
-				ftpSecondLevelCombo.setEnabled(false);
-				downloadBtn.setEnabled(false);
-
-				pttFileTxt.setText("");
-				rntFileTxt.setText("");
-
-				imgFileTxt.setEnabled(false);
-				imgBrowseBtn.setEnabled(false);
-				scaffoldCombo.setEnabled(false);
-
-				(new Thread(new Runnable(){
-					@Override
-					public void run() {
-						FTPClient ftp = new FTPClient();
-						try {
-							ftp.connect("ftp.ncbi.nih.gov");
-							ftp.enterLocalPassiveMode();
-							ftp.login("anonymous", "");
-							FTPFile[] files = ftp.listFiles("/genomes/Bacteria/");
-
-							ftpFirstLevelCombo.removeAllItems();
-							for(FTPFile t : files){
-								if(!t.getName().contains(".")){
-									ftpFirstLevelCombo.addItem(t.getName());
-								}
-								ftpSecondLevelCombo.addItem("Please Choose Your bacteria First");
-							}
-
-						} catch (IOException e) {
-							logger.error(e.getMessage());
-							return;
-						}						
-					}
-				})).start();
-
-			}
-		});
-
-		ftpFirstLevelCombo.addItemListener(new ItemListener(){
-			@SuppressWarnings("deprecation")
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-
-				if(e.getStateChange() == ItemEvent.SELECTED){
-					ftpSecondLevelCombo.removeAllItems();
-					ftpSecondLevelCombo.addItem("Retieving Files List, Please Wait");
-
-					if (second_thread != null){
-						second_thread.run();
-						second_thread.stop();
-						second_thread = null;
-					}
-					
-					second_thread = new Thread(new Runnable(){
-						private FTPClient ftp = null;
-						@Override
-						public void run() {
-							if (ftp != null){
-								try {
-									ftp.disconnect();
-								} catch (IOException e) {
-									e.printStackTrace();
-								}
-								return;
-							}
-							
-							ftp = new FTPClient();
-							
-							try {
-								ftp.connect("ftp.ncbi.nih.gov");
-								ftp.enterLocalPassiveMode();
-								ftp.login("anonymous", "");
-								String ftpDir = "/genomes/Bacteria/" + ftpFirstLevelCombo.getSelectedItem() + "/";
-								FTPFile[] files = ftp.listFiles(ftpDir);
-								ftp.disconnect();
-
-								ftpSecondLevelCombo.removeAllItems();
-								for(FTPFile t : files){
-									if(t.getName().endsWith(".ptt")){
-										String fileName = "";
-										String bacteriaName = "";
-										String lengthString = "";
-										String line = "";
-
-										fileName = t.getName().substring(0, t.getName().length() - 4);
-
-										ftp.connect("ftp.ncbi.nih.gov");
-										ftp.enterLocalPassiveMode();
-										ftp.login("anonymous", "");
-										InputStream stream = ftp.retrieveFileStream(ftpDir + fileName + ".ptt");
-										BufferedReader ftpBr = new BufferedReader(new InputStreamReader(stream));
-
-										line = ftpBr.readLine();
-										bacteriaName = line.substring(0, line.indexOf(" -"));
-										lengthString = line.substring(line.indexOf("..") + 2);
-
-										String itemString = String.format("%s: %s (%s bp)", fileName, bacteriaName, lengthString);
-										ftpSecondLevelCombo.addItem(itemString);
-
-										ftp.disconnect();
-									}
-								}
-
-								//ftp.abort();
-
-								ftpSecondLevelCombo.setEnabled(true);
-							} catch (Exception e1) {
-								logger.error(e1.getMessage());
-								return;
-							}							
-						}
-					});	
-					
-					second_thread.start();
-				}
-			}
-		});
-
-		ftpSecondLevelCombo.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if(e.getStateChange() == ItemEvent.SELECTED){
-					downloadBtn.setEnabled(true);
-				}	
-			}
-		});
-
-		buttonGroup.add(ownRadioBtn);
-		ownRadioBtn.setToolTipText("Use existing files from NCBI FTP server");
-		ownRadioBtn.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		ownRadioBtn.setBounds(12, 201, 402, 25);
-		panelMain.add(ownRadioBtn);
-		ownRadioBtn.setSelected(true);
-
-		ftpFirstLevelCombo.setEnabled(false);
-		ftpSecondLevelCombo.setEditable(false);
-		downloadBtn.setEnabled(false);
-
-		ownRadioBtn.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				ftpFirstLevelCombo.setEnabled(false);
-				ftpSecondLevelCombo.setEnabled(false);
-				downloadBtn.setEnabled(false);
-
-				pttBrowseBtn.setEnabled(true);
-				pttFileTxt.setEnabled(true);
-				rntBrowseBtn.setEnabled(true);
-				rntFileTxt.setEnabled(true);
-
-				ftpFirstLevelCombo.setEnabled(false);
-				ftpSecondLevelCombo.setEnabled(false);
-				downloadBtn.setEnabled(false);
-
-				ftpFirstLevelCombo.removeAllItems();
-				ftpSecondLevelCombo.removeAllItems();
-
-				imgFileTxt.setEnabled(false);
-				imgBrowseBtn.setEnabled(false);
-				scaffoldCombo.setEnabled(false);
-			}
-		});
-
-		rntFileTxt.setEnabled(false);
-		pttFileTxt.setEnabled(false);
-
-		JLabel lblGenesFileName = new JLabel("Gene annotation:");
-		lblGenesFileName.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblGenesFileName.setBounds(377, 592, 163, 22);
-		panelMain.add(lblGenesFileName);
-
-		geneFileNameLbl.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		geneFileNameLbl.setBounds(521, 587, 186, 33);
-		panelMain.add(geneFileNameLbl);
-
-		JLabel label = new JLabel("Or");
-		label.setFont(new Font("Tahoma", Font.BOLD, 16));
-		label.setBounds(12, 294, 51, 35);
-		panelMain.add(label);
-
-		JSeparator separator_4 = new JSeparator();
-		separator_4.setBounds(52, 313, 771, 2);
-		panelMain.add(separator_4);
-
-		buttonGroup.add(imgRadioBtn);
-		imgRadioBtn.setToolTipText("use existing files from IMG server");
-		imgRadioBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				ftpFirstLevelCombo.setEnabled(false);
-				ftpSecondLevelCombo.setEnabled(false);
-				downloadBtn.setEnabled(false);
-
-				pttBrowseBtn.setEnabled(false);
-				pttFileTxt.setEnabled(false);
-				rntBrowseBtn.setEnabled(false);
-				rntFileTxt.setEnabled(false);
-
-				ftpFirstLevelCombo.setEnabled(false);
-				ftpSecondLevelCombo.setEnabled(false);
-				downloadBtn.setEnabled(false);
-
-				ftpFirstLevelCombo.removeAllItems();
-				ftpSecondLevelCombo.removeAllItems();
-
-				imgFileTxt.setEnabled(true);
-				imgBrowseBtn.setEnabled(true);
-				scaffoldCombo.setEnabled(false);
-			}
-		});
-		imgRadioBtn.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		imgRadioBtn.setBounds(12, 322, 402, 25);
-		panelMain.add(imgRadioBtn);
-
-		JLabel lblImgFile = new JLabel("IMG file:");
-		lblImgFile.setBounds(12, 382, 79, 16);
-		panelMain.add(lblImgFile);
-
-		imgFileTxt = new JTextField();
-		imgFileTxt.setToolTipText("Path to the IMG file, use the browse button");
-		imgFileTxt.setEditable(false);
-		imgFileTxt.setEnabled(false);
-		imgFileTxt.setColumns(10);
-		imgFileTxt.setBounds(148, 379, 559, 22);
-		panelMain.add(imgFileTxt);
-		imgBrowseBtn.setToolTipText("Select the file downloaded from IMG server");
-		imgBrowseBtn.setEnabled(false);
-		imgBrowseBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Path currentRelativePath = Paths.get("");
-				String location = currentRelativePath.toAbsolutePath().toString();
-				JFileChooser fileChooser = new JFileChooser(location);
-				fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-				fileChooser.setFileFilter(new FileNameExtensionFilter("XLS File (.xls)", "xls"));
-				int result = fileChooser.showOpenDialog(MainFrame.this);
-
-				if (result == JFileChooser.APPROVE_OPTION){
-					imgFileTxt.setText(fileChooser.getSelectedFile().getAbsolutePath());
-					try {
-						PrepareFiles.extractScaffolds(fileChooser.getSelectedFile().getAbsolutePath(), projectInfo, MainFrame.this.scaffoldCombo);
-					} catch (IOException e1) {
-						logger.error(e1.getMessage());
-						return;
-					}
-				}
-			}
-		});
-
-		imgBrowseBtn.setBounds(716, 378, 97, 25);
-		panelMain.add(imgBrowseBtn);
-
-		JLabel lblSelectYourScaffold = new JLabel("Select a scaffold:");
-		lblSelectYourScaffold.setBounds(12, 412, 112, 16);
-		panelMain.add(lblSelectYourScaffold);
-		scaffoldCombo.setToolTipText("Select the scaffold within the IMG file");
-		scaffoldCombo.setEnabled(false);
-
-		scaffoldCombo.setBounds(148, 410, 559, 20);
-		panelMain.add(scaffoldCombo);
-
-		JSeparator separator_7 = new JSeparator();
-		separator_7.setBounds(0, 493, 823, 2);
-		panelMain.add(separator_7);
-
-		JLabel lblyouCanDownload = new JLabel("You can download the IMG file by clicking on this link");
-		lblyouCanDownload.setBounds(12, 354, 695, 16);
-		panelMain.add(lblyouCanDownload);
-		infoLbl.setForeground(Color.RED);
-
-		infoLbl.setFont(new Font("Tahoma", Font.ITALIC, 11));
-		infoLbl.setBounds(12, 6, 665, 14);
-		panelMain.add(infoLbl);
-
-		JLabel lblNeedHelp = new JLabel("(?)");
-		lblNeedHelp.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				JOptionPane.showMessageDialog(MainFrame.this, "This will guide you to finding the protein-coding (.ptt file) and RNA (.rnt file) gene\n"
-						+ "annotation at the FTP server of the National Center for Biotechnology Information\n"
-						+ "(ftp://ftp.ncbi.nih.gov/genomes/)");
-			}
-		});
-		lblNeedHelp.setToolTipText("Click me!");
-		lblNeedHelp.setForeground(Color.BLUE);
-		lblNeedHelp.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		lblNeedHelp.setBounds(433, 85, 88, 14);
-		panelMain.add(lblNeedHelp);
-
-		JLabel lblhelp = new JLabel("(?)");
-		lblhelp.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				JOptionPane.showMessageDialog(MainFrame.this, "If you previously downloaded the .ppt and .rnt files from NCBI you can select them here.\n"
-						+ "You can also manually edit the .ptt and .rnt files before creating a new project as long as you\n"
-						+ "follow the appropriate format of the file.");
-			}
-		});
-		lblhelp.setToolTipText("Click me!");
-		lblhelp.setForeground(Color.BLUE);
-		lblhelp.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		lblhelp.setBounds(433, 207, 88, 14);
-		panelMain.add(lblhelp);
-
-		JLabel label_2 = new JLabel("(?)");
-		label_2.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				JOptionPane.showMessageDialog(MainFrame.this, "Alternatively, you can use annotation downloaded from Integrated Microbial Genomes (http://img.jgi.doe.gov/).\n"
-						+ "To download the IMG annotation, find the desired genome in the IMG database (finished genomes only),\n"
-						+ "select 'Export gene information' (near the bottom of the page), and save the .xls file from the follwoing page.");
-			}
-		});
-		label_2.setToolTipText( "Click me!");
-		label_2.setForeground(Color.BLUE);
-		label_2.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_2.setBounds(433, 329, 88, 14);
-		panelMain.add(label_2);
-
-		JLabel label_1 = new JLabel("(?)");
-		label_1.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				JOptionPane.showMessageDialog(MainFrame.this, "The IMG annotation may include data for multiple scaffolds (e.g., chromosomes or plasmids)\n"
-						+ "Select the one you wish to use.");
-			}
-		});
-		label_1.setToolTipText("Click me!");
-		label_1.setForeground(Color.BLUE);
-		label_1.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_1.setBounds(120, 412, 88, 14);
-		panelMain.add(label_1);
-
-		JLabel lblSequqenceLength = new JLabel("Sequqence length (bp):");
-		lblSequqenceLength.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblSequqenceLength.setBounds(378, 555, 204, 22);
-		panelMain.add(lblSequqenceLength);
-
-		sequenceLengthLbl.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		sequenceLengthLbl.setBounds(575, 550, 178, 33);
-		panelMain.add(sequenceLengthLbl);
-		
-		lblPleaseEnterAn.setForeground(Color.RED);
-		lblPleaseEnterAn.setBounds(498, 37, 293, 14);
-		lblPleaseEnterAn.setVisible(false);
-		panelMain.add(lblPleaseEnterAn);
-
 		ButtonGroup numberOfReads = new ButtonGroup();
+		
+				JPanel panelMain = new JPanel();
+				tabbedPane.addTab("Main", null, panelMain, null);
+				panelMain.setLayout(null);
+				
+						JLabel lblSequenceLength = new JLabel("Sequence Length (bp):");
+						lblSequenceLength.setFont(new Font("Tahoma", Font.PLAIN, 16));
+						lblSequenceLength.setBounds(12, 31, 212, 20);
+						panelMain.add(lblSequenceLength);
+						
+								sequenceLenTxt = new JTextField();
+								sequenceLenTxt.addFocusListener(new FocusAdapter() {
+									@Override
+									public void focusGained(FocusEvent arg0) {
+										highlightAllTheText((JTextField) arg0.getComponent());
+									}
+								});
+								sequenceLenTxt.setToolTipText("Enter sequence length to be used in this project");
+								sequenceLenTxt.setBounds(231, 33, 150, 22);
+								panelMain.add(sequenceLenTxt);
+								sequenceLenTxt.setColumns(10);
+								
+								sequenceLenTxt.setInputVerifier(new IntegerInputVerifier(lblPleaseEnterAn));
+								
+										applySequenceBtn.setToolTipText("Apply the entered sequence length");
+										applySequenceBtn.setFont(new Font("Tahoma", Font.BOLD, 13));
+										applySequenceBtn.addActionListener(new ActionListener() {
+											public void actionPerformed(ActionEvent arg0) {
+												applySequenceNumber();
+											}
+										});
+										applySequenceBtn.setBounds(391, 31, 97, 25);
+										panelMain.add(applySequenceBtn);
+										
+												JSeparator separator = new JSeparator();
+												separator.setBounds(0, 62, 823, 2);
+												panelMain.add(separator);
+												
+														JLabel lblProjectInformation = new JLabel("Project Information:");
+														lblProjectInformation.setFont(new Font("Tahoma", Font.PLAIN, 15));
+														lblProjectInformation.setBounds(12, 550, 144, 20);
+														panelMain.add(lblProjectInformation);
+														
+																JLabel lblLibrariesCount = new JLabel("Libraries count:");
+																lblLibrariesCount.setFont(new Font("Tahoma", Font.PLAIN, 16));
+																lblLibrariesCount.setBounds(166, 555, 163, 22);
+																panelMain.add(lblLibrariesCount);
+																
+																		libraryCountLbl.setFont(new Font("Tahoma", Font.PLAIN, 15));
+																		libraryCountLbl.setBounds(317, 550, 51, 33);
+																		panelMain.add(libraryCountLbl);
+																		
+																				JLabel lblDataTablesCount = new JLabel("Data tables count:");
+																				lblDataTablesCount.setFont(new Font("Tahoma", Font.PLAIN, 16));
+																				lblDataTablesCount.setBounds(166, 592, 163, 22);
+																				panelMain.add(lblDataTablesCount);
+																				
+																						dataTableCountLbl.setFont(new Font("Tahoma", Font.PLAIN, 15));
+																						dataTableCountLbl.setBounds(317, 587, 51, 33);
+																						panelMain.add(dataTableCountLbl);
+																						
+																								ftpFirstLevelCombo.setBounds(12, 110, 695, 22);
+																								
+																										panelMain.add(ftpFirstLevelCombo);
+																										ftpSecondLevelCombo.setEnabled(false);
+																										
+																												ftpSecondLevelCombo.setBounds(12, 145, 695, 22);
+																												panelMain.add(ftpSecondLevelCombo);
+																												downloadBtn.addActionListener(new ActionListener() {
+																													public void actionPerformed(ActionEvent arg0) {
+
+																														String temp = (String) ftpSecondLevelCombo.getSelectedItem();
+																														temp = temp.substring(temp.indexOf("(") + 1);
+																														temp = temp.substring(0, temp.indexOf(")"));
+																														temp = temp.replaceAll(" bp", "");
+
+																														int tempInt = Integer.parseInt(temp);
+																														if (projectInfo.getSequenceLen() != 0 && projectInfo.getSequenceLen() != tempInt){
+
+																															String msg = String.format("The sequence length in GenBank is %d.\nDo you want to use the GenBank length or the length you supplied manually?", tempInt);
+																															int answer = JOptionPane.showOptionDialog(MainFrame.this, 
+																																	msg, 
+																																	"Warning", 
+																																	JOptionPane.YES_NO_OPTION, 
+																																	JOptionPane.WARNING_MESSAGE, 
+																																	null, 
+																																	new String[]{"GenBank", "Manual"}, // this is the array
+																																	"default");
+
+																															if (answer == JOptionPane.YES_OPTION){
+																																sequenceLenTxt.setText(tempInt + "");
+																																applySequenceNumber();
+
+																															}else{
+																																//Do Nothing
+																															}
+
+																														}else if (projectInfo.getSequenceLen() == 0 && projectInfo.getSequenceLen() != tempInt){
+																															sequenceLenTxt.setText(tempInt + "");
+																															applySequenceNumber();
+																														}
+
+																														downloadBtn.setText("Downloading");
+
+																														(new Thread(new Runnable(){
+																															@Override
+																															public void run() {
+																																FTPClient ftp = new FTPClient();
+																																try {
+																																	ftp.connect("ftp.ncbi.nih.gov");
+																																	ftp.enterLocalPassiveMode();
+																																	ftp.login("anonymous", "");
+																																	String ftpDir = "/genomes/Bacteria/" + ftpFirstLevelCombo.getSelectedItem() + "/";
+																																	FTPFile[] files = ftp.listFiles(ftpDir);
+
+																																	for (FTPFile t : files){
+																																		String fileName = (String)ftpSecondLevelCombo.getSelectedItem();
+																																		fileName = fileName.substring(0, fileName.indexOf(":"));
+
+																																		if(t.getName().contains(fileName)){
+																																			if(t.getName().endsWith("ptt")){
+																																				File pttTemp = new File(projectInfo.getPath() + t.getName());
+																																				FileOutputStream fos = new FileOutputStream(pttTemp);
+																																				ftp.retrieveFile(ftpDir + t.getName(), fos);
+																																				pttFileTxt.setText(pttTemp.getAbsolutePath());
+																																			}else if(t.getName().endsWith("rnt")){
+																																				File rntTemp = new File(projectInfo.getPath() + t.getName());
+																																				FileOutputStream fos = new FileOutputStream(rntTemp);
+																																				ftp.retrieveFile(ftpDir + t.getName(), fos);
+																																				rntFileTxt.setText(rntTemp.getAbsolutePath());
+																																			}
+
+																																		}
+																																	}
+
+																																	downloadBtn.setText("Download");
+																																	downloadBtn.setEnabled(true);
+																																	ftpFirstLevelCombo.setEnabled(true);
+																																	ftpSecondLevelCombo.setEnabled(true);
+
+																																} catch (IOException e) {
+																																	logger.error(e.getMessage());
+																																	return;
+																																}
+
+																																prepareGeneFile();
+																															}
+																														})).start();
+
+																													}
+																												});
+																												
+																														downloadBtn.setBounds(716, 144, 97, 25);
+																														panelMain.add(downloadBtn);
+																														
+																																JLabel lblPttFile = new JLabel("PTT File:");
+																																lblPttFile.setBounds(12, 235, 79, 16);
+																																panelMain.add(lblPttFile);
+																																
+																																		JLabel lblRntFile = new JLabel("RNT File:");
+																																		lblRntFile.setBounds(12, 267, 79, 16);
+																																		panelMain.add(lblRntFile);
+																																		
+																																				pttFileTxt = new JTextField();
+																																				pttFileTxt.setBounds(85, 232, 622, 22);
+																																				panelMain.add(pttFileTxt);
+																																				pttFileTxt.setColumns(10);
+																																				
+																																						rntFileTxt = new JTextField();
+																																						rntFileTxt.setColumns(10);
+																																						rntFileTxt.setBounds(85, 264, 622, 22);
+																																						panelMain.add(rntFileTxt);
+																																						pttBrowseBtn.addActionListener(new ActionListener() {
+																																							public void actionPerformed(ActionEvent arg0) {
+
+																																								Path currentRelativePath = Paths.get("");
+																																								String location = currentRelativePath.toAbsolutePath()
+																																										.toString();
+																																								JFileChooser fileChooser = new JFileChooser(location);
+																																								fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+																																								fileChooser.setFileFilter(new FileNameExtensionFilter("PTT Files (.ptt)", "ptt"));
+																																								int result = fileChooser.showOpenDialog(MainFrame.this);
+
+																																								if(result == JFileChooser.APPROVE_OPTION){
+																																									pttFileTxt.setText(fileChooser.getSelectedFile().getAbsolutePath());
+																																								}else{
+																																									return;
+																																								}
+
+																																							}
+																																						});
+																																						
+																																								pttBrowseBtn.setBounds(716, 231, 97, 25);
+																																								panelMain.add(pttBrowseBtn);
+																																								rntBrowseBtn.addActionListener(new ActionListener() {
+																																									public void actionPerformed(ActionEvent arg0) {
+																																										Path currentRelativePath = Paths.get("");
+																																										String location = currentRelativePath.toAbsolutePath()
+																																												.toString();
+																																										JFileChooser fileChooser = new JFileChooser(location);
+																																										fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+																																										fileChooser.setFileFilter(new FileNameExtensionFilter("RNT Files (.rnt)", "rnt"));
+																																										int result = fileChooser.showOpenDialog(MainFrame.this);
+
+																																										if(result == JFileChooser.APPROVE_OPTION){
+																																											rntFileTxt.setText(fileChooser.getSelectedFile().getAbsolutePath());
+																																										}else{
+																																											return;
+																																										}
+																																									}
+																																								});
+																																								
+																																										rntBrowseBtn.setBounds(716, 263, 97, 25);
+																																										panelMain.add(rntBrowseBtn);
+																																										
+																																												JLabel lblOr = new JLabel("Or");
+																																												lblOr.setFont(new Font("Tahoma", Font.BOLD, 16));
+																																												lblOr.setBounds(12, 168, 51, 35);
+																																												panelMain.add(lblOr);
+																																												btnPrepareGeneFile.setToolTipText("Process files and create the .gene file");
+																																												btnPrepareGeneFile.addActionListener(new ActionListener() {
+																																													public void actionPerformed(ActionEvent arg0) {				
+
+																																														prepareGeneFile();
+																																													}
+																																												});
+																																												
+																																														btnPrepareGeneFile.setFont(new Font("Tahoma", Font.BOLD, 13));
+																																														btnPrepareGeneFile.setBounds(339, 450, 182, 25);
+																																														panelMain.add(btnPrepareGeneFile);
+																																														
+																																																JSeparator separator_3 = new JSeparator();
+																																																separator_3.setBounds(52, 187, 771, 2);
+																																																panelMain.add(separator_3);
+																																																
+																																																		buttonGroup.add(databaseRadioBtn);
+																																																		databaseRadioBtn.setToolTipText("Automatically download from the NCBI FTP Server");
+																																																		databaseRadioBtn.setFont(new Font("Tahoma", Font.PLAIN, 16));
+																																																		databaseRadioBtn.setBounds(10, 76, 404, 25);
+																																																		panelMain.add(databaseRadioBtn);	
+																																																		
+																																																				databaseRadioBtn.addActionListener(new ActionListener() {
+																																																					@Override
+																																																					public void actionPerformed(ActionEvent arg0) {
+																																																						ftpFirstLevelCombo.setEnabled(true);
+																																																						ftpSecondLevelCombo.setEnabled(true);
+																																																						downloadBtn.setEnabled(true);
+																																																		
+																																																						pttBrowseBtn.setEnabled(false);
+																																																						pttFileTxt.setEnabled(false);
+																																																						rntBrowseBtn.setEnabled(false);
+																																																						rntFileTxt.setEnabled(false);
+																																																		
+																																																						ftpFirstLevelCombo.removeAllItems();
+																																																						ftpFirstLevelCombo.addItem("Retrieving Bacterias List, Please Wait...");
+																																																						ftpSecondLevelCombo.setEnabled(false);
+																																																						downloadBtn.setEnabled(false);
+																																																		
+																																																						pttFileTxt.setText("");
+																																																						rntFileTxt.setText("");
+																																																		
+																																																						imgFileTxt.setEnabled(false);
+																																																						imgBrowseBtn.setEnabled(false);
+																																																						scaffoldCombo.setEnabled(false);
+																																																		
+																																																						(new Thread(new Runnable(){
+																																																							@Override
+																																																							public void run() {
+																																																								FTPClient ftp = new FTPClient();
+																																																								try {
+																																																									ftp.connect("ftp.ncbi.nih.gov");
+																																																									ftp.enterLocalPassiveMode();
+																																																									ftp.login("anonymous", "");
+																																																									FTPFile[] files = ftp.listFiles("/genomes/Bacteria/");
+																																																		
+																																																									ftpFirstLevelCombo.removeAllItems();
+																																																									for(FTPFile t : files){
+																																																										if(!t.getName().contains(".")){
+																																																											ftpFirstLevelCombo.addItem(t.getName());
+																																																										}
+																																																										ftpSecondLevelCombo.addItem("Please Choose Your bacteria First");
+																																																									}
+																																																		
+																																																								} catch (IOException e) {
+																																																									logger.error(e.getMessage());
+																																																									return;
+																																																								}						
+																																																							}
+																																																						})).start();
+																																																		
+																																																					}
+																																																				});
+																																																				
+																																																						ftpFirstLevelCombo.addItemListener(new ItemListener(){
+																																																							@SuppressWarnings("deprecation")
+																																																							@Override
+																																																							public void itemStateChanged(ItemEvent e) {
+																																																				
+																																																								if(e.getStateChange() == ItemEvent.SELECTED){
+																																																									ftpSecondLevelCombo.removeAllItems();
+																																																									ftpSecondLevelCombo.addItem("Retieving Files List, Please Wait");
+																																																				
+																																																									if (second_thread != null){
+																																																										second_thread.run();
+																																																										second_thread.stop();
+																																																										second_thread = null;
+																																																									}
+																																																									
+																																																									second_thread = new Thread(new Runnable(){
+																																																										private FTPClient ftp = null;
+																																																										@Override
+																																																										public void run() {
+																																																											if (ftp != null){
+																																																												try {
+																																																													ftp.disconnect();
+																																																												} catch (IOException e) {
+																																																													e.printStackTrace();
+																																																												}
+																																																												return;
+																																																											}
+																																																											
+																																																											ftp = new FTPClient();
+																																																											
+																																																											try {
+																																																												ftp.connect("ftp.ncbi.nih.gov");
+																																																												ftp.enterLocalPassiveMode();
+																																																												ftp.login("anonymous", "");
+																																																												String ftpDir = "/genomes/Bacteria/" + ftpFirstLevelCombo.getSelectedItem() + "/";
+																																																												FTPFile[] files = ftp.listFiles(ftpDir);
+																																																												ftp.disconnect();
+																																																				
+																																																												ftpSecondLevelCombo.removeAllItems();
+																																																												for(FTPFile t : files){
+																																																													if(t.getName().endsWith(".ptt")){
+																																																														String fileName = "";
+																																																														String bacteriaName = "";
+																																																														String lengthString = "";
+																																																														String line = "";
+																																																				
+																																																														fileName = t.getName().substring(0, t.getName().length() - 4);
+																																																				
+																																																														ftp.connect("ftp.ncbi.nih.gov");
+																																																														ftp.enterLocalPassiveMode();
+																																																														ftp.login("anonymous", "");
+																																																														InputStream stream = ftp.retrieveFileStream(ftpDir + fileName + ".ptt");
+																																																														BufferedReader ftpBr = new BufferedReader(new InputStreamReader(stream));
+																																																				
+																																																														line = ftpBr.readLine();
+																																																														bacteriaName = line.substring(0, line.indexOf(" -"));
+																																																														lengthString = line.substring(line.indexOf("..") + 2);
+																																																				
+																																																														String itemString = String.format("%s: %s (%s bp)", fileName, bacteriaName, lengthString);
+																																																														ftpSecondLevelCombo.addItem(itemString);
+																																																				
+																																																														ftp.disconnect();
+																																																													}
+																																																												}
+																																																				
+																																																												//ftp.abort();
+																																																				
+																																																												ftpSecondLevelCombo.setEnabled(true);
+																																																											} catch (Exception e1) {
+																																																												logger.error(e1.getMessage());
+																																																												return;
+																																																											}							
+																																																										}
+																																																									});	
+																																																									
+																																																									second_thread.start();
+																																																								}
+																																																							}
+																																																						});
+																																																						
+																																																								ftpSecondLevelCombo.addItemListener(new ItemListener() {
+																																																									@Override
+																																																									public void itemStateChanged(ItemEvent e) {
+																																																										if(e.getStateChange() == ItemEvent.SELECTED){
+																																																											downloadBtn.setEnabled(true);
+																																																										}	
+																																																									}
+																																																								});
+																																																								
+																																																										buttonGroup.add(ownRadioBtn);
+																																																										ownRadioBtn.setToolTipText("Use existing files from NCBI FTP server");
+																																																										ownRadioBtn.setFont(new Font("Tahoma", Font.PLAIN, 16));
+																																																										ownRadioBtn.setBounds(12, 201, 402, 25);
+																																																										panelMain.add(ownRadioBtn);
+																																																										ownRadioBtn.setSelected(true);
+																																																										
+																																																												ftpFirstLevelCombo.setEnabled(false);
+																																																												ftpSecondLevelCombo.setEditable(false);
+																																																												downloadBtn.setEnabled(false);
+																																																												
+																																																														ownRadioBtn.addActionListener(new ActionListener() {
+																																																												
+																																																															@Override
+																																																															public void actionPerformed(ActionEvent arg0) {
+																																																																ftpFirstLevelCombo.setEnabled(false);
+																																																																ftpSecondLevelCombo.setEnabled(false);
+																																																																downloadBtn.setEnabled(false);
+																																																												
+																																																																pttBrowseBtn.setEnabled(true);
+																																																																pttFileTxt.setEnabled(true);
+																																																																rntBrowseBtn.setEnabled(true);
+																																																																rntFileTxt.setEnabled(true);
+																																																												
+																																																																ftpFirstLevelCombo.setEnabled(false);
+																																																																ftpSecondLevelCombo.setEnabled(false);
+																																																																downloadBtn.setEnabled(false);
+																																																												
+																																																																ftpFirstLevelCombo.removeAllItems();
+																																																																ftpSecondLevelCombo.removeAllItems();
+																																																												
+																																																																imgFileTxt.setEnabled(false);
+																																																																imgBrowseBtn.setEnabled(false);
+																																																																scaffoldCombo.setEnabled(false);
+																																																															}
+																																																														});
+																																																														
+																																																																rntFileTxt.setEnabled(false);
+																																																																pttFileTxt.setEnabled(false);
+																																																																
+																																																																		JLabel lblGenesFileName = new JLabel("Gene annotation:");
+																																																																		lblGenesFileName.setFont(new Font("Tahoma", Font.PLAIN, 16));
+																																																																		lblGenesFileName.setBounds(377, 592, 163, 22);
+																																																																		panelMain.add(lblGenesFileName);
+																																																																		
+																																																																				geneFileNameLbl.setFont(new Font("Tahoma", Font.PLAIN, 15));
+																																																																				geneFileNameLbl.setBounds(521, 587, 186, 33);
+																																																																				panelMain.add(geneFileNameLbl);
+																																																																				
+																																																																						JLabel label = new JLabel("Or");
+																																																																						label.setFont(new Font("Tahoma", Font.BOLD, 16));
+																																																																						label.setBounds(12, 294, 51, 35);
+																																																																						panelMain.add(label);
+																																																																						
+																																																																								JSeparator separator_4 = new JSeparator();
+																																																																								separator_4.setBounds(52, 313, 771, 2);
+																																																																								panelMain.add(separator_4);
+																																																																								
+																																																																										buttonGroup.add(imgRadioBtn);
+																																																																										imgRadioBtn.setToolTipText("use existing files from IMG server");
+																																																																										imgRadioBtn.addActionListener(new ActionListener() {
+																																																																											public void actionPerformed(ActionEvent arg0) {
+																																																																												ftpFirstLevelCombo.setEnabled(false);
+																																																																												ftpSecondLevelCombo.setEnabled(false);
+																																																																												downloadBtn.setEnabled(false);
+
+																																																																												pttBrowseBtn.setEnabled(false);
+																																																																												pttFileTxt.setEnabled(false);
+																																																																												rntBrowseBtn.setEnabled(false);
+																																																																												rntFileTxt.setEnabled(false);
+
+																																																																												ftpFirstLevelCombo.setEnabled(false);
+																																																																												ftpSecondLevelCombo.setEnabled(false);
+																																																																												downloadBtn.setEnabled(false);
+
+																																																																												ftpFirstLevelCombo.removeAllItems();
+																																																																												ftpSecondLevelCombo.removeAllItems();
+
+																																																																												imgFileTxt.setEnabled(true);
+																																																																												imgBrowseBtn.setEnabled(true);
+																																																																												scaffoldCombo.setEnabled(false);
+																																																																											}
+																																																																										});
+																																																																										imgRadioBtn.setFont(new Font("Tahoma", Font.PLAIN, 16));
+																																																																										imgRadioBtn.setBounds(12, 322, 402, 25);
+																																																																										panelMain.add(imgRadioBtn);
+																																																																										
+																																																																												JLabel lblImgFile = new JLabel("IMG file:");
+																																																																												lblImgFile.setBounds(12, 382, 79, 16);
+																																																																												panelMain.add(lblImgFile);
+																																																																												
+																																																																														imgFileTxt = new JTextField();
+																																																																														imgFileTxt.setToolTipText("Path to the IMG file, use the browse button");
+																																																																														imgFileTxt.setEditable(false);
+																																																																														imgFileTxt.setEnabled(false);
+																																																																														imgFileTxt.setColumns(10);
+																																																																														imgFileTxt.setBounds(148, 379, 559, 22);
+																																																																														panelMain.add(imgFileTxt);
+																																																																														imgBrowseBtn.setToolTipText("Select the file downloaded from IMG server");
+																																																																														imgBrowseBtn.setEnabled(false);
+																																																																														imgBrowseBtn.addActionListener(new ActionListener() {
+																																																																															public void actionPerformed(ActionEvent e) {
+																																																																																Path currentRelativePath = Paths.get("");
+																																																																																String location = currentRelativePath.toAbsolutePath().toString();
+																																																																																JFileChooser fileChooser = new JFileChooser(location);
+																																																																																fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+																																																																																fileChooser.setFileFilter(new FileNameExtensionFilter("XLS File (.xls)", "xls"));
+																																																																																int result = fileChooser.showOpenDialog(MainFrame.this);
+
+																																																																																if (result == JFileChooser.APPROVE_OPTION){
+																																																																																	imgFileTxt.setText(fileChooser.getSelectedFile().getAbsolutePath());
+																																																																																	try {
+																																																																																		PrepareFiles.extractScaffolds(fileChooser.getSelectedFile().getAbsolutePath(), projectInfo, MainFrame.this.scaffoldCombo);
+																																																																																	} catch (IOException e1) {
+																																																																																		logger.error(e1.getMessage());
+																																																																																		return;
+																																																																																	}
+																																																																																}
+																																																																															}
+																																																																														});
+																																																																														
+																																																																																imgBrowseBtn.setBounds(716, 378, 97, 25);
+																																																																																panelMain.add(imgBrowseBtn);
+																																																																																
+																																																																																		JLabel lblSelectYourScaffold = new JLabel("Select a scaffold:");
+																																																																																		lblSelectYourScaffold.setBounds(12, 412, 112, 16);
+																																																																																		panelMain.add(lblSelectYourScaffold);
+																																																																																		scaffoldCombo.setToolTipText("Select the scaffold within the IMG file");
+																																																																																		scaffoldCombo.setEnabled(false);
+																																																																																		
+																																																																																				scaffoldCombo.setBounds(148, 410, 559, 20);
+																																																																																				panelMain.add(scaffoldCombo);
+																																																																																				
+																																																																																						JSeparator separator_7 = new JSeparator();
+																																																																																						separator_7.setBounds(0, 493, 823, 2);
+																																																																																						panelMain.add(separator_7);
+																																																																																						
+																																																																																								JLabel lblyouCanDownload = new JLabel("You can download the IMG file by clicking on this link");
+																																																																																								lblyouCanDownload.setBounds(12, 354, 695, 16);
+																																																																																								panelMain.add(lblyouCanDownload);
+																																																																																								infoLbl.setForeground(Color.RED);
+																																																																																								
+																																																																																										infoLbl.setFont(new Font("Tahoma", Font.ITALIC, 11));
+																																																																																										infoLbl.setBounds(12, 6, 665, 14);
+																																																																																										panelMain.add(infoLbl);
+																																																																																										
+																																																																																												JLabel lblNeedHelp = new JLabel("(?)");
+																																																																																												lblNeedHelp.addMouseListener(new MouseAdapter() {
+																																																																																													@Override
+																																																																																													public void mouseClicked(MouseEvent arg0) {
+																																																																																														JOptionPane.showMessageDialog(MainFrame.this, "This will guide you to finding the protein-coding (.ptt file) and RNA (.rnt file) gene\n"
+																																																																																																+ "annotation at the FTP server of the National Center for Biotechnology Information\n"
+																																																																																																+ "(ftp://ftp.ncbi.nih.gov/genomes/)");
+																																																																																													}
+																																																																																												});
+																																																																																												lblNeedHelp.setToolTipText("Click me!");
+																																																																																												lblNeedHelp.setForeground(Color.BLUE);
+																																																																																												lblNeedHelp.setFont(new Font("Tahoma", Font.PLAIN, 11));
+																																																																																												lblNeedHelp.setBounds(433, 85, 88, 14);
+																																																																																												panelMain.add(lblNeedHelp);
+																																																																																												
+																																																																																														JLabel lblhelp = new JLabel("(?)");
+																																																																																														lblhelp.addMouseListener(new MouseAdapter() {
+																																																																																															@Override
+																																																																																															public void mouseClicked(MouseEvent e) {
+																																																																																																JOptionPane.showMessageDialog(MainFrame.this, "If you previously downloaded the .ppt and .rnt files from NCBI you can select them here.\n"
+																																																																																																		+ "You can also manually edit the .ptt and .rnt files before creating a new project as long as you\n"
+																																																																																																		+ "follow the appropriate format of the file.");
+																																																																																															}
+																																																																																														});
+																																																																																														lblhelp.setToolTipText("Click me!");
+																																																																																														lblhelp.setForeground(Color.BLUE);
+																																																																																														lblhelp.setFont(new Font("Tahoma", Font.PLAIN, 11));
+																																																																																														lblhelp.setBounds(433, 207, 88, 14);
+																																																																																														panelMain.add(lblhelp);
+																																																																																														
+																																																																																																JLabel label_2 = new JLabel("(?)");
+																																																																																																label_2.addMouseListener(new MouseAdapter() {
+																																																																																																	@Override
+																																																																																																	public void mouseClicked(MouseEvent e) {
+																																																																																																		JOptionPane.showMessageDialog(MainFrame.this, "Alternatively, you can use annotation downloaded from Integrated Microbial Genomes (http://img.jgi.doe.gov/).\n"
+																																																																																																				+ "To download the IMG annotation, find the desired genome in the IMG database (finished genomes only),\n"
+																																																																																																				+ "select 'Export gene information' (near the bottom of the page), and save the .xls file from the follwoing page.");
+																																																																																																	}
+																																																																																																});
+																																																																																																label_2.setToolTipText( "Click me!");
+																																																																																																label_2.setForeground(Color.BLUE);
+																																																																																																label_2.setFont(new Font("Tahoma", Font.PLAIN, 11));
+																																																																																																label_2.setBounds(433, 329, 88, 14);
+																																																																																																panelMain.add(label_2);
+																																																																																																
+																																																																																																		JLabel label_1 = new JLabel("(?)");
+																																																																																																		label_1.addMouseListener(new MouseAdapter() {
+																																																																																																			@Override
+																																																																																																			public void mouseClicked(MouseEvent e) {
+																																																																																																				JOptionPane.showMessageDialog(MainFrame.this, "The IMG annotation may include data for multiple scaffolds (e.g., chromosomes or plasmids)\n"
+																																																																																																						+ "Select the one you wish to use.");
+																																																																																																			}
+																																																																																																		});
+																																																																																																		label_1.setToolTipText("Click me!");
+																																																																																																		label_1.setForeground(Color.BLUE);
+																																																																																																		label_1.setFont(new Font("Tahoma", Font.PLAIN, 11));
+																																																																																																		label_1.setBounds(120, 412, 88, 14);
+																																																																																																		panelMain.add(label_1);
+																																																																																																		
+																																																																																																				JLabel lblSequqenceLength = new JLabel("Sequqence length (bp):");
+																																																																																																				lblSequqenceLength.setFont(new Font("Tahoma", Font.PLAIN, 16));
+																																																																																																				lblSequqenceLength.setBounds(378, 555, 204, 22);
+																																																																																																				panelMain.add(lblSequqenceLength);
+																																																																																																				
+																																																																																																						sequenceLengthLbl.setFont(new Font("Tahoma", Font.PLAIN, 15));
+																																																																																																						sequenceLengthLbl.setBounds(575, 550, 178, 33);
+																																																																																																						panelMain.add(sequenceLengthLbl);
+																																																																																																						
+																																																																																																						lblPleaseEnterAn.setForeground(Color.RED);
+																																																																																																						lblPleaseEnterAn.setBounds(498, 37, 293, 14);
+																																																																																																						lblPleaseEnterAn.setVisible(false);
+																																																																																																						panelMain.add(lblPleaseEnterAn);
 
 		JPanel panelInitialize = new JPanel();
 		tabbedPane.addTab("Manage Libraries", null, panelInitialize, null);
@@ -851,7 +851,14 @@ public class MainFrame extends JFrame {
 					return;
 				}
 
-				Integer uniqueInsertionsLimit = Integer.parseInt(removeUniqueInsertionsTxt.getText());
+				Integer uniqueInsertionsLimit = 0;
+				try{
+					uniqueInsertionsLimit = Integer.parseInt(removeUniqueInsertionsTxt.getText());
+				}catch(NumberFormatException e){
+					JOptionPane.showMessageDialog(MainFrame.this, "Please enter a valid number for fileds highlighted with red.");
+					clearTheForm();
+					return;
+				}
 				if(samFilePathTxt.getText().endsWith(".inspo")){
 					String newPath = projectInfo.getPath() + PrepareFiles.prepareFileName(samFilePathTxt.getText(), ".inspo");
 
@@ -1087,7 +1094,7 @@ public class MainFrame extends JFrame {
 		winLenTxt.setToolTipText("Enter the window length");
 		winLenTxt.setColumns(10);
 		winLenTxt.setBounds(424, 483, 56, 20);
-		winLenTxt.setInputVerifier(new IntegerInputVerifier(errorMsgLbl, plotBtn));
+		winLenTxt.setInputVerifier(new IntegerInputVerifier(errorMsgLbl));
 		panelInitialize.add(winLenTxt);
 
 		winStepTxt = new JTextField();
@@ -1100,7 +1107,7 @@ public class MainFrame extends JFrame {
 		winStepTxt.setToolTipText("Enter window step size");
 		winStepTxt.setColumns(10);
 		winStepTxt.setBounds(490, 483, 65, 20);
-		winStepTxt.setInputVerifier(new IntegerInputVerifier(errorMsgLbl, plotBtn));
+		winStepTxt.setInputVerifier(new IntegerInputVerifier(errorMsgLbl));
 		panelInitialize.add(winStepTxt);
 
 		lblWindowLength.setBounds(392, 468, 123, 14);
@@ -1149,7 +1156,7 @@ public class MainFrame extends JFrame {
 		maxNumInsTxt.setText("3");
 		maxNumInsTxt.setColumns(10);
 		maxNumInsTxt.setBounds(426, 551, 118, 20);
-		maxNumInsTxt.setInputVerifier(new IntegerInputVerifier(errorMsgLbl, maxNumInsBtn));
+		maxNumInsTxt.setInputVerifier(new IntegerInputVerifier(errorMsgLbl));
 		panelInitialize.add(maxNumInsTxt);
 
 		JLabel lblMaxNumberOf = new JLabel("Max number of insertions/reads:");
@@ -1266,7 +1273,7 @@ public class MainFrame extends JFrame {
 		removeUniqueInsertionsTxt.setBounds(710, 211, 38, 20);
 		panelInitialize.add(removeUniqueInsertionsTxt);
 		removeUniqueInsertionsTxt.setColumns(10);
-		removeUniqueInsertionsTxt.setInputVerifier(new IntegerInputVerifier(errorMsgLbl, extractInsBtn));
+		removeUniqueInsertionsTxt.setInputVerifier(new IntegerInputVerifier(errorMsgLbl));
 
 		lblReads.setBounds(760, 215, 46, 14);
 		panelInitialize.add(lblReads);
@@ -1904,18 +1911,19 @@ public class MainFrame extends JFrame {
 			return;
 		}
 
-		final int len = Integer.parseInt(winLenTxt.getText());
-		final int step = Integer.parseInt(winStepTxt.getText());
-		final int maxNumIns = Integer.parseInt(maxNumInsTxt.getText());
-		final boolean ifOnlyInsertions = countOnlyUniqueRadio.isSelected();
+		
 
 		plotWaitLbl.setVisible(true);
 
 		(new Thread(new Runnable() {
-
 			@Override
 			public void run() {
-				try {		
+				try {
+					int len = Integer.parseInt(winLenTxt.getText());
+					int step = Integer.parseInt(winStepTxt.getText());
+					int maxNumIns = Integer.parseInt(maxNumInsTxt.getText());
+					boolean ifOnlyInsertions = countOnlyUniqueRadio.isSelected();
+					
 					String result = PrepareFiles.maxNumberOfInsertions((String) plotLibraryCombo.getSelectedItem(), len, step, maxNumIns, ifOnlyInsertions, MainFrame.this.projectInfo);
 
 					if (result.compareTo(Messages.failMsg) != 0){
@@ -1926,8 +1934,11 @@ public class MainFrame extends JFrame {
 					}
 
 					plotWaitLbl.setVisible(false);
-				} catch (Exception e) {
-					e.printStackTrace();
+				}catch(IOException e){
+					logger.error(e.getStackTrace());
+				}catch (NumberFormatException e) {
+					JOptionPane.showMessageDialog(MainFrame.this, "Please enter valid values for Window Length, Step and Max number of insertions fields.");
+					plotWaitLbl.setVisible(false);
 				}
 			}
 		})).start();
@@ -2286,13 +2297,16 @@ public class MainFrame extends JFrame {
 			return;
 		}
 
-		final int len = Integer.parseInt(winLenTxt.getText());
-		final int step = Integer.parseInt(winStepTxt.getText());
-		plotWaitLbl.setVisible(true);
-		int tempLen = 0;
-		int tempStep = 0;
-
+		int len = 0;
+		int step = 0;
+		
 		try{
+			len = Integer.parseInt(winLenTxt.getText());
+			step = Integer.parseInt(winStepTxt.getText());
+			plotWaitLbl.setVisible(true);
+			int tempLen = 0;
+			int tempStep = 0;
+			
 			File winInfo = new File(projectInfo.getPath() + (String)plotLibraryCombo.getSelectedItem() + ".data");
 			if (winInfo.exists()){
 				BufferedReader br = new BufferedReader(new FileReader(winInfo));
@@ -2316,6 +2330,9 @@ public class MainFrame extends JFrame {
 			}
 		}catch (IOException e){
 			logger.fatal(e.getMessage());
+		}catch (NumberFormatException e1) {
+			JOptionPane.showMessageDialog(MainFrame.this, "Please enter a valid window length and step value.");
+			return;
 		}
 
 		final String title;
@@ -2329,12 +2346,13 @@ public class MainFrame extends JFrame {
 			title = temp;
 		}
 
+		final int threadLen = len;
+		final int threadStep = step;
 		(new Thread(new Runnable() {
-
 			@Override
 			public void run() {
 				try {	
-					ChartPanel panel = new ChartPanel(PlotData.plotData((String) plotLibraryCombo.getSelectedItem(), len, step, title, projectInfo, countOnlyUniqueRadio.isSelected()));
+					ChartPanel panel = new ChartPanel(PlotData.plotData((String) plotLibraryCombo.getSelectedItem(), threadLen, threadStep, title, projectInfo, countOnlyUniqueRadio.isSelected()));
 
 					PlotViewer frame = new PlotViewer();					
 					frame.setPlotName(title);
@@ -2365,7 +2383,7 @@ public class MainFrame extends JFrame {
 		try{
 			seqLenInt = Integer.parseInt(seqLen);
 		}catch(NumberFormatException e){
-			JOptionPane.showMessageDialog(MainFrame.this, "Please Enter Your Sequence Number Correctly!");
+			JOptionPane.showMessageDialog(MainFrame.this, "Please enter a valid integer number.");
 			return;
 		}
 
