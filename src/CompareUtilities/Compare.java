@@ -20,6 +20,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.log4j.Logger;
+
+import GUI.MainFrame;
+
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
@@ -30,6 +34,7 @@ public class Compare extends JFrame {
 	/**
 	 * 
 	 */
+	private Logger logger = Logger.getLogger(Compare.class.getName());
 	private static final long serialVersionUID = -2458273832974069254L;
 	private JPanel contentPane;
 	private JTextField input1Txt;
@@ -251,8 +256,7 @@ public class Compare extends JFrame {
 				try {
 					startTheProcess();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					logger.error(e1.getStackTrace());
 				}
 			}
 		});

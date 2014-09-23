@@ -77,7 +77,7 @@ public class PlotData {
 		XYSeriesCollection dataset = new XYSeriesCollection(series);
 		
 
-		JFreeChart chart = ChartFactory.createXYBarChart(
+		/*JFreeChart chart = ChartFactory.createXYBarChart(
 				title,
 				"Number of sequence reads", 
 				false,
@@ -87,30 +87,30 @@ public class PlotData {
 				true,
 				true,
 				false
+				);*/
+		
+		final JFreeChart chart = ChartFactory.createXYLineChart(
+				title,																// chart title
+				"Number of sequence reads",											// x axis label
+				"Number of unique insertions with the given number of reads",		// y axis label
+				dataset,															// data
+				PlotOrientation.VERTICAL,											// orientation
+				false,																// include legend
+				true,																// tooltips
+				false																// urls
 				);
+				
 		
 		XYPlot plot = (XYPlot) chart.getPlot();
 		plot.getDomainAxis().setLowerBound(-10);
+		plot.setDomainGridlinesVisible(false);
+		plot.setRangeGridlinesVisible(false);
 		
 		try {
 			saveToXls(positions_X, counts_Y, info, libName);
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
-		
-        /*final IntervalMarker target = new IntervalMarker(400.0, 700.0);
-        target.setLabel("Target Range");
-        target.setLabelFont(new Font("SansSerif", Font.ITALIC, 11));
-        target.setLabelAnchor(RectangleAnchor.LEFT);
-        target.setLabelTextAnchor(TextAnchor.CENTER_LEFT);
-        target.setPaint(new Color(222, 222, 255, 128));
-        plot.addRangeMarker(target, Layer.BACKGROUND);*/
-		
-		/*try {
-			saveToXls(xAxis, yAxis, info, libName, onlyUniqueInsertions);
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-		}*/
 		
 		return chart;
 	}

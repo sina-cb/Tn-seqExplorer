@@ -1299,7 +1299,7 @@ public class MainFrame extends JFrame {
 				anotherPlot();
 			}
 		});
-		btnAnotherPlot.setBounds(422, 514, 227, 23);
+		btnAnotherPlot.setBounds(551, 584, 227, 23);
 		panelInitialize.add(btnAnotherPlot);
 		
 		JLabel label_11 = new JLabel("(?)");
@@ -1316,7 +1316,7 @@ public class MainFrame extends JFrame {
 		label_11.setToolTipText("Click me!");
 		label_11.setForeground(Color.BLUE);
 		label_11.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_11.setBounds(662, 520, 30, 14);
+		label_11.setBounds(781, 590, 30, 14);
 		panelInitialize.add(label_11);
 		loadingLbl.setVisible(false);
 		doneLbl1.setVisible(false);
@@ -2359,10 +2359,6 @@ public class MainFrame extends JFrame {
 					frame.setVisible(true);
 					frame.addPlot(panel);
 
-					//TODO: These comments can be removed without any change.
-					/*File randomFile = new File("C:\\Users\\Sina\\Desktop\\" + (String) plotLibraryCombo.getSelectedItem() + " len" + len + " step" + step + ".jpeg");
-					ChartUtilities.saveChartAsJPEG(randomFile, panel.getChart(), 800, 600);*/
-
 					plotWaitLbl.setVisible(false);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -2908,7 +2904,7 @@ public class MainFrame extends JFrame {
 
 		reloadWinInfo();
 		
-		//TODO: Check this!!!
+		//GUI Difference in Linux and Windows Should be checked again!
 		String OSName = System.getProperty("os.name");
 		if(!(OSName.contains("Windows") || OSName.contains("windows"))){
 			if (if_initialize_step_1){
