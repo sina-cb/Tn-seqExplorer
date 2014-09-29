@@ -3063,7 +3063,7 @@ public class MainFrame extends JFrame {
 		}
 	}
 
-	// 2
+	// Step 2 - Creating Inspos File
 	private class SortInsertions implements Runnable{
 		
 		private int uniqueInsertionsLimit;
@@ -3119,7 +3119,7 @@ public class MainFrame extends JFrame {
 		}
 	}
 
-	// 3
+	// Step 3 - Create InspoU File
 	private class CountUnique implements Runnable{
 		
 		private int uniqueInsertionsLimit;
@@ -3149,7 +3149,7 @@ public class MainFrame extends JFrame {
 	}
 
 
-	// 4
+	// Step 4 - Creating InspoUs File
 	private class SortByNumberOfInsertions implements Runnable{
 		@Override
 		public void run() {
