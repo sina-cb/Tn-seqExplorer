@@ -31,8 +31,10 @@ public class InspouDistance {
 
 			String extension = ".inspou";
 			File input = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\" + libName + extension);
+			File gbkFile = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\" + "NC_005791.gbk");
+			Integer[] lengths = {30, 100, 300};
 
-			String extAll = " - all.xls"; 
+/*			String extAll = " - all.xls"; 
 			File outputAll = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\results\\" + libName + extAll);
 
 			String extSame = " - same.xls"; 
@@ -43,15 +45,31 @@ public class InspouDistance {
 
 			processAll(input, outputAll, libName);
 			processSame(input, outputSame, libName);
-			processDiff(input, outputDiff, libName);
+			processDiff(input, outputDiff, libName);*/
+			
+			for (Integer length : lengths){
+				String fileName = libName + " - Extracted Seq with " + length + " Flank" + ".xls";
+				File outputSeq = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\results\\" + fileName);
 
-			input = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\" + libName + extension);
+				try {
+					outputSeq.delete();
+					outputSeq.createNewFile();
+					
+					extractSequence(gbkFile, input, length, outputSeq);
+				} catch (IOException e) {
+					System.out.println("IOException");
+					outputSeq.delete();
+				}
+			}
+			
+			/*input = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\" + libName + extension);
 			String windowInsertions = " - windows with %d insertions.xls";
 			String tempOutput = "C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\results\\" + libName + windowInsertions;
-			processWindow(input, tempOutput);
+			processWindow(input, tempOutput);*/
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void processWindow(File input, String outputPath) {
 		File output = null;
 		try{
@@ -123,6 +141,7 @@ public class InspouDistance {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void processDiff(File input, File output, String libname) {
 		try{
 			output.delete();
@@ -180,6 +199,7 @@ public class InspouDistance {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void processSame(File input, File output, String libname) {
 		try{
 			output.delete();
@@ -279,6 +299,7 @@ public class InspouDistance {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void processAll(File input, File output, String libname) {
 		try{
 			output.delete();
@@ -326,12 +347,22 @@ public class InspouDistance {
 		}
 	}
 
+	private int distance(String line1, String line2){
+		int pos1 = Integer.parseInt(line1.substring(0, line1.indexOf("\t")));
+		int pos2 = Integer.parseInt(line2.substring(0, line2.indexOf("\t")));
+		return Math.abs(pos1 - pos2);
+	}
+	
 	private String findSign(String line){
 		String sign = line.substring(line.indexOf("\t") + 1);
 		sign = sign.substring(0, sign.indexOf("\t"));
 		return sign;
 	}
 
+	private int findPosition(String line){
+		return Integer.parseInt(line.substring(0, line.indexOf("\t")));
+	}
+	
 	private void saveChart(File input, String libname) {
 		String outPath = input.getAbsolutePath().substring(0, input.getAbsolutePath().indexOf(".xls")) + ".png";
 		File output = null;
@@ -404,6 +435,110 @@ public class InspouDistance {
 				output.delete();
 			}
 		}
-	}		
+	}
+	
+	private void extractSequence(File gbk, File input, int length, File output) throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader(gbk));
+		String seqLine = br.readLine();
+		
+		ArrayList<Character> sequence = new ArrayList<>();
+		
+		while (!seqLine.startsWith("ORIGIN")){
+			seqLine = br.readLine();
+		}
+
+		seqLine = br.readLine();
+		while(seqLine != null){
+			seqLine = seqLine.replaceAll("\\s+","");
+			seqLine = seqLine.replaceAll("\\d","");
+			seqLine = seqLine.replaceAll("[^acgt]", "");
+			if (seqLine.length() != 0)
+				for (int k = 0; k < seqLine.length(); k++){
+					sequence.add(seqLine.charAt(k));
+				}
+			seqLine = br.readLine();
+		}
+		br.close();
+		
+		int seqLen = sequence.size();
+		
+		BufferedWriter bw = new BufferedWriter(new FileWriter(output));
+		br = new BufferedReader(new FileReader(input));
+		
+		String line1 = br.readLine();
+		String line2 = br.readLine();
+		while(line2 != null && (findSign(line1).equals(findSign(line2)) || distance(line1, line2) != 9 || !findSign(line1).equals("+"))){
+			line1 = line2;
+			line2 = br.readLine();
+		}
+		
+		while(line2 != null){
+			int diff = distance(line1, line2);
+
+			if (diff == 9){
+				int startPos = findPosition(line1) - length - 1;
+				int endPos = findPosition(line2) + length - 1;
+				
+				StringBuilder subSeq = new StringBuilder();
+				subSeq.append(String.format(">%d..%d\r\n", (startPos + 1), (endPos + 1)));
+				//subSeq.append(">\n");
+				bw.write(subSeq.toString());
+				
+				subSeq = new StringBuilder();
+				subSeq.ensureCapacity(2 * length + 100);
+				
+				if (startPos < 0){
+					startPos = seqLen + startPos;
+					int readLength = seqLen - startPos;
+					
+					for (int i = 0; i < readLength; i++){
+						int tIndex = i + startPos;
+						subSeq.append(sequence.get(tIndex));
+					}
+					
+					readLength = endPos;
+					for (int i = 0; i <= readLength; i++){
+						int tIndex = i + 0;
+						subSeq.append(sequence.get(tIndex));
+					}
+				}else if (endPos >= seqLen){
+					endPos = endPos - seqLen;
+					int readLength = seqLen - startPos;
+					
+					for (int i = 0; i < readLength; i++){
+						int tIndex = i + startPos;
+						subSeq.append(sequence.get(tIndex));
+					}
+					
+					readLength = endPos;
+					for (int i = 0; i <= readLength; i++){
+						int tIndex = i + 0;
+						subSeq.append(sequence.get(tIndex));
+					}
+				}else{
+					System.out.print("");
+					
+					for (int i = 0; i <= endPos - startPos; i++){
+						int tIndex = i + startPos;
+						subSeq.append(sequence.get(tIndex));
+					}
+				}
+				
+				bw.write(subSeq.toString() + "\r\n");
+				
+			} // End of IF
+			
+			line1 = line2;
+			line2 = br.readLine();
+
+			while(line2 != null && (findSign(line1).equals(findSign(line2)) || distance(line1, line2) != 9 || !findSign(line1).equals("+"))){
+				line1 = line2;
+				line2 = br.readLine();
+			}
+		}
+
+		bw.close();
+		br.close();
+	}
 
 }
