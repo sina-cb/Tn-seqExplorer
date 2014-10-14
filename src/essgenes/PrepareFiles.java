@@ -795,7 +795,10 @@ public class PrepareFiles {
 			//long readSize = 0;
 
 			String line = br.readLine();
-			line = br.readLine();
+			
+			while (line.startsWith("@")){
+				line = br.readLine();
+			}
 
 			while(line != null){
 				line = line.substring(line.indexOf("\t") + 1);
@@ -815,8 +818,31 @@ public class PrepareFiles {
 				int location = 0;
 				if (direction == 1){
 					location = Integer.parseInt(line.substring(0, line.indexOf("\t")));
-				}else{
-					location = (Integer.parseInt(line.substring(0, line.indexOf("\t"))) * -1) - 50;
+				}else if (direction == -1){
+					location = (Integer.parseInt(line.substring(0, line.indexOf("\t"))) * -1) /*- 50*/;
+					
+					line = line.substring(line.indexOf("\t") + 1);
+					line = line.substring(line.indexOf("\t") + 1);
+
+					String pattern = line.substring(0, line.indexOf("\t"));
+					int sum = 0;
+					int tIndex = 0;
+					StringBuilder num = new StringBuilder();
+					String validChars = "MD=XN";
+					while (tIndex < pattern.length()){
+						if (pattern.charAt(tIndex) >= '0' && pattern.charAt(tIndex) <= '9'){
+							num.append(pattern.charAt(tIndex));
+						}else{
+							if (validChars.contains(pattern.charAt(tIndex) + "")){
+								sum += Integer.parseInt(num.toString());
+							}
+							num = new StringBuilder();
+						}
+						tIndex++;
+					}
+					
+					location -= sum;
+					
 					if (location < -CHRLEN){
 						location += CHRLEN;
 					}

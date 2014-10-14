@@ -16,6 +16,7 @@ public class FilterTable {
 		File knownEssentials = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\known-essentials.xls");
 		File knownNonEssentials = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\known-non-essentials.xls");
 		File output = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\Compare\\result.xls");
+		
 		String line = "";
 
 		/////////////////////////////////////////////////////////////////////////////////

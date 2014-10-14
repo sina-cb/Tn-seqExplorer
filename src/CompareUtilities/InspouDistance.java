@@ -26,15 +26,16 @@ public class InspouDistance {
 
 	public void run() {
 
-		for (int i = 1; i <= 12; i++){
+		for (int i = 1; i < 13; i++){
 			String libName = String.format("lib%d-1", i);
 
 			String extension = ".inspou";
 			File input = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\" + libName + extension);
+			//File gbkFile = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\" + "NC_003911.gbk");
 			File gbkFile = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\" + "NC_005791.gbk");
 			Integer[] lengths = {30, 100, 300};
 
-/*			String extAll = " - all.xls"; 
+			String extAll = " - all.xls"; 
 			File outputAll = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\results\\" + libName + extAll);
 
 			String extSame = " - same.xls"; 
@@ -42,12 +43,20 @@ public class InspouDistance {
 
 			String extDiff = " - diff.xls"; 
 			File outputDiff = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\results\\" + libName + extDiff);
+			
+			String extDiffPlusMinus = " - diff (+ , -).xls"; 
+			File outputDiffPlusMinus = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\results\\" + libName + extDiffPlusMinus);
+			
+			String extDiffMinusPlus = " - diff (- , +).xls"; 
+			File outputDiffMinusPlus = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\results\\" + libName + extDiffMinusPlus);
 
 			processAll(input, outputAll, libName);
 			processSame(input, outputSame, libName);
-			processDiff(input, outputDiff, libName);*/
+			processDiff(input, outputDiff, libName);
+			processDiffPlusMinus(input, outputDiffPlusMinus, libName);
+			processDiffMinusPlus(input, outputDiffMinusPlus, libName);
 			
-			for (Integer length : lengths){
+			/*for (Integer length : lengths){
 				String fileName = libName + " - Extracted Seq with " + length + " Flank" + ".xls";
 				File outputSeq = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\results\\" + fileName);
 
@@ -60,12 +69,12 @@ public class InspouDistance {
 					System.out.println("IOException");
 					outputSeq.delete();
 				}
-			}
+			}*/
 			
-			/*input = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\" + libName + extension);
+			input = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\" + libName + extension);
 			String windowInsertions = " - windows with %d insertions.xls";
 			String tempOutput = "C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\results\\" + libName + windowInsertions;
-			processWindow(input, tempOutput);*/
+			processWindow(input, tempOutput);
 		}
 	}
 
@@ -179,6 +188,120 @@ public class InspouDistance {
 				line2 = br.readLine();
 
 				while(line2 != null && findSign(line1).equals(findSign(line2))){
+					line1 = line2;
+					line2 = br.readLine();
+				}
+			}
+
+			bw.write("Diff.\tCount\n");
+			for (int i = 0; i <= maxDiff; i++){
+				bw.write(i + "\t" + counts[i] + "\n");
+			}
+
+			br.close();
+			bw.close();
+
+			saveChart(output, libname);
+		}catch(IOException e){
+			System.out.println("IOException");
+			output.delete();
+		}
+	}
+	
+	private void processDiffPlusMinus(File input, File output, String libname) {
+		try{
+			output.delete();
+			output.createNewFile();
+
+			BufferedReader br = new BufferedReader(new FileReader(input));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(output));
+
+			String line1 = br.readLine();
+			String line2 = br.readLine();
+
+			while(line2 != null && (findSign(line1).equals(findSign(line2)) || !findSign(line1).equals("+"))){
+				line1 = line2;
+				line2 = br.readLine();
+			}
+
+			int[] counts = new int[1000000];
+			int maxDiff = Integer.MIN_VALUE;
+			while(line2 != null){
+				String num1String = line1.substring(0, line1.indexOf("\t"));
+				String num2String = line2.substring(0, line2.indexOf("\t"));
+
+				int num1 = Integer.parseInt(num1String);
+				int num2 = Integer.parseInt(num2String);
+
+				int diff = num2 - num1;
+
+				counts[diff]++;
+
+				if (diff > maxDiff){
+					maxDiff = diff;
+				}
+
+				line1 = line2;
+				line2 = br.readLine();
+
+				while(line2 != null && (findSign(line1).equals(findSign(line2)) || !findSign(line1).equals("+"))){
+					line1 = line2;
+					line2 = br.readLine();
+				}
+			}
+
+			bw.write("Diff.\tCount\n");
+			for (int i = 0; i <= maxDiff; i++){
+				bw.write(i + "\t" + counts[i] + "\n");
+			}
+
+			br.close();
+			bw.close();
+
+			saveChart(output, libname);
+		}catch(IOException e){
+			System.out.println("IOException");
+			output.delete();
+		}
+	}
+	
+	private void processDiffMinusPlus(File input, File output, String libname) {
+		try{
+			output.delete();
+			output.createNewFile();
+
+			BufferedReader br = new BufferedReader(new FileReader(input));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(output));
+
+			String line1 = br.readLine();
+			String line2 = br.readLine();
+
+			while(line2 != null && (findSign(line1).equals(findSign(line2)) || !findSign(line1).equals("-"))){
+				line1 = line2;
+				line2 = br.readLine();
+			}
+
+			int[] counts = new int[1000000];
+			int maxDiff = Integer.MIN_VALUE;
+			while(line2 != null){
+				String num1String = line1.substring(0, line1.indexOf("\t"));
+				String num2String = line2.substring(0, line2.indexOf("\t"));
+
+				int num1 = Integer.parseInt(num1String);
+				int num2 = Integer.parseInt(num2String);
+
+				int diff = num2 - num1;
+
+				counts[diff]++;
+
+				if (diff > maxDiff){
+					maxDiff = diff;
+				}
+
+				line1 = line2;
+				line2 = br.readLine();
+
+				while(line2 != null && (findSign(line1).equals(findSign(line2)) || !findSign(line1).equals("-"))){
 					line1 = line2;
 					line2 = br.readLine();
 				}
