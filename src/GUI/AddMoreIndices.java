@@ -90,6 +90,8 @@ public class AddMoreIndices extends JFrame {
 	private JRadioButton countInsAllReadsRadio = new JRadioButton("Count all sequence reads");
 	private JCheckBox randomizePlotDataChk = new JCheckBox("Randomize data");
 	private JProgressBar progressBar = new JProgressBar();
+	private JTextField textField;
+	private JTextField textField_1;
 	
 	/**
 	 * Create the frame.
@@ -219,13 +221,13 @@ public class AddMoreIndices extends JFrame {
 	public AddMoreIndices() {
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 588, 392);
+		setBounds(100, 100, 700, 481);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		tabbedPane.setBounds(10, 11, 561, 340);
+		tabbedPane.setBounds(10, 11, 674, 431);
 		contentPane.add(tabbedPane);
 
 		JPanel panel = new JPanel();
@@ -259,7 +261,7 @@ public class AddMoreIndices extends JFrame {
 		});
 		addLibraryCombo.setToolTipText("Choose a library to use for adding datat to the table");
 
-		addLibraryCombo.setBounds(157, 60, 361, 20);
+		addLibraryCombo.setBounds(157, 60, 502, 20);
 		panel.add(addLibraryCombo);
 
 		addWinLenTxt = new JTextField();
@@ -274,7 +276,7 @@ public class AddMoreIndices extends JFrame {
 		addStepTxt.setToolTipText("Window steps to used for adding data");
 		addStepTxt.setText("10");
 		addStepTxt.setColumns(10);
-		addStepTxt.setBounds(432, 122, 86, 20);
+		addStepTxt.setBounds(475, 122, 86, 20);
 		addStepTxt.setInputVerifier(new IntegerInputVerifier(errorMsg1Lbl));
 		panel.add(addStepTxt);
 
@@ -283,7 +285,7 @@ public class AddMoreIndices extends JFrame {
 		panel.add(lblWindowLength);
 
 		JLabel label_3 = new JLabel("Step:");
-		label_3.setBounds(307, 125, 137, 14);
+		label_3.setBounds(350, 125, 137, 14);
 		panel.add(label_3);
 
 		adjustStartTxt = new JTextField();
@@ -302,12 +304,12 @@ public class AddMoreIndices extends JFrame {
 		adjustEndTxt.setToolTipText("You can also omit percent sign and use regular number");
 		adjustEndTxt.setText("-20%");
 		adjustEndTxt.setColumns(10);
-		adjustEndTxt.setBounds(432, 153, 86, 20);
+		adjustEndTxt.setBounds(475, 153, 86, 20);
 		adjustEndTxt.setInputVerifier(new PercentageInputVerifier(errorMsg1Lbl, addMoreColumnsBtn));
 		panel.add(adjustEndTxt);
 
 		JLabel lblAdjustGeneEnd = new JLabel("Adjust gene end:");
-		lblAdjustGeneEnd.setBounds(307, 156, 137, 14);
+		lblAdjustGeneEnd.setBounds(350, 156, 137, 14);
 		panel.add(lblAdjustGeneEnd);
 
 		addSeqLenTxt = new JTextField();
@@ -327,13 +329,13 @@ public class AddMoreIndices extends JFrame {
 				addBtnAction();
 			}
 		});
-		addMoreColumnsBtn.setBounds(426, 278, 120, 23);
+		addMoreColumnsBtn.setBounds(539, 369, 120, 23);
 		panel.add(addMoreColumnsBtn);
 		
 		tableNameTxt = new JTextField();
 		tableNameTxt.setToolTipText("Selected data table in the main project");
 		tableNameTxt.setEditable(false);
-		tableNameTxt.setBounds(157, 91, 361, 20);
+		tableNameTxt.setBounds(157, 91, 502, 20);
 		panel.add(tableNameTxt);
 		tableNameTxt.setColumns(10);
 		
@@ -342,7 +344,7 @@ public class AddMoreIndices extends JFrame {
 		panel.add(lblSelectedTable);
 		
 		lblPleaseWait.setIcon(new ImageIcon(AddMoreIndices.class.getResource("/resources/load.gif")));
-		lblPleaseWait.setBounds(205, 287, 185, 14);
+		lblPleaseWait.setBounds(205, 378, 185, 14);
 		lblPleaseWait.setVisible(false);
 		panel.add(lblPleaseWait);
 		
@@ -394,7 +396,7 @@ public class AddMoreIndices extends JFrame {
 		label_8.setToolTipText("Click me!");
 		label_8.setForeground(Color.BLUE);
 		label_8.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_8.setBounds(528, 125, 88, 14);
+		label_8.setBounds(571, 125, 88, 14);
 		panel.add(label_8);
 		
 		JLabel label_9 = new JLabel("(?)");
@@ -414,28 +416,103 @@ public class AddMoreIndices extends JFrame {
 		label_9.setToolTipText("Click me!");
 		label_9.setForeground(Color.BLUE);
 		label_9.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_9.setBounds(528, 156, 88, 14);
+		label_9.setBounds(571, 156, 88, 14);
 		panel.add(label_9);
 		
 		newDataUniqueInsertionRadio.setSelected(true);
-		newDataUniqueInsertionRadio.setBounds(307, 180, 281, 23);
+		newDataUniqueInsertionRadio.setBounds(350, 180, 281, 23);
 		panel.add(newDataUniqueInsertionRadio);
 		
-		newDataAllReadsRadio.setBounds(307, 206, 281, 23);
+		newDataAllReadsRadio.setBounds(350, 206, 281, 23);
 		panel.add(newDataAllReadsRadio);
 		
 		JXLabel lblThisToolWill = new JXLabel("This tool will add essentiality indices for all genes in the selected table. The lower the essentiality index the more likely it is that the given gene is essential.");
-		lblThisToolWill.setBounds(10, 11, 536, 42);
+		lblThisToolWill.setBounds(10, 11, 649, 42);
 		lblThisToolWill.setLineWrap(true);
 		panel.add(lblThisToolWill);
 		
-		progressBar.setBounds(10, 287, 185, 14);
+		progressBar.setBounds(10, 378, 185, 14);
 		panel.add(progressBar);
 		
 		errorMsg1Lbl.setForeground(Color.RED);
-		errorMsg1Lbl.setBounds(10, 262, 434, 14);
+		errorMsg1Lbl.setBounds(10, 353, 434, 14);
 		errorMsg1Lbl.setVisible(false);
 		panel.add(errorMsg1Lbl);
+		
+		JPanel panel_1 = new JPanel();
+		tabbedPane.addTab("Add insertion density", null, panel_1, null);
+		panel_1.setLayout(null);
+		
+		JLabel label_6 = new JLabel("This tool adds a new data column with the count of insertions or read counts in each gene.");
+		label_6.setBounds(10, 11, 649, 14);
+		panel_1.add(label_6);
+		
+		JLabel label_7 = new JLabel("Choose a library:");
+		label_7.setBounds(10, 39, 137, 14);
+		panel_1.add(label_7);
+		
+		JComboBox<String> comboBox = new JComboBox<String>();
+		comboBox.setToolTipText("Choose a library to use for adding datat to the table");
+		comboBox.setBounds(157, 36, 502, 20);
+		panel_1.add(comboBox);
+		
+		JLabel label_11 = new JLabel("Adjust gene start:");
+		label_11.setBounds(10, 67, 137, 14);
+		panel_1.add(label_11);
+		
+		textField = new JTextField();
+		textField.setToolTipText("You can also omit percent sign and use regular number");
+		textField.setText("-5%");
+		textField.setColumns(10);
+		textField.setBounds(157, 64, 86, 20);
+		panel_1.add(textField);
+		
+		JLabel label_13 = new JLabel("(?)");
+		label_13.setToolTipText("Click me!");
+		label_13.setForeground(Color.BLUE);
+		label_13.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		label_13.setBounds(253, 67, 88, 14);
+		panel_1.add(label_13);
+		
+		JLabel label_14 = new JLabel("Adjust gene end:");
+		label_14.setBounds(350, 67, 137, 14);
+		panel_1.add(label_14);
+		
+		textField_1 = new JTextField();
+		textField_1.setToolTipText("You can also omit percent sign and use regular number");
+		textField_1.setText("-20%");
+		textField_1.setColumns(10);
+		textField_1.setBounds(475, 64, 86, 20);
+		panel_1.add(textField_1);
+		
+		JLabel label_15 = new JLabel("(?)");
+		label_15.setToolTipText("Click me!");
+		label_15.setForeground(Color.BLUE);
+		label_15.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		label_15.setBounds(571, 67, 88, 14);
+		panel_1.add(label_15);
+		
+		JRadioButton radioButton = new JRadioButton("Count only unique insertions");
+		radioButton.setSelected(true);
+		radioButton.setBounds(10, 88, 281, 23);
+		panel_1.add(radioButton);
+		
+		JRadioButton radioButton_1 = new JRadioButton("Count all sequence reads");
+		radioButton_1.setBounds(10, 114, 281, 23);
+		panel_1.add(radioButton_1);
+		
+		JRadioButton radioButton_2 = new JRadioButton("Count only unique insertions");
+		radioButton_2.setSelected(true);
+		radioButton_2.setBounds(10, 347, 281, 23);
+		panel_1.add(radioButton_2);
+		
+		JRadioButton radioButton_3 = new JRadioButton("Count all sequence reads");
+		radioButton_3.setBounds(10, 373, 281, 23);
+		panel_1.add(radioButton_3);
+		
+		JButton button = new JButton("Count");
+		button.setBounds(570, 373, 89, 23);
+		panel_1.add(button);
 		
 		JPanel panel_3 = new JPanel();
 		tabbedPane.addTab("Add insertion counts", null, panel_3, null);
@@ -446,7 +523,7 @@ public class AddMoreIndices extends JFrame {
 		panel_3.add(label_10);
 		
 		countInsLibCombo.setToolTipText("Choose a library to use for adding datat to the table");
-		countInsLibCombo.setBounds(157, 32, 361, 20);
+		countInsLibCombo.setBounds(157, 32, 502, 20);
 		panel_3.add(countInsLibCombo);
 		
 		JLabel lblAdjustGeneStart_1 = new JLabel("Adjust gene start:");
@@ -462,14 +539,14 @@ public class AddMoreIndices extends JFrame {
 		panel_3.add(countInsAdjStartTxt);
 		
 		JLabel lblTest = new JLabel("Adjust gene end:");
-		lblTest.setBounds(307, 63, 137, 14);
+		lblTest.setBounds(350, 63, 137, 14);
 		panel_3.add(lblTest);
 		
 		countInsAdjEndTxt = new JTextField();
 		countInsAdjEndTxt.setToolTipText("You can also omit percent sign and use regular number");
 		countInsAdjEndTxt.setText("-20%");
 		countInsAdjEndTxt.setColumns(10);
-		countInsAdjEndTxt.setBounds(432, 60, 86, 20);
+		countInsAdjEndTxt.setBounds(475, 60, 86, 20);
 		countInsAdjEndTxt.setInputVerifier(new PercentageInputVerifier(errorMsg2Lbl, countInsBtn));
 		panel_3.add(countInsAdjEndTxt);
 		
@@ -478,11 +555,11 @@ public class AddMoreIndices extends JFrame {
 				countIns();
 			}
 		});
-		countInsBtn.setBounds(457, 278, 89, 23);
+		countInsBtn.setBounds(570, 369, 89, 23);
 		panel_3.add(countInsBtn);
 		countInsPleaseWaitLbl.setIcon(new ImageIcon(AddMoreIndices.class.getResource("/resources/load.gif")));
 		
-		countInsPleaseWaitLbl.setBounds(10, 282, 177, 14);
+		countInsPleaseWaitLbl.setBounds(10, 378, 177, 14);
 		panel_3.add(countInsPleaseWaitLbl);
 		
 		countInsUniqueInsertionRadio.setSelected(true);
@@ -529,15 +606,15 @@ public class AddMoreIndices extends JFrame {
 		label_4.setToolTipText("Click me!");
 		label_4.setForeground(Color.BLUE);
 		label_4.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_4.setBounds(528, 63, 88, 14);
+		label_4.setBounds(571, 63, 88, 14);
 		panel_3.add(label_4);
 		
 		JLabel lblThisToolAdds = new JLabel("This tool adds a new data column with the count of insertions or read counts in each gene.");
-		lblThisToolAdds.setBounds(10, 11, 536, 14);
+		lblThisToolAdds.setBounds(10, 11, 649, 14);
 		panel_3.add(lblThisToolAdds);
 		
 		errorMsg2Lbl.setForeground(Color.RED);
-		errorMsg2Lbl.setBounds(10, 257, 384, 14);
+		errorMsg2Lbl.setBounds(10, 353, 384, 14);
 		errorMsg2Lbl.setVisible(false);
 		panel_3.add(errorMsg2Lbl);
 
@@ -545,7 +622,7 @@ public class AddMoreIndices extends JFrame {
 		tabbedPane.addTab("Compare data", null, compareScrollPanel, null);
 		compareScrollPanel.setLayout(null);
 		
-		scrollPane.setBounds(10, 64, 536, 117);
+		scrollPane.setBounds(10, 64, 649, 117);
 		compareScrollPanel.add(scrollPane);
 		
 		compareTable = new JTable();
@@ -556,7 +633,7 @@ public class AddMoreIndices extends JFrame {
 				compare();
 			}
 		});
-		compareBtn.setBounds(443, 278, 103, 23);
+		compareBtn.setBounds(556, 369, 103, 23);
 		compareScrollPanel.add(compareBtn);
 		
 		JLabel lblMaximumInsertions = new JLabel("Maximum insertions:");
@@ -598,7 +675,7 @@ public class AddMoreIndices extends JFrame {
 		compareScrollPanel.add(columnTwoCombo);
 		
 		compareWaitLbl.setIcon(new ImageIcon(AddMoreIndices.class.getResource("/resources/load.gif")));
-		compareWaitLbl.setBounds(10, 282, 112, 14);
+		compareWaitLbl.setBounds(10, 373, 112, 14);
 		compareScrollPanel.add(compareWaitLbl);
 		
 		JButton plotTwoColBtn = new JButton("Plot");
@@ -607,17 +684,17 @@ public class AddMoreIndices extends JFrame {
 				plotColumns();
 			}
 		});
-		plotTwoColBtn.setBounds(335, 278, 103, 23);
+		plotTwoColBtn.setBounds(448, 369, 103, 23);
 		compareScrollPanel.add(plotTwoColBtn);
 		
-		logPlotCheck.setBounds(379, 216, 171, 23);
+		logPlotCheck.setBounds(438, 220, 171, 23);
 		compareScrollPanel.add(logPlotCheck);
 		
-		randomizePlotDataChk.setBounds(379, 244, 127, 23);
+		randomizePlotDataChk.setBounds(438, 248, 127, 23);
 		compareScrollPanel.add(randomizePlotDataChk);
 		
 		JXLabel lblNewLabel = new JXLabel("The 'Compare' adds a new column that shows the difference between the data in two previously created columns; the 'Plot' button plots data in two previously created columns.");
-		lblNewLabel.setBounds(10, 11, 536, 42);
+		lblNewLabel.setBounds(10, 11, 649, 42);
 		lblNewLabel.setLineWrap(true);
 		compareScrollPanel.add(lblNewLabel);
 		
@@ -633,7 +710,7 @@ public class AddMoreIndices extends JFrame {
 		label_5.setToolTipText("Click me!");
 		label_5.setForeground(Color.BLUE);
 		label_5.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_5.setBounds(512, 248, 88, 14);
+		label_5.setBounds(571, 252, 88, 14);
 		compareScrollPanel.add(label_5);
 		
 		errorMsg3Lbl.setForeground(Color.RED);
