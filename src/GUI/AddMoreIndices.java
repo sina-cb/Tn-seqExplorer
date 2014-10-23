@@ -511,6 +511,11 @@ public class AddMoreIndices extends JFrame {
 		panel_1.add(radioButton_3);
 		
 		JButton button = new JButton("Count");
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				calcInsertionDensity();
+			}
+		});
 		button.setBounds(637, 407, 89, 23);
 		panel_1.add(button);
 		
@@ -717,6 +722,35 @@ public class AddMoreIndices extends JFrame {
 		errorMsg3Lbl.setBounds(368, 192, 178, 14);
 		errorMsg3Lbl.setVisible(false);
 		compareScrollPanel.add(errorMsg3Lbl);
+	}
+
+	protected void calcInsertionDensity() {
+		final String libraryName = (String) addLibraryCombo.getSelectedItem(); 
+		final String adjStart = adjustStartTxt.getText();
+		final String adjEnd = adjustEndTxt.getText();
+		
+		countInsPleaseWaitLbl.setVisible(true);
+		countInsBtn.setEnabled(false);
+		
+		(new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					if (AddColumns.calcInsertionDensity(libraryName, tableName, adjStart, adjEnd, countInsUniqueInsertionRadio.isSelected(), info).compareTo(Messages.successMsg) == 0){
+						JOptionPane.showMessageDialog(AddMoreIndices.this, "Data added");
+					}else{
+						JOptionPane.showMessageDialog(AddMoreIndices.this, "There was some problem, data was not added!!!", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+					
+					countInsPleaseWaitLbl.setVisible(false);
+					countInsBtn.setEnabled(true);
+				} catch (IOException e) {
+					logger.error(e.getMessage());
+					return;
+				}
+			}
+		})).start();
 	}
 
 	private void plotColumns(){
