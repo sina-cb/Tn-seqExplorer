@@ -57,6 +57,9 @@ public class AddMoreIndices extends JFrame {
 	@SuppressWarnings("unused")
 	private JFrame parentFrame = null;
 
+	private JLabel step2ErrorLbl = new JLabel("Please enter a valid value in the red fields.");
+	private JLabel step2WaitLbl = new JLabel("Please wait...");
+	private JComboBox<String> step2Combo = new JComboBox<String>();	
 	private JLabel errorMsg3Lbl = new JLabel("Enter a valid value.");
 	private JLabel errorMsg2Lbl = new JLabel("Please enter a valid value in the red fields.");
 	private JLabel errorMsg1Lbl = new JLabel("Please enter a valid value in the red fields.");
@@ -90,8 +93,8 @@ public class AddMoreIndices extends JFrame {
 	private JRadioButton countInsAllReadsRadio = new JRadioButton("Count all sequence reads");
 	private JCheckBox randomizePlotDataChk = new JCheckBox("Randomize data");
 	private JProgressBar progressBar = new JProgressBar();
-	private JTextField textField;
-	private JTextField textField_1;
+	private JTextField step2AdjustStart;
+	private JTextField step2AdjustEnd;
 	
 	/**
 	 * Create the frame.
@@ -118,10 +121,14 @@ public class AddMoreIndices extends JFrame {
 				}
 
 				if (selectedTab == 1){
+					initializeDensityInsertions();
+				}
+				
+				if (selectedTab == 2){
 					initializeCountInsertions();
 				}
 
-				if(selectedTab == 2){
+				if(selectedTab == 3){
 					initializeCompare();
 				}			
 			}
@@ -174,6 +181,47 @@ public class AddMoreIndices extends JFrame {
 		columnOneCombo.setSelectedIndex(firstCombo);
 		columnTwoCombo.setSelectedIndex(secondCombo);
 		
+	}
+	
+	private void initializeDensityInsertions(){
+		BufferedReader br = null;
+
+		if(step2Combo != null){
+			step2Combo.removeAllItems();
+		}
+		
+		step2WaitLbl.setVisible(false);
+		step2ErrorLbl.setVisible(false);
+		
+		try{
+			br = new BufferedReader(new FileReader(info.getFile()));
+
+			String line = br.readLine();
+			br.readLine();
+			br.readLine();
+
+			while(line != null){
+				line = br.readLine();
+
+				if (line != null)
+					step2Combo.addItem(line.substring(0, line.length() - 6));
+
+				line = br.readLine();
+				line = br.readLine();
+				line = br.readLine();
+			}
+
+		}catch(IOException e){
+			logger.error(e.getMessage());
+			return;
+		}finally{
+			try{
+				br.close();
+			}catch(IOException e){
+				logger.error(e.getMessage());
+				return;
+			}
+		}
 	}
 	
 	private void initializeCountInsertions(){
@@ -451,21 +499,20 @@ public class AddMoreIndices extends JFrame {
 		label_7.setBounds(10, 39, 137, 14);
 		panel_1.add(label_7);
 		
-		JComboBox<String> comboBox = new JComboBox<String>();
-		comboBox.setToolTipText("Choose a library to use for adding datat to the table");
-		comboBox.setBounds(157, 36, 569, 20);
-		panel_1.add(comboBox);
+		step2Combo.setToolTipText("Choose a library to use for adding datat to the table");
+		step2Combo.setBounds(157, 36, 569, 20);
+		panel_1.add(step2Combo);
 		
 		JLabel label_11 = new JLabel("Adjust gene start:");
 		label_11.setBounds(10, 67, 137, 14);
 		panel_1.add(label_11);
 		
-		textField = new JTextField();
-		textField.setToolTipText("You can also omit percent sign and use regular number");
-		textField.setText("-5%");
-		textField.setColumns(10);
-		textField.setBounds(157, 64, 86, 20);
-		panel_1.add(textField);
+		step2AdjustStart = new JTextField();
+		step2AdjustStart.setToolTipText("You can also omit percent sign and use regular number");
+		step2AdjustStart.setText("-5%");
+		step2AdjustStart.setColumns(10);
+		step2AdjustStart.setBounds(157, 64, 86, 20);
+		panel_1.add(step2AdjustStart);
 		
 		JLabel label_13 = new JLabel("(?)");
 		label_13.setToolTipText("Click me!");
@@ -478,12 +525,12 @@ public class AddMoreIndices extends JFrame {
 		label_14.setBounds(350, 67, 137, 14);
 		panel_1.add(label_14);
 		
-		textField_1 = new JTextField();
-		textField_1.setToolTipText("You can also omit percent sign and use regular number");
-		textField_1.setText("-20%");
-		textField_1.setColumns(10);
-		textField_1.setBounds(475, 64, 86, 20);
-		panel_1.add(textField_1);
+		step2AdjustEnd = new JTextField();
+		step2AdjustEnd.setToolTipText("You can also omit percent sign and use regular number");
+		step2AdjustEnd.setText("-20%");
+		step2AdjustEnd.setColumns(10);
+		step2AdjustEnd.setBounds(475, 64, 86, 20);
+		panel_1.add(step2AdjustEnd);
 		
 		JLabel label_15 = new JLabel("(?)");
 		label_15.setToolTipText("Click me!");
@@ -492,32 +539,31 @@ public class AddMoreIndices extends JFrame {
 		label_15.setBounds(571, 67, 88, 14);
 		panel_1.add(label_15);
 		
-		JRadioButton radioButton = new JRadioButton("Count only unique insertions");
-		radioButton.setSelected(true);
-		radioButton.setBounds(10, 88, 281, 23);
-		panel_1.add(radioButton);
+		JRadioButton step2UniqueRadio = new JRadioButton("Count only unique insertions");
+		step2UniqueRadio.setSelected(true);
+		step2UniqueRadio.setBounds(10, 88, 281, 23);
+		panel_1.add(step2UniqueRadio);
 		
-		JRadioButton radioButton_1 = new JRadioButton("Count all sequence reads");
-		radioButton_1.setBounds(10, 114, 281, 23);
-		panel_1.add(radioButton_1);
+		JRadioButton step2AllRadio = new JRadioButton("Count all sequence reads");
+		step2AllRadio.setBounds(10, 114, 281, 23);
+		panel_1.add(step2AllRadio);
 		
-		JRadioButton radioButton_2 = new JRadioButton("Count only unique insertions");
-		radioButton_2.setSelected(true);
-		radioButton_2.setBounds(10, 381, 281, 23);
-		panel_1.add(radioButton_2);
-		
-		JRadioButton radioButton_3 = new JRadioButton("Count all sequence reads");
-		radioButton_3.setBounds(10, 407, 281, 23);
-		panel_1.add(radioButton_3);
-		
-		JButton button = new JButton("Count");
-		button.addActionListener(new ActionListener() {
+		JButton btnAdd = new JButton("Add");
+		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				calcInsertionDensity();
 			}
 		});
-		button.setBounds(637, 407, 89, 23);
-		panel_1.add(button);
+		btnAdd.setBounds(637, 407, 89, 23);
+		panel_1.add(btnAdd);
+		
+		step2WaitLbl.setIcon(new ImageIcon(AddMoreIndices.class.getResource("/resources/load.gif")));
+		step2WaitLbl.setBounds(10, 415, 164, 15);
+		panel_1.add(step2WaitLbl);
+		
+		step2ErrorLbl.setForeground(Color.RED);
+		step2ErrorLbl.setBounds(10, 388, 370, 15);
+		panel_1.add(step2ErrorLbl);
 		
 		JPanel panel_3 = new JPanel();
 		tabbedPane.addTab("Add insertion counts", null, panel_3, null);
@@ -725,9 +771,9 @@ public class AddMoreIndices extends JFrame {
 	}
 
 	protected void calcInsertionDensity() {
-		final String libraryName = (String) addLibraryCombo.getSelectedItem(); 
-		final String adjStart = adjustStartTxt.getText();
-		final String adjEnd = adjustEndTxt.getText();
+		final String libraryName = (String) step2Combo.getSelectedItem(); 
+		final String adjStart = step2AdjustStart.getText();
+		final String adjEnd = step2AdjustEnd.getText();
 		
 		countInsPleaseWaitLbl.setVisible(true);
 		countInsBtn.setEnabled(false);
