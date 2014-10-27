@@ -220,9 +220,9 @@ public class AddColumns {
 
 		line = br.readLine();
 		if (ifUniqueInsertions){
-			bw.write(line + "\tunique_insertion_counts: " + libName + "\n");
+			bw.write(line + "\tunique_insertion_density: " + libName + "\n");
 		}else{
-			bw.write(line + "\tall_reads_counts: " + libName + "\n");
+			bw.write(line + "\tall_reads_density: " + libName + "\n");
 		}
 
 		line = br.readLine();
@@ -258,14 +258,17 @@ public class AddColumns {
 			}else{
 				logger.error("Gene strand is not + or -  ...  skipping end adjustments");
 			}
-			
-			int count = 0;
-			for (int i = start; i <= end; i++){
-				count += insertions.get(i);
+
+			if  (adjustEnd + adjustStart < geneLen){
+				int count = 0;
+				for (int i = start; i <= end; i++){
+					count += insertions.get(i);
+				}
+				
+				bw.write(line + "\t" + ((double)count / geneLen) + "\n");
+			}else{
+				bw.write(line + "\t" + Double.NaN + "\n");
 			}
-			
-			bw.write(line + "\t" + count + "\n");
-			bw.flush();
 			
 			line = br.readLine();
 		}
