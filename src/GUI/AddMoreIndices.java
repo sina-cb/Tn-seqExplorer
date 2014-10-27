@@ -47,6 +47,8 @@ import essgenes.ProjectInfo;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 
+import javax.swing.JSeparator;
+
 @SuppressWarnings("serial")
 public class AddMoreIndices extends JFrame {
 
@@ -57,6 +59,8 @@ public class AddMoreIndices extends JFrame {
 	@SuppressWarnings("unused")
 	private JFrame parentFrame = null;
 
+	private JButton step2PlotBtn = new JButton("Plot");
+	private JComboBox<String> step2ColumnCombo = new JComboBox<String>();
 	private JLabel step2ErrorLbl = new JLabel("Please enter a valid value in the red fields.");
 	private JLabel step2WaitLbl = new JLabel("Please wait...");
 	private JComboBox<String> step2Combo = new JComboBox<String>();	
@@ -185,7 +189,6 @@ public class AddMoreIndices extends JFrame {
 	
 	private void initializeDensityInsertions(){
 		BufferedReader br = null;
-
 		if(step2Combo != null){
 			step2Combo.removeAllItems();
 		}
@@ -211,17 +214,33 @@ public class AddMoreIndices extends JFrame {
 				line = br.readLine();
 			}
 
+			br.close();
 		}catch(IOException e){
 			logger.error(e.getMessage());
 			return;
-		}finally{
-			try{
-				br.close();
-			}catch(IOException e){
-				logger.error(e.getMessage());
-				return;
-			}
 		}
+		
+		try{
+			br = new BufferedReader(new FileReader(new File(info.getPath() + tableName + ".table.xls")));
+			
+			br.readLine();
+			br.readLine();
+			String[] titles = br.readLine().split("\t");
+			
+			int count = 0;
+			step2ColumnCombo.removeAllItems();
+			for (String title : titles){
+				if (title.contains("density")){
+					step2ColumnCombo.addItem(count + ":\t" + title);
+				}
+				count++;
+			}
+			
+		}catch (IOException e){
+			logger.error(e.getMessage());
+			return;
+		}
+		
 	}
 	
 	private void initializeCountInsertions(){
@@ -554,7 +573,7 @@ public class AddMoreIndices extends JFrame {
 				calcInsertionDensity();
 			}
 		});
-		btnAdd.setBounds(637, 407, 89, 23);
+		btnAdd.setBounds(637, 152, 89, 23);
 		panel_1.add(btnAdd);
 		
 		step2WaitLbl.setIcon(new ImageIcon(AddMoreIndices.class.getResource("/resources/load.gif")));
@@ -564,6 +583,29 @@ public class AddMoreIndices extends JFrame {
 		step2ErrorLbl.setForeground(Color.RED);
 		step2ErrorLbl.setBounds(10, 388, 370, 15);
 		panel_1.add(step2ErrorLbl);
+		
+		JSeparator separator = new JSeparator();
+		separator.setBounds(10, 187, 716, 2);
+		panel_1.add(separator);
+		
+		JLabel lblPlotDensity = new JXLabel("Plot density / number of insertions:");
+		lblPlotDensity.setBounds(10, 201, 716, 15);
+		panel_1.add(lblPlotDensity);
+		
+		JLabel lblChooseAColumn = new JLabel("Choose a column in the table:");
+		lblChooseAColumn.setBounds(10, 228, 281, 15);
+		panel_1.add(lblChooseAColumn);
+		
+		step2ColumnCombo.setBounds(253, 223, 473, 24);
+		panel_1.add(step2ColumnCombo);
+		
+		step2PlotBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				plotDensities();
+			}
+		});
+		step2PlotBtn.setBounds(637, 259, 89, 25);
+		panel_1.add(step2PlotBtn);
 		
 		JPanel panel_3 = new JPanel();
 		tabbedPane.addTab("Add insertion counts", null, panel_3, null);
@@ -768,6 +810,46 @@ public class AddMoreIndices extends JFrame {
 		errorMsg3Lbl.setBounds(368, 192, 178, 14);
 		errorMsg3Lbl.setVisible(false);
 		compareScrollPanel.add(errorMsg3Lbl);
+	}
+
+	protected void plotDensities() {
+		
+		String item = (String) step2ColumnCombo.getSelectedItem();
+		
+		final String columnName = item.substring(item.indexOf("\t") + 1);
+		final int columnIndex = Integer.parseInt(item.substring(0, item.indexOf(":")));
+		
+		step2WaitLbl.setVisible(true);
+		step2PlotBtn.setEnabled(false);
+		
+		this.logPlot = logPlotCheck.isSelected();
+		
+		(new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				String tempTitle = tableName + ", Column: " + columnName + " (#" + columnIndex + ")";
+				
+				ChartPanel panel;
+				try {
+					panel = new ChartPanel(PlotData.plotInsertionDensities(new File(info.getPath() + tableName + ".table.xls"), columnName, columnIndex, tempTitle, info));
+				} catch (IOException e) {
+					logger.error("Some error while creating the plot!");
+					return;
+				}
+				
+				PlotViewer frame = new PlotViewer();					
+				frame.setPlotName(tempTitle);
+				frame.setVisible(true);
+				frame.addPlot(panel);
+				
+				step2WaitLbl.setVisible(false);
+				step2PlotBtn.setEnabled(true);
+				initializeDensityInsertions();
+			}
+		})).start();
+		
 	}
 
 	protected void calcInsertionDensity() {

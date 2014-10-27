@@ -39,39 +39,39 @@ public class PlotViewer extends JFrame {
 		setResizable(false);
 		setTitle("Plot");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 728, 655);
+		setBounds(100, 100, 769, 655);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
 		plotPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		plotPanel.setBounds(10, 36, 700, 480);
+		plotPanel.setBounds(10, 36, 743, 480);
 		contentPane.add(plotPanel);
 		
 		JLabel lblResultPlot = new JLabel("Result plot:");
 		lblResultPlot.setBounds(10, 11, 96, 14);
 		contentPane.add(lblResultPlot);
 		
-		parametersPanel.setBounds(10, 527, 700, 89);
+		parametersPanel.setBounds(10, 527, 743, 89);
 		contentPane.add(parametersPanel);
 		parametersPanel.setLayout(new FormLayout(new ColumnSpec[] {
-				ColumnSpec.decode("116px"),
+				ColumnSpec.decode("155px"),
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("max(47dlu;default)"),
 				ColumnSpec.decode("67px"),
 				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
 				ColumnSpec.decode("59px"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				FormFactory.DEFAULT_COLSPEC,
+				ColumnSpec.decode("max(41dlu;default)"),
 				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-				ColumnSpec.decode("74px"),
+				ColumnSpec.decode("61px"),
 				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-				ColumnSpec.decode("58px"),
+				ColumnSpec.decode("23px"),
 				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-				ColumnSpec.decode("86px"),
+				ColumnSpec.decode("32px"),
 				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-				ColumnSpec.decode("80px"),},
+				ColumnSpec.decode("89px"),},
 			new RowSpec[] {
 				FormFactory.LINE_GAP_ROWSPEC,
 				RowSpec.decode("20px"),
