@@ -24,6 +24,7 @@ public class InspouDistance {
 		obj.run();
 	}
 
+	@SuppressWarnings("unused")
 	public void run() {
 
 		for (int i = 1; i < 13; i++){
@@ -78,7 +79,6 @@ public class InspouDistance {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	private void processWindow(File input, String outputPath) {
 		File output = null;
 		try{
@@ -150,7 +150,6 @@ public class InspouDistance {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	private void processDiff(File input, File output, String libname) {
 		try{
 			output.delete();
@@ -322,7 +321,6 @@ public class InspouDistance {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	private void processSame(File input, File output, String libname) {
 		try{
 			output.delete();
@@ -422,7 +420,6 @@ public class InspouDistance {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	private void processAll(File input, File output, String libname) {
 		try{
 			output.delete();
@@ -560,6 +557,7 @@ public class InspouDistance {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private void extractSequence(File gbk, File input, int length, File output) throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(gbk));
 		String seqLine = br.readLine();

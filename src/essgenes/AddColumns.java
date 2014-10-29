@@ -299,6 +299,12 @@ public class AddColumns {
 			if(newTableFile.renameTo(tableFile)){
 				return Messages.successMsg;
 			}
+		}else{
+			if(tableFile.delete()){
+				if(newTableFile.renameTo(tableFile)){
+					return Messages.successMsg;
+				}
+			}
 		}
 
 		return Messages.failMsg;
