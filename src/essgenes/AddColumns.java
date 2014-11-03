@@ -181,6 +181,11 @@ public class AddColumns {
 			
 			adjustEnd = 0;
 			adjustEndPercent = Integer.parseInt(adjustEndString.substring(0, adjustEndString.length() - 1)) / 100.0;
+			
+			if (adjustEndPercent + adjustStartPercent >= 100){
+				JOptionPane.showMessageDialog(null, "Summation of Start and End adjustment percents cannot be greater than or equal to 100.");
+				return Messages.failMsg;
+			}
 		}else{
 			if (adjustEndString.contains("%")){
 				JOptionPane.showMessageDialog(null, "Both adjustment numbers should either be in percents or be absolute values.");
@@ -318,17 +323,30 @@ public class AddColumns {
 		double adjustEndPercent;
 
 		if (adjustStartString.contains("%")){
+			if (!adjustEndString.contains("%")){
+				JOptionPane.showMessageDialog(null, "Both adjustment numbers should either be in percents or be absolute values.");
+				return "Both adjustment numbers should either be in percents or be absolute values.";
+			}
+			
 			adjustStart = 0;
 			adjustStartPercent = Integer.parseInt(adjustStartString.substring(0, adjustStartString.length() - 1)) / 100.0;
-		}else{
-			adjustStart = Integer.parseInt(adjustStartString);
-			adjustStartPercent = 0.0;
-		}
-
-		if (adjustEndString.contains("%")){
+			
 			adjustEnd = 0;
 			adjustEndPercent = Integer.parseInt(adjustEndString.substring(0, adjustEndString.length() - 1)) / 100.0;
+			
+			if (adjustEndPercent + adjustStartPercent >= 100){
+				JOptionPane.showMessageDialog(null, "Summation of Start and End adjustment percents cannot be greater than or equal to 100.");
+				return Messages.failMsg;
+			}
 		}else{
+			if (adjustEndString.contains("%")){
+				JOptionPane.showMessageDialog(null, "Both adjustment numbers should either be in percents or be absolute values.");
+				return "Both adjustment numbers should either be in percents or be absolute values.";
+			}
+			
+			adjustStart = Integer.parseInt(adjustStartString);
+			adjustStartPercent = 0.0;
+			
 			adjustEnd = Integer.parseInt(adjustEndString);
 			adjustEndPercent = 0.0;
 		}

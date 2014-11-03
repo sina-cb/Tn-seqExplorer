@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -38,6 +39,7 @@ import org.jfree.chart.ChartPanel;
 
 import CustomGUIComponent.BoldCellRenderer;
 import CustomGUIComponent.IntegerInputVerifier;
+import CustomGUIComponent.MyChartMouseListener;
 import CustomGUIComponent.PercentageInputVerifier;
 import essgenes.AddColumns;
 import essgenes.Messages;
@@ -59,6 +61,8 @@ public class AddMoreIndices extends JFrame {
 	@SuppressWarnings("unused")
 	private JFrame parentFrame = null;
 
+	private JRadioButton step2UniqueRadio = new JRadioButton("Count only unique insertions");
+	private JRadioButton step2AllRadio = new JRadioButton("Count all sequence reads");
 	private JButton step2PlotBtn = new JButton("Plot");
 	private JComboBox<String> step2ColumnCombo = new JComboBox<String>();
 	private JLabel step2ErrorLbl = new JLabel("Please enter a valid value in the red fields.");
@@ -567,14 +571,16 @@ public class AddMoreIndices extends JFrame {
 		label_15.setBounds(571, 67, 88, 14);
 		panel_1.add(label_15);
 		
-		JRadioButton step2UniqueRadio = new JRadioButton("Count only unique insertions");
 		step2UniqueRadio.setSelected(true);
 		step2UniqueRadio.setBounds(10, 88, 281, 23);
 		panel_1.add(step2UniqueRadio);
-		
-		JRadioButton step2AllRadio = new JRadioButton("Count all sequence reads");
+
 		step2AllRadio.setBounds(10, 114, 281, 23);
 		panel_1.add(step2AllRadio);
+		
+		ButtonGroup step2BtnGroup = new ButtonGroup();
+		step2BtnGroup.add(step2UniqueRadio);
+		step2BtnGroup.add(step2AllRadio);
 		
 		JButton btnAdd = new JButton("Add");
 		btnAdd.addActionListener(new ActionListener() {
@@ -849,7 +855,7 @@ public class AddMoreIndices extends JFrame {
 			@Override
 			public void run() {
 				
-				String tempTitle = tableName + ", Column: " + columnName + " (#" + columnIndex + ")";
+				String tempTitle = "Table: " + tableName + ", Column: " + columnName + " (#" + columnIndex + "), Average densities per bucket: " + averageBucket;
 				
 				ChartPanel panel;
 				try {
@@ -885,7 +891,7 @@ public class AddMoreIndices extends JFrame {
 			@Override
 			public void run() {
 				try {
-					if (AddColumns.calcInsertionDensity(libraryName, tableName, adjStart, adjEnd, countInsUniqueInsertionRadio.isSelected(), info).compareTo(Messages.successMsg) == 0){
+					if (AddColumns.calcInsertionDensity(libraryName, tableName, adjStart, adjEnd, step2UniqueRadio.isSelected(), info).compareTo(Messages.successMsg) == 0){
 						JOptionPane.showMessageDialog(AddMoreIndices.this, "Data added");
 					}else{
 						JOptionPane.showMessageDialog(AddMoreIndices.this, "There was some problem, data was not added!!!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -936,20 +942,23 @@ public class AddMoreIndices extends JFrame {
 			public void run() {
 				
 				String tempTitle = "";
-				if (randomizePlotDataChk.isSelected())
+				if (!randomizePlotDataChk.isSelected())
 					tempTitle = tableName + ", Columns: " + first + " v.s. " + second;
 				else
 					tempTitle = tableName + ", Columns: " + first + " v.s. " + second + " (Randomized data)";
 				
 				ChartPanel panel;
+				PlotViewer frame = new PlotViewer();
 				try {
-					panel = new ChartPanel(PlotData.plotColumns(tableName, first, second, AddMoreIndices.this.logPlot, tempTitle,randomizePlotDataChk.isSelected() ,info));
+					ArrayList<String> geneInfo = new ArrayList<>();
+					panel = new ChartPanel(PlotData.plotColumns(tableName, first, second, AddMoreIndices.this.logPlot, tempTitle, randomizePlotDataChk.isSelected(), geneInfo, info));
+					panel.addChartMouseListener(new MyChartMouseListener(geneInfo, frame.plotInfo));
+					frame.hasChartListener = true;
 				} catch (IOException e) {
 					logger.error("Some error while creating the plot!");
 					return;
 				}
 				
-				PlotViewer frame = new PlotViewer();					
 				frame.setPlotName(tempTitle);
 				frame.setVisible(true);
 				frame.addPlot(panel);

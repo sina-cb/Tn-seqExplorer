@@ -12,18 +12,23 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import org.jdesktop.swingx.JXLabel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.Range;
+
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.RowSpec;
+import java.awt.Font;
 
 @SuppressWarnings("serial")
 public class PlotViewer extends JFrame {
 
+	public JLabel plotInfo = new JXLabel("New label");
+	public boolean hasChartListener = false;
 	private JPanel contentPane;
 	private JPanel plotPanel = new JPanel();
 	private JTextField xStartTxt;
@@ -31,6 +36,7 @@ public class PlotViewer extends JFrame {
 	private JTextField yStartTxt;
 	private JTextField yEndTxt;
 	private JPanel parametersPanel = new JPanel();
+	private JPanel panel = new JPanel();
 	
 	/**
 	 * Create the frame.
@@ -39,7 +45,7 @@ public class PlotViewer extends JFrame {
 		setResizable(false);
 		setTitle("Plot");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 769, 655);
+		setBounds(100, 100, 769, 702);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -53,7 +59,7 @@ public class PlotViewer extends JFrame {
 		lblResultPlot.setBounds(10, 11, 96, 14);
 		contentPane.add(lblResultPlot);
 		
-		parametersPanel.setBounds(10, 527, 743, 89);
+		parametersPanel.setBounds(10, 575, 743, 89);
 		contentPane.add(parametersPanel);
 		parametersPanel.setLayout(new FormLayout(new ColumnSpec[] {
 				ColumnSpec.decode("155px"),
@@ -117,6 +123,15 @@ public class PlotViewer extends JFrame {
 		
 		JButton replotBtn = new JButton("Re-Plot");
 		parametersPanel.add(replotBtn, "16, 6, left, top");
+		
+		panel.setBounds(10, 527, 743, 37);
+		contentPane.add(panel);
+		panel.setLayout(new BorderLayout(0, 0));
+		plotInfo.setFont(new Font("Tahoma", Font.BOLD, 13));
+		plotInfo.setText("Hover Points in the chart to get some information about it if available.");
+		
+		panel.add(plotInfo, BorderLayout.CENTER);
+		((JXLabel)plotInfo).setLineWrap(true);
 		replotBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				replot();
@@ -182,6 +197,10 @@ public class PlotViewer extends JFrame {
 			for (int i = 0; i < parametersPanel.getComponentCount(); i++){
 				parametersPanel.getComponent(i).setEnabled(false);
 			}
+		}
+		
+		if (!hasChartListener){
+			panel.setVisible(false);
 		}
 	}
 	

@@ -28,6 +28,8 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.util.ShapeUtilities;
 
+import CustomGUIComponent.MyXYDataItem;
+
 public class PlotData {
 
 	private static Logger logger = Logger.getLogger(PlotData.class.getName());
@@ -99,8 +101,8 @@ public class PlotData {
 
 		final JFreeChart chart = ChartFactory.createXYLineChart(
 				title,																// chart title
-				"Number of sequence reads",											// x axis label
-				"Number of unique insertions with the given number of reads",		// y axis label
+				"Insertion density per bp",											// x axis label
+				"Number of genes with the given insertion density",		// y axis label
 				dataset,															// data
 				PlotOrientation.VERTICAL,											// orientation
 				false,																// include legend
@@ -355,19 +357,6 @@ public class PlotData {
 		return dataset;
 	}
 
-	private static XYDataset createDataset(ArrayList<Double> xAxis, ArrayList<Double> yAxis){
-		XYSeries series = new XYSeries("Plot");
-
-		for(int i = 0; i < xAxis.size(); i++){
-			series.add(xAxis.get(i), yAxis.get(i));
-		}
-
-		XYSeriesCollection dataset = new XYSeriesCollection();
-		dataset.addSeries(series);
-
-		return dataset;
-	}
-
 	private static JFreeChart createChart(XYDataset dataset, String title, boolean ifReads, Double xStart, Double xEnd, Double yStart, Double yEnd){
 
 		String xLabel;
@@ -431,7 +420,7 @@ public class PlotData {
 
 	}
 
-	public static JFreeChart plotColumns(String tableName, int firstCol, int secondCol, boolean logPlot, String title, boolean randomize, ProjectInfo info) throws IOException{
+	public static JFreeChart plotColumns(String tableName, int firstCol, int secondCol, boolean logPlot, String title, boolean randomize, ArrayList<String> geneInfo, ProjectInfo info) throws IOException{
 
 		File tableFile = new File(info.getPath() + tableName + ".table.xls"); //REPLACE
 		BufferedReader br = new BufferedReader(new FileReader(tableFile));
@@ -497,11 +486,18 @@ public class PlotData {
 		while(line != null){
 			tabs = AddColumns.tabsForCompare(line);
 
-			double one = Double.parseDouble(tabs.get(firstCol + 7));
-			double two = Double.parseDouble(tabs.get(secondCol + 7));
+			double xTemp = Double.parseDouble(tabs.get(firstCol + 7));
+			double yTemp = Double.parseDouble(tabs.get(secondCol + 7));
 
-			xAxis.add(one);
-			yAxis.add(two);
+			/*String temp = "(X, Y) = (%f, %f),  locus_tag = %s,  gene_symbol = %s,  description = %s";
+			temp = String.format(temp, xTemp, yTemp, tabs.get(5), tabs.get(6), tabs.get(7));*/
+			String temp = "Info: locus_tag = %s,  gene_symbol = %s,  description = %s";
+			temp = String.format(temp, tabs.get(5), tabs.get(6), tabs.get(7));
+			
+			geneInfo.add(temp);
+			
+			xAxis.add(xTemp);
+			yAxis.add(yTemp);
 
 			line = br.readLine();
 		}
@@ -529,12 +525,25 @@ public class PlotData {
 			}
 		}
 
-		XYDataset dataset = createDataset(xAxis, yAxis);
+		XYDataset dataset = createDataset(xAxis, yAxis, geneInfo);
 		JFreeChart chart = createScatterChart(dataset, logPlot, xAxisName, yAxisName, title);
 
 		return chart;
 	}
 
+	private static XYDataset createDataset(ArrayList<Double> xAxis, ArrayList<Double> yAxis, ArrayList<String> geneInfo){
+		XYSeries series = new XYSeries("Plot");
+
+		for(int i = 0; i < xAxis.size(); i++){
+			series.add(new MyXYDataItem(xAxis.get(i), yAxis.get(i), geneInfo.get(i)));
+		}
+
+		XYSeriesCollection dataset = new XYSeriesCollection();
+		dataset.addSeries(series);
+
+		return dataset;
+	}
+	
 	private static JFreeChart createScatterChart(XYDataset dataset, boolean logPlot, String xName, String yName, String title) {
 		final JFreeChart chart = ChartFactory.createScatterPlot(
 				title,                  	// chart title
@@ -558,11 +567,15 @@ public class PlotData {
 			//logAxisY.setStandardTickUnits(LogAxis.createLogTickUnits(Locale.ENGLISH));
 			//logAxisY.setRange(Math.log(maxY), Math.log(minY));
 			plot.setRangeAxis(logAxisY);
+			plot.setDomainGridlinesVisible(false);
+			plot.setRangeGridlinesVisible(false);
 		}
 
 		XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
 		renderer.setSeriesLinesVisible(0, false);
-		renderer.setSeriesShape(0, ShapeUtilities.createDiamond(1), true);
+		renderer.setSeriesShape(0, ShapeUtilities.createDiamond(2), true);
+		plot.setDomainGridlinesVisible(false);
+		plot.setRangeGridlinesVisible(false);
 		plot.setRenderer(renderer);
 		return chart;
 	}
