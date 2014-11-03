@@ -99,6 +99,7 @@ public class AddMoreIndices extends JFrame {
 	private JProgressBar progressBar = new JProgressBar();
 	private JTextField step2AdjustStart;
 	private JTextField step2AdjustEnd;
+	private JTextField step2AverageTxt;
 	
 	/**
 	 * Create the frame.
@@ -235,10 +236,18 @@ public class AddMoreIndices extends JFrame {
 				}
 				count++;
 			}
-			
+			br.close();
 		}catch (IOException e){
 			logger.error(e.getMessage());
 			return;
+		}catch (NullPointerException e1) {
+			JOptionPane.showMessageDialog(null, "");
+			try {
+				br.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 	}
@@ -604,8 +613,18 @@ public class AddMoreIndices extends JFrame {
 				plotDensities();
 			}
 		});
-		step2PlotBtn.setBounds(637, 259, 89, 25);
+		step2PlotBtn.setBounds(637, 288, 89, 25);
 		panel_1.add(step2PlotBtn);
+		
+		JLabel lblAverageNumberOf = new JLabel("Average number of densites per  bucket:");
+		lblAverageNumberOf.setBounds(9, 261, 234, 14);
+		panel_1.add(lblAverageNumberOf);
+		
+		step2AverageTxt = new JTextField();
+		step2AverageTxt.setText("20");
+		step2AverageTxt.setBounds(253, 258, 86, 20);
+		panel_1.add(step2AverageTxt);
+		step2AverageTxt.setColumns(10);
 		
 		JPanel panel_3 = new JPanel();
 		tabbedPane.addTab("Add insertion counts", null, panel_3, null);
@@ -818,6 +837,7 @@ public class AddMoreIndices extends JFrame {
 		
 		final String columnName = item.substring(item.indexOf("\t") + 1);
 		final int columnIndex = Integer.parseInt(item.substring(0, item.indexOf(":")));
+		final int averageBucket = Integer.parseInt(step2AverageTxt.getText());
 		
 		step2WaitLbl.setVisible(true);
 		step2PlotBtn.setEnabled(false);
@@ -833,7 +853,7 @@ public class AddMoreIndices extends JFrame {
 				
 				ChartPanel panel;
 				try {
-					panel = new ChartPanel(PlotData.plotInsertionDensities(new File(info.getPath() + tableName + ".table.xls"), columnName, columnIndex, tempTitle, info));
+					panel = new ChartPanel(PlotData.plotInsertionDensities(new File(info.getPath() + tableName + ".table.xls"), columnName, columnIndex, tempTitle, averageBucket, info));
 				} catch (IOException e) {
 					logger.error("Some error while creating the plot!");
 					return;
@@ -873,6 +893,7 @@ public class AddMoreIndices extends JFrame {
 					
 					countInsPleaseWaitLbl.setVisible(false);
 					countInsBtn.setEnabled(true);
+					initializeDensityInsertions();
 				} catch (IOException e) {
 					logger.error(e.getMessage());
 					return;

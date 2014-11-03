@@ -32,10 +32,9 @@ public class PlotData {
 
 	private static Logger logger = Logger.getLogger(PlotData.class.getName());
 
-	public static JFreeChart plotInsertionDensities(File table, String columnName, int columnIndex, String title, ProjectInfo info) throws IOException{
+	public static JFreeChart plotInsertionDensities(File table, String columnName, int columnIndex, String title, int averageNumOfGenesInBuckets, ProjectInfo info) throws IOException{
 
 		double trimPercent = 5;
-		int averageNumOfGenesInBuckets = 20;
 
 		BufferedReader br = new BufferedReader(new FileReader(table));
 

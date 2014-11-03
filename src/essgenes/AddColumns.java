@@ -195,7 +195,7 @@ public class AddColumns {
 		}
 
 		int LSeq = info.getSequenceLen();
-
+		
 		File libFile = new File(info.getPath() + libName + ".inspou");
 		BufferedReader br = new BufferedReader(new FileReader(libFile));
 
