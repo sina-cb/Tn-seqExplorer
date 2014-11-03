@@ -4,13 +4,14 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -24,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -45,11 +47,6 @@ import essgenes.AddColumns;
 import essgenes.Messages;
 import essgenes.PlotData;
 import essgenes.ProjectInfo;
-
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
-
-import javax.swing.JSeparator;
 
 @SuppressWarnings("serial")
 public class AddMoreIndices extends JFrame {
@@ -950,9 +947,8 @@ public class AddMoreIndices extends JFrame {
 				ChartPanel panel;
 				PlotViewer frame = new PlotViewer();
 				try {
-					ArrayList<String> geneInfo = new ArrayList<>();
-					panel = new ChartPanel(PlotData.plotColumns(tableName, first, second, AddMoreIndices.this.logPlot, tempTitle, randomizePlotDataChk.isSelected(), geneInfo, info));
-					panel.addChartMouseListener(new MyChartMouseListener(geneInfo, frame.plotInfo));
+					panel = new ChartPanel(PlotData.plotColumns(tableName, first, second, AddMoreIndices.this.logPlot, tempTitle, randomizePlotDataChk.isSelected(), info));
+					panel.addChartMouseListener(new MyChartMouseListener(frame.plotInfo));
 					frame.hasChartListener = true;
 				} catch (IOException e) {
 					logger.error("Some error while creating the plot!");

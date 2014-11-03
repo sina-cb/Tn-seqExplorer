@@ -69,7 +69,7 @@ import essgenes.StatisticsHelper;
 public class MainFrame extends JFrame {
 
 	public static final String ProgTitle = "Tn-seq explorer";
-	public static final String ProgVersion = "v1.2";
+	public static final String ProgVersion = "v1.3";
 
 	private boolean if_initialize_step_1 = true;
 	private JLabel label_10 = new JLabel("(?)");

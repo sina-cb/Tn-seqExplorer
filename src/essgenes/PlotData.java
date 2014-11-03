@@ -420,7 +420,7 @@ public class PlotData {
 
 	}
 
-	public static JFreeChart plotColumns(String tableName, int firstCol, int secondCol, boolean logPlot, String title, boolean randomize, ArrayList<String> geneInfo, ProjectInfo info) throws IOException{
+	public static JFreeChart plotColumns(String tableName, int firstCol, int secondCol, boolean logPlot, String title, boolean randomize, ProjectInfo info) throws IOException{
 
 		File tableFile = new File(info.getPath() + tableName + ".table.xls"); //REPLACE
 		BufferedReader br = new BufferedReader(new FileReader(tableFile));
@@ -483,6 +483,7 @@ public class PlotData {
 
 		//Reading Main Data and Process it
 		line = br.readLine();
+		ArrayList<String> geneInfo = new ArrayList<>();
 		while(line != null){
 			tabs = AddColumns.tabsForCompare(line);
 
