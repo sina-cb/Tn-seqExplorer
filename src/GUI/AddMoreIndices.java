@@ -999,7 +999,6 @@ public class AddMoreIndices extends JFrame {
 	
 	private void compare(){
 		
-		String maxInsString = compareMaxInsTxt.getText();
 		String firstCol = (String) columnOneCombo.getSelectedItem();
 		String secondCol = (String) columnTwoCombo.getSelectedItem();
 		
