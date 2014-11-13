@@ -65,7 +65,6 @@ public class AddMoreIndices extends JFrame {
 	private JLabel step2ErrorLbl = new JLabel("Please enter a valid value in the red fields.");
 	private JLabel step2WaitLbl = new JLabel("Please wait...");
 	private JComboBox<String> step2Combo = new JComboBox<String>();	
-	private JLabel errorMsg3Lbl = new JLabel("Enter a valid value.");
 	private JLabel errorMsg2Lbl = new JLabel("Please enter a valid value in the red fields.");
 	private JLabel errorMsg1Lbl = new JLabel("Please enter a valid value in the red fields.");
 	private JPanel contentPane;
@@ -619,7 +618,7 @@ public class AddMoreIndices extends JFrame {
 		step2PlotBtn.setBounds(637, 288, 89, 25);
 		panel_1.add(step2PlotBtn);
 		
-		JLabel lblAverageNumberOf = new JLabel("Average number of densites per  bucket:");
+		JLabel lblAverageNumberOf = new JLabel("Smoothness");
 		lblAverageNumberOf.setBounds(9, 261, 234, 14);
 		panel_1.add(lblAverageNumberOf);
 		
@@ -628,6 +627,21 @@ public class AddMoreIndices extends JFrame {
 		step2AverageTxt.setBounds(253, 258, 86, 20);
 		panel_1.add(step2AverageTxt);
 		step2AverageTxt.setColumns(10);
+		
+		JLabel label_16 = new JLabel("(?)");
+		label_16.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				JOptionPane.showMessageDialog(AddMoreIndices.this, "This parameter determines the smoothness of the histogram. The higher values\n"
+						+ "result in smoother plots. The size of density bins is set such that the average\n"
+						+ "number of genes in each bin is close to the value of this parameter.");
+			}
+		});
+		label_16.setToolTipText("Click me!");
+		label_16.setForeground(Color.BLUE);
+		label_16.setFont(new Font("Dialog", Font.PLAIN, 11));
+		label_16.setBounds(350, 261, 88, 14);
+		panel_1.add(label_16);
 		
 		JPanel panel_3 = new JPanel();
 		tabbedPane.addTab("Add insertion counts", null, panel_3, null);
@@ -757,7 +771,6 @@ public class AddMoreIndices extends JFrame {
 		
 		compareMaxInsTxt = new JTextField();
 		compareMaxInsTxt.setBounds(237, 189, 103, 20);
-		compareMaxInsTxt.setInputVerifier(new IntegerInputVerifier(errorMsg3Lbl));
 		compareScrollPanel.add(compareMaxInsTxt);
 		compareMaxInsTxt.setColumns(10);
 		
@@ -819,7 +832,9 @@ public class AddMoreIndices extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				JOptionPane.showMessageDialog(AddMoreIndices.this, "This option will add a small random number to each value. This could be beneficial when plotting data where several\n"
 						+ "genes often have the same values in both compared columns. As a result, such genes will appear as a cloud of data\n"
-						+ "points in the plot rather than a single point.");
+						+ "points in the plot rather than a single point.\n\n"
+						+ "This is intended to be used only with essentiality indices;\n"
+						+ "do not check this box when comparing insertion densities.");
 			}
 		});
 		label_5.setToolTipText("Click me!");
@@ -827,11 +842,6 @@ public class AddMoreIndices extends JFrame {
 		label_5.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		label_5.setBounds(605, 253, 88, 14);
 		compareScrollPanel.add(label_5);
-		
-		errorMsg3Lbl.setForeground(Color.RED);
-		errorMsg3Lbl.setBounds(368, 192, 178, 14);
-		errorMsg3Lbl.setVisible(false);
-		compareScrollPanel.add(errorMsg3Lbl);
 	}
 
 	protected void plotDensities() {
@@ -855,17 +865,37 @@ public class AddMoreIndices extends JFrame {
 				String tempTitle = "Table: " + tableName + ", Column: " + columnName + " (#" + columnIndex + "), Average densities per bucket: " + averageBucket;
 				
 				ChartPanel panel;
+				int numX = 0;
+				int numY = 0;
+
 				try {
 					panel = new ChartPanel(PlotData.plotInsertionDensities(new File(info.getPath() + tableName + ".table.xls"), columnName, columnIndex, tempTitle, averageBucket, info));
+					
+					String libName = columnName.substring(columnName.indexOf(": ") + 2);
+					BufferedReader br = new BufferedReader(new FileReader(new File(info.getPath() + libName + ".inspou")));
+					
+					String line = br.readLine();
+					while (line != null){
+						line = line.substring(line.indexOf("\t") + 1);
+						line = line.substring(line.indexOf("\t") + 1);
+						numX = numX + Integer.parseInt(line);
+						numY++;
+
+						line = br.readLine();
+					}
+					br.close();
+					
 				} catch (IOException e) {
 					logger.error("Some error while creating the plot!");
 					return;
 				}
 				
-				PlotViewer frame = new PlotViewer();					
+				PlotViewer frame = new PlotViewer();
+				frame.hasChartListener = true;
 				frame.setPlotName(tempTitle);
 				frame.setVisible(true);
 				frame.addPlot(panel);
+				frame.plotInfo.setText(String.format("The library includes %d reads mapped to %d unique insertions", numX, numY));
 				
 				step2WaitLbl.setVisible(false);
 				step2PlotBtn.setEnabled(true);
@@ -973,11 +1003,6 @@ public class AddMoreIndices extends JFrame {
 		String firstCol = (String) columnOneCombo.getSelectedItem();
 		String secondCol = (String) columnTwoCombo.getSelectedItem();
 		
-		if (maxInsString == null || maxInsString.compareTo("") == 0){
-			JOptionPane.showMessageDialog(AddMoreIndices.this, "Please enter Max Insertion.");
-			return;
-		}
-		
 		if (firstCol == null || firstCol.compareTo("") == 0){
 			JOptionPane.showMessageDialog(AddMoreIndices.this, "Please select columns to compare.");
 			return;
@@ -1003,7 +1028,10 @@ public class AddMoreIndices extends JFrame {
 			@Override
 			public void run() {
 				try {
-					int maxIns = Integer.parseInt(compareMaxInsTxt.getText());
+					double maxIns = 0;
+					if (compareMaxInsTxt.getText() != null && !compareMaxInsTxt.getText().equals("")){
+						maxIns = Double.parseDouble(compareMaxInsTxt.getText()); 
+					}
 					
 					if (AddColumns.compareColumns(tableName, first, second, maxIns, info).compareTo(Messages.successMsg) == 0){
 						JOptionPane.showMessageDialog(AddMoreIndices.this, "Data added");

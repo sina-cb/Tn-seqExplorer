@@ -711,7 +711,7 @@ public class AddColumns {
 		}
 	}
 
-	public static String compareColumns(String tableName, int firstColumn, int secondColumn, int maxIns, ProjectInfo info) throws IOException {
+	public static String compareColumns(String tableName, int firstColumn, int secondColumn, double maxIns, ProjectInfo info) throws IOException {
 
 		File tableFile = new File(info.getPath() + tableName + ".table.xls"); //REPLACE
 		BufferedReader br = new BufferedReader(new FileReader(tableFile));
@@ -741,8 +741,8 @@ public class AddColumns {
 			String tempLine = new String(line);
 			ArrayList<String> tabs = tabsForCompare(line);
 
-			int one = Integer.parseInt(tabs.get(firstColumn + 7));
-			int two = Integer.parseInt(tabs.get(secondColumn + 7));
+			double one = Double.parseDouble(tabs.get(firstColumn + 7));
+			double two = Double.parseDouble(tabs.get(secondColumn + 7));
 
 			if (one > maxIns){
 				one = maxIns;
