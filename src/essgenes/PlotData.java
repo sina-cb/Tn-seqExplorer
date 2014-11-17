@@ -80,7 +80,7 @@ public class PlotData {
 
 		XYSeries series = new XYSeries("data");
 
-		for (int i = 1; i < counts.size(); i++){
+		for (int i = 0; i < counts.size(); i++){
 			series.add(bucketStart.get(i), counts.get(i));
 		}
 
@@ -159,6 +159,9 @@ public class PlotData {
 		XYSeries series = new XYSeries("data");
 
 		for (int i = 0; i < positions_X.size(); i++){
+			if (positions_X.get(i) < 100 && counts_Y.get(i) == 0){
+				continue;
+			}
 			series.add(positions_X.get(i), counts_Y.get(i));
 		}
 
