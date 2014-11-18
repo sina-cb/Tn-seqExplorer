@@ -1991,7 +1991,7 @@ public class MainFrame extends JFrame {
 
 			//Path currentRelativePath = Paths.get("");
 			//String location = currentRelativePath.toAbsolutePath().toString();
-			String location = shellDest.getAbsolutePath().substring(0, shellPath.length() - 10);
+			String location = shellDest.getAbsolutePath().substring(0, shellPath.indexOf("/shell.sh"));
 			File dir = new File(location);
 			Process child = Runtime.getRuntime().exec(cmd, null, dir);
 			child.waitFor();
@@ -2027,7 +2027,7 @@ public class MainFrame extends JFrame {
 
 			//Path currentRelativePath = Paths.get("");
 			//String location = currentRelativePath.toAbsolutePath().toString();
-			String location = shellDest.getAbsolutePath().substring(0, shellPath.length() - 10);
+			String location = shellDest.getAbsolutePath().substring(0, shellPath.indexOf("/shell.sh"));
 			File dir = new File(location);
 			Process child = Runtime.getRuntime().exec(cmd, null, dir);
 			child.waitFor();
