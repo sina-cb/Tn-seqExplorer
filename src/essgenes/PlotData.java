@@ -150,6 +150,7 @@ public class PlotData {
 					numberOfReads = Integer.parseInt(line);
 				}
 			}
+			
 			br.close();
 
 		} catch (IOException e) {
@@ -193,7 +194,7 @@ public class PlotData {
 
 
 		XYPlot plot = (XYPlot) chart.getPlot();
-		plot.getDomainAxis().setLowerBound(-10);
+		plot.getDomainAxis().setLowerBound(0);
 		plot.setDomainGridlinesVisible(false);
 		plot.setRangeGridlinesVisible(false);
 

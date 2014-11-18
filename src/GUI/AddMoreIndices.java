@@ -830,11 +830,13 @@ public class AddMoreIndices extends JFrame {
 		label_5.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				JOptionPane.showMessageDialog(AddMoreIndices.this, "This option will add a small random number to each value. This could be beneficial when plotting data where several\n"
-						+ "genes often have the same values in both compared columns. As a result, such genes will appear as a cloud of data\n"
-						+ "points in the plot rather than a single point.\n\n"
-						+ "This is intended to be used only with essentiality indices;\n"
-						+ "do not check this box when comparing insertion densities.");
+				JOptionPane.showMessageDialog(AddMoreIndices.this, 
+						  "This option adds a random number between 0.75 and 1.25 to each value. This could be\n"
+						+ "beneficial when plotting data where several genes often have the same values in both\n"
+						+ "compared columns. As a result, such genes will appear as a cloud of data points in\n"
+						+ "the plot rather than a single point.\n\n"
+						+ "This is intended to be used only with essentiality indices; do not check this box when \n"
+						+ "comparing insertion densities.");
 			}
 		});
 		label_5.setToolTipText("Click me!");
