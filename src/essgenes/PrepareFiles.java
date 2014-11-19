@@ -701,7 +701,7 @@ public class PrepareFiles {
 	}
 
 	private static void sortNotDistinct(String inputFile, String outputFile, Comparator<String> comparator) throws IOException{	
-		boolean verbose = true;
+		boolean verbose = false;
 		boolean distinct = false;
 		int maxTempFiles = 2048;
 		Charset cs = Charset.forName("US-ASCII");
