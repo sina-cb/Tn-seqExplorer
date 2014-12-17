@@ -1,5 +1,8 @@
 bin/
 
+log.out
+projects.dat
+
 *.class
 
 # Mobile Tools for Java (J2ME)
