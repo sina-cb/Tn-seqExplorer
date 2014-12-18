@@ -32,6 +32,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import javax.swing.ButtonGroup;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -74,6 +75,7 @@ public class MainFrame extends JFrame {
 	public static final String ProgTitle = "Tn-seq explorer";
 	public static final String ProgVersion = "v1.3";
 
+	private JButton bowtieSamCreateBtn = new JButton("Create SAM file");
 	private boolean if_initialize_step_1 = true;
 	private JLabel label_10 = new JLabel("(?)");
 	private JLabel lblReads = new JLabel("reads.");
@@ -148,7 +150,6 @@ public class MainFrame extends JFrame {
 	private Logger logger = Logger.getLogger(MainFrame.class.getName());
 	private boolean hasSeqNum = false;
 	private boolean hasGeneFile = false;
-	private JTextField fnaFilePath;
 	private JTextField fastqFilePath;
 	private JTextField newSamNameTxt;
 	private JTextField samFilePath;
@@ -159,6 +160,7 @@ public class MainFrame extends JFrame {
 	private JTextField bowtieFnaTxt;
 	private JTextField bowtieSamLocTxt;
 	private JTextField bowtieSamFilenameTxt;
+	private JTextField fnaFilePath;
 
 	/**
 	 * Create the frame.
@@ -1647,163 +1649,229 @@ public class MainFrame extends JFrame {
 				remoteInstallHelp();
 			}
 		});
-		remoteHelpBtn.setBounds(10, 342, 256, 25);
+		remoteHelpBtn.setBounds(10, 374, 256, 25);
 		panel_3.add(remoteHelpBtn);
+		
+		JPanel panel_5 = new JPanel();
+		panel_5.setBounds(10, 179, 803, 183);
+		panel_3.add(panel_5);
+		GridBagLayout gbl_panel_5 = new GridBagLayout();
+		gbl_panel_5.columnWidths = new int[]{0, 461, 85, 0};
+		gbl_panel_5.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
+		gbl_panel_5.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+		gbl_panel_5.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		panel_5.setLayout(gbl_panel_5);
+						
+								JLabel lblSelectThefastq = new JLabel("Select the 'FASTQ' File:");
+								GridBagConstraints gbc_lblSelectThefastq = new GridBagConstraints();
+								gbc_lblSelectThefastq.anchor = GridBagConstraints.WEST;
+								gbc_lblSelectThefastq.insets = new Insets(0, 0, 5, 5);
+								gbc_lblSelectThefastq.gridx = 0;
+								gbc_lblSelectThefastq.gridy = 0;
+								panel_5.add(lblSelectThefastq, gbc_lblSelectThefastq);
+								
+										fastqFilePath = new JTextField();
+										GridBagConstraints gbc_fastqFilePath = new GridBagConstraints();
+										gbc_fastqFilePath.fill = GridBagConstraints.HORIZONTAL;
+										gbc_fastqFilePath.insets = new Insets(0, 0, 5, 5);
+										gbc_fastqFilePath.gridx = 1;
+										gbc_fastqFilePath.gridy = 0;
+										panel_5.add(fastqFilePath, gbc_fastqFilePath);
+										fastqFilePath.setText("");
+										fastqFilePath.setEnabled(true);
+										fastqFilePath.setEditable(false);
+										fastqFilePath.setColumns(10);
+										
+												JButton fastqBrowseBtn = new JButton("Browse");
+												GridBagConstraints gbc_fastqBrowseBtn = new GridBagConstraints();
+												gbc_fastqBrowseBtn.fill = GridBagConstraints.HORIZONTAL;
+												gbc_fastqBrowseBtn.insets = new Insets(0, 0, 5, 0);
+												gbc_fastqBrowseBtn.gridx = 2;
+												gbc_fastqBrowseBtn.gridy = 0;
+												panel_5.add(fastqBrowseBtn, gbc_fastqBrowseBtn);
+												fastqBrowseBtn.setToolTipText("Select a FASTQ file");
+														
+																JLabel lblSelectThefna = new JLabel("Select the 'FNA' File:");
+																GridBagConstraints gbc_lblSelectThefna = new GridBagConstraints();
+																gbc_lblSelectThefna.anchor = GridBagConstraints.WEST;
+																gbc_lblSelectThefna.insets = new Insets(0, 0, 5, 5);
+																gbc_lblSelectThefna.gridx = 0;
+																gbc_lblSelectThefna.gridy = 1;
+																panel_5.add(lblSelectThefna, gbc_lblSelectThefna);
+																
+																fnaFilePath = new JTextField();
+																fnaFilePath.setEditable(false);
+																GridBagConstraints gbc_fnaFilePath = new GridBagConstraints();
+																gbc_fnaFilePath.insets = new Insets(0, 0, 5, 5);
+																gbc_fnaFilePath.fill = GridBagConstraints.HORIZONTAL;
+																gbc_fnaFilePath.gridx = 1;
+																gbc_fnaFilePath.gridy = 1;
+																panel_5.add(fnaFilePath, gbc_fnaFilePath);
+																fnaFilePath.setColumns(10);
+														
+																JButton fnaBrowseBtn = new JButton("Browse");
+																GridBagConstraints gbc_fnaBrowseBtn = new GridBagConstraints();
+																gbc_fnaBrowseBtn.fill = GridBagConstraints.HORIZONTAL;
+																gbc_fnaBrowseBtn.insets = new Insets(0, 0, 5, 0);
+																gbc_fnaBrowseBtn.gridx = 2;
+																gbc_fnaBrowseBtn.gridy = 1;
+																panel_5.add(fnaBrowseBtn, gbc_fnaBrowseBtn);
+																fnaBrowseBtn.setToolTipText("Select a FNA file");
+																fnaBrowseBtn.addActionListener(new ActionListener() {
+																	public void actionPerformed(ActionEvent arg0) {
+																		Path currentRelativePath = Paths.get("");
+																		String location = currentRelativePath.toAbsolutePath()
+																				.toString();
+																		JFileChooser fileChooser = new JFileChooser(location);
+																		fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+																		fileChooser.setFileFilter(new FileNameExtensionFilter("FNA Files (.fna)", "fna"));
+																		int result = fileChooser.showOpenDialog(MainFrame.this);
 
-		JLabel lblSelectThefna = new JLabel("Select the 'FNA' File:");
-		lblSelectThefna.setBounds(10, 179, 200, 15);
-		panel_3.add(lblSelectThefna);
+																		if (result == JFileChooser.APPROVE_OPTION){
+																			fnaFilePath.setText(fileChooser.getSelectedFile().getAbsolutePath());
+																		}else{
+																			return;
+																		}
+																	}
+																});
+														
+														JButton bwaFnaDownloadBtn = new JButton("Download");
+														GridBagConstraints gbc_bwaFnaDownloadBtn = new GridBagConstraints();
+														gbc_bwaFnaDownloadBtn.fill = GridBagConstraints.HORIZONTAL;
+														gbc_bwaFnaDownloadBtn.insets = new Insets(0, 0, 5, 0);
+														gbc_bwaFnaDownloadBtn.gridx = 2;
+														gbc_bwaFnaDownloadBtn.gridy = 2;
+														panel_5.add(bwaFnaDownloadBtn, gbc_bwaFnaDownloadBtn);
+												
+														JLabel lblCreateSamFile = new JLabel("Create SAM file in:");
+														GridBagConstraints gbc_lblCreateSamFile = new GridBagConstraints();
+														gbc_lblCreateSamFile.anchor = GridBagConstraints.WEST;
+														gbc_lblCreateSamFile.insets = new Insets(0, 0, 5, 5);
+														gbc_lblCreateSamFile.gridx = 0;
+														gbc_lblCreateSamFile.gridy = 3;
+														panel_5.add(lblCreateSamFile, gbc_lblCreateSamFile);
+														
+																samFilePath = new JTextField();
+																GridBagConstraints gbc_samFilePath = new GridBagConstraints();
+																gbc_samFilePath.fill = GridBagConstraints.HORIZONTAL;
+																gbc_samFilePath.insets = new Insets(0, 0, 5, 5);
+																gbc_samFilePath.gridx = 1;
+																gbc_samFilePath.gridy = 3;
+																panel_5.add(samFilePath, gbc_samFilePath);
+																samFilePath.setText("");
+																samFilePath.setEnabled(true);
+																samFilePath.setEditable(false);
+																samFilePath.setColumns(10);
+																
+																		JButton newSamBrowseBtn = new JButton("Browse");
+																		GridBagConstraints gbc_newSamBrowseBtn = new GridBagConstraints();
+																		gbc_newSamBrowseBtn.fill = GridBagConstraints.HORIZONTAL;
+																		gbc_newSamBrowseBtn.insets = new Insets(0, 0, 5, 0);
+																		gbc_newSamBrowseBtn.gridx = 2;
+																		gbc_newSamBrowseBtn.gridy = 3;
+																		panel_5.add(newSamBrowseBtn, gbc_newSamBrowseBtn);
+																		newSamBrowseBtn.setToolTipText("Select a location to save the new SAM file");
+																		
+																				JLabel lblEnterNewSam = new JLabel("Enter new SAM file name:");
+																				GridBagConstraints gbc_lblEnterNewSam = new GridBagConstraints();
+																				gbc_lblEnterNewSam.anchor = GridBagConstraints.WEST;
+																				gbc_lblEnterNewSam.insets = new Insets(0, 0, 5, 5);
+																				gbc_lblEnterNewSam.gridx = 0;
+																				gbc_lblEnterNewSam.gridy = 4;
+																				panel_5.add(lblEnterNewSam, gbc_lblEnterNewSam);
+																				
+																						newSamNameTxt = new JTextField();
+																						GridBagConstraints gbc_newSamNameTxt = new GridBagConstraints();
+																						gbc_newSamNameTxt.fill = GridBagConstraints.HORIZONTAL;
+																						gbc_newSamNameTxt.insets = new Insets(0, 0, 5, 5);
+																						gbc_newSamNameTxt.gridx = 1;
+																						gbc_newSamNameTxt.gridy = 4;
+																						panel_5.add(newSamNameTxt, gbc_newSamNameTxt);
+																						newSamNameTxt.addFocusListener(new FocusAdapter() {
+																							@Override
+																							public void focusGained(FocusEvent arg0) {
+																								highlightAllTheText((JTextField) arg0.getComponent());
+																							}
+																						});
+																						newSamNameTxt.setToolTipText("Created SAM file name");
+																						newSamNameTxt.setText("");
+																						newSamNameTxt.setEnabled(true);
+																						newSamNameTxt.setColumns(10);
+																								
+																										JLabel label_4 = new JLabel("(?)");
+																										GridBagConstraints gbc_label_4 = new GridBagConstraints();
+																										gbc_label_4.anchor = GridBagConstraints.WEST;
+																										gbc_label_4.insets = new Insets(0, 0, 0, 5);
+																										gbc_label_4.gridx = 0;
+																										gbc_label_4.gridy = 5;
+																										panel_5.add(label_4, gbc_label_4);
+																										label_4.addMouseListener(new MouseAdapter() {
+																											@Override
+																											public void mouseClicked(MouseEvent arg0) {
+																												JOptionPane.showMessageDialog(MainFrame.this, "The FASTQ file contains your sequence reads and you should have received it from Illumina or the sequencing facility\n"
+																														+ "you used. The FNA file contains the genomic DNA sequence in fastA format and you can download it for complete\n"
+																														+ "prokaryotic genomes from the NCBI ftp server at ftp://ftp.ncbi.nih.gov/genomes/Bacteria/");
+																											}
+																										});
+																										label_4.setToolTipText("Click me!");
+																										label_4.setForeground(Color.BLUE);
+																										label_4.setFont(new Font("Tahoma", Font.PLAIN, 11));
+																						
+																								JButton btnRun = new JButton("Create SAM file");
+																								GridBagConstraints gbc_btnRun = new GridBagConstraints();
+																								gbc_btnRun.gridx = 2;
+																								gbc_btnRun.gridy = 5;
+																								panel_5.add(btnRun, gbc_btnRun);
+																								btnRun.setToolTipText("Create the SAM file");
+																								btnRun.addActionListener(new ActionListener() {
+																									public void actionPerformed(ActionEvent e) {
+																										try {
+																											createSamFile();
+																										} catch (IOException | InterruptedException e1) {
+																											e1.printStackTrace();
+																										}
+																									}
+																								});
+																		newSamBrowseBtn.addActionListener(new ActionListener() {
+																			public void actionPerformed(ActionEvent arg0) {
+																				Path currentRelativePath = Paths.get("");
+																				String location = currentRelativePath.toAbsolutePath()
+																						.toString();
+																				JFileChooser fileChooser = new JFileChooser(location);
+																				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+																				int result = fileChooser.showOpenDialog(MainFrame.this);
 
-		fnaFilePath = new JTextField();
-		fnaFilePath.setEnabled(true);
-		fnaFilePath.setEditable(false);
-		fnaFilePath.setText("");
-		fnaFilePath.setBounds(220, 177, 487, 19);
-		panel_3.add(fnaFilePath);
-		fnaFilePath.setColumns(10);
+																				if (result == JFileChooser.APPROVE_OPTION){
+																					samFilePath.setText(fileChooser.getSelectedFile().getAbsolutePath());
+																				}else{
+																					return;
+																				}
+																			}
+																		});
+												fastqBrowseBtn.addActionListener(new ActionListener() {
+													public void actionPerformed(ActionEvent e) {
+														Path currentRelativePath = Paths.get("");
+														String location = currentRelativePath.toAbsolutePath()
+																.toString();
+														JFileChooser fileChooser = new JFileChooser(location);
+														fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+														fileChooser.setFileFilter(new FileNameExtensionFilter("FASTQ Files (.fastq)", "fastq"));
+														int result = fileChooser.showOpenDialog(MainFrame.this);
 
-		JButton fnaBrowseBtn = new JButton("Browse");
-		fnaBrowseBtn.setToolTipText("Select a FNA file");
-		fnaBrowseBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				Path currentRelativePath = Paths.get("");
-				String location = currentRelativePath.toAbsolutePath()
-						.toString();
-				JFileChooser fileChooser = new JFileChooser(location);
-				fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-				fileChooser.setFileFilter(new FileNameExtensionFilter("FNA Files (.fna)", "fna"));
-				int result = fileChooser.showOpenDialog(MainFrame.this);
-
-				if (result == JFileChooser.APPROVE_OPTION){
-					fnaFilePath.setText(fileChooser.getSelectedFile().getAbsolutePath());
-				}else{
-					return;
-				}
-			}
-		});
-		fnaBrowseBtn.setBounds(716, 174, 97, 25);
-		panel_3.add(fnaBrowseBtn);
-
-		JLabel lblSelectThefastq = new JLabel("Select the 'FASTQ' File:");
-		lblSelectThefastq.setBounds(10, 210, 200, 15);
-		panel_3.add(lblSelectThefastq);
-
-		fastqFilePath = new JTextField();
-		fastqFilePath.setText("");
-		fastqFilePath.setEnabled(true);
-		fastqFilePath.setEditable(false);
-		fastqFilePath.setColumns(10);
-		fastqFilePath.setBounds(220, 208, 487, 19);
-		panel_3.add(fastqFilePath);
-
-		JButton fastqBrowseBtn = new JButton("Browse");
-		fastqBrowseBtn.setToolTipText("Select a FASTQ file");
-		fastqBrowseBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Path currentRelativePath = Paths.get("");
-				String location = currentRelativePath.toAbsolutePath()
-						.toString();
-				JFileChooser fileChooser = new JFileChooser(location);
-				fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-				fileChooser.setFileFilter(new FileNameExtensionFilter("FASTQ Files (.fastq)", "fastq"));
-				int result = fileChooser.showOpenDialog(MainFrame.this);
-
-				if (result == JFileChooser.APPROVE_OPTION){
-					fastqFilePath.setText(fileChooser.getSelectedFile().getAbsolutePath());
-				}else{
-					return;
-				}
-			}
-		});
-		fastqBrowseBtn.setBounds(716, 205, 97, 25);
-		panel_3.add(fastqBrowseBtn);
-
-		newSamNameTxt = new JTextField();
-		newSamNameTxt.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusGained(FocusEvent arg0) {
-				highlightAllTheText((JTextField) arg0.getComponent());
-			}
-		});
-		newSamNameTxt.setToolTipText("Created SAM file name");
-		newSamNameTxt.setText("");
-		newSamNameTxt.setEnabled(true);
-		newSamNameTxt.setColumns(10);
-		newSamNameTxt.setBounds(220, 262, 144, 19);
-		panel_3.add(newSamNameTxt);
-
-		JLabel lblEnterNewSam = new JLabel("Enter new SAM file name:");
-		lblEnterNewSam.setBounds(10, 265, 200, 15);
-		panel_3.add(lblEnterNewSam);
-
-		JButton btnRun = new JButton("Create SAM file");
-		btnRun.setToolTipText("Create the SAM file");
-		btnRun.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					createSamFile();
-				} catch (IOException | InterruptedException e1) {
-					e1.printStackTrace();
-				}
-			}
-		});
-		btnRun.setBounds(638, 292, 175, 23);
-		panel_3.add(btnRun);
-
-		JLabel lblCreateSamFile = new JLabel("Create SAM file in:");
-		lblCreateSamFile.setBounds(10, 236, 200, 15);
-		panel_3.add(lblCreateSamFile);
-
-		samFilePath = new JTextField();
-		samFilePath.setText("");
-		samFilePath.setEnabled(true);
-		samFilePath.setEditable(false);
-		samFilePath.setColumns(10);
-		samFilePath.setBounds(220, 234, 487, 19);
-		panel_3.add(samFilePath);
-
-		JButton newSamBrowseBtn = new JButton("Browse");
-		newSamBrowseBtn.setToolTipText("Select a location to save the new SAM file");
-		newSamBrowseBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				Path currentRelativePath = Paths.get("");
-				String location = currentRelativePath.toAbsolutePath()
-						.toString();
-				JFileChooser fileChooser = new JFileChooser(location);
-				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				int result = fileChooser.showOpenDialog(MainFrame.this);
-
-				if (result == JFileChooser.APPROVE_OPTION){
-					samFilePath.setText(fileChooser.getSelectedFile().getAbsolutePath());
-				}else{
-					return;
-				}
-			}
-		});
-		newSamBrowseBtn.setBounds(716, 232, 97, 25);
-		panel_3.add(newSamBrowseBtn);
-
-		JLabel label_4 = new JLabel("(?)");
-		label_4.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				JOptionPane.showMessageDialog(MainFrame.this, "The FASTQ file contains your sequence reads and you should have received it from Illumina or the sequencing facility\n"
-						+ "you used. The FNA file contains the genomic DNA sequence in fastA format and you can download it for complete\n"
-						+ "prokaryotic genomes from the NCBI ftp server at ftp://ftp.ncbi.nih.gov/genomes/Bacteria/");
-			}
-		});
-		label_4.setToolTipText("Click me!");
-		label_4.setForeground(Color.BLUE);
-		label_4.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_4.setBounds(10, 296, 30, 14);
-		panel_3.add(label_4);
+														if (result == JFileChooser.APPROVE_OPTION){
+															fastqFilePath.setText(fileChooser.getSelectedFile().getAbsolutePath());
+														}else{
+															return;
+														}
+													}
+												});
 		
 		JPanel panel_1 = new JPanel();
 		tabbedPane.addTab("Bowtie", null, panel_1, null);
 		panel_1.setLayout(null);
 		
 		JPanel panel_2 = new JPanel();
-		panel_2.setBounds(12, 12, 801, 89);
+		panel_2.setBounds(12, 12, 801, 75);
 		panel_1.add(panel_2);
 		panel_2.setLayout(null);
 		
@@ -1814,7 +1882,7 @@ public class MainFrame extends JFrame {
 		lblNewLabel_2.setLineWrap(true);
 		
 		JPanel panel_4 = new JPanel();
-		panel_4.setBounds(12, 113, 799, 507);
+		panel_4.setBounds(12, 113, 799, 192);
 		panel_1.add(panel_4);
 		GridBagLayout gbl_panel_4 = new GridBagLayout();
 		gbl_panel_4.columnWidths = new int[]{0, 0, 0, 0};
@@ -1832,7 +1900,6 @@ public class MainFrame extends JFrame {
 		panel_4.add(lblFastqFile, gbc_lblFastqFile);
 		
 		bowtieFastqTxt = new JTextField();
-		bowtieFastqTxt.setText("C:\\Users\\sina\\Desktop\\EssentialGenes\\essential-genes-data\\lib1.fastq");
 		bowtieFastqTxt.setEditable(false);
 		GridBagConstraints gbc_bowtieFastqTxt = new GridBagConstraints();
 		gbc_bowtieFastqTxt.insets = new Insets(0, 0, 5, 5);
@@ -1875,7 +1942,6 @@ public class MainFrame extends JFrame {
 		panel_4.add(lblFna, gbc_lblFna);
 		
 		bowtieFnaTxt = new JTextField();
-		bowtieFnaTxt.setText("C:\\Users\\sina\\Desktop\\EssentialGenes\\essential-genes-data\\NC_005791.fna");
 		bowtieFnaTxt.setEditable(false);
 		GridBagConstraints gbc_bowtieFnaTxt = new GridBagConstraints();
 		gbc_bowtieFnaTxt.insets = new Insets(0, 0, 5, 5);
@@ -1926,7 +1992,6 @@ public class MainFrame extends JFrame {
 		panel_4.add(lblSamFile, gbc_lblSamFile);
 		
 		bowtieSamLocTxt = new JTextField();
-		bowtieSamLocTxt.setText("C:\\Users\\sina\\Desktop");
 		bowtieSamLocTxt.setEditable(false);
 		GridBagConstraints gbc_bowtieSamLocTxt = new GridBagConstraints();
 		gbc_bowtieSamLocTxt.fill = GridBagConstraints.HORIZONTAL;
@@ -1968,7 +2033,6 @@ public class MainFrame extends JFrame {
 		panel_4.add(lblSamFilename, gbc_lblSamFilename);
 		
 		bowtieSamFilenameTxt = new JTextField();
-		bowtieSamFilenameTxt.setText("test_index");
 		GridBagConstraints gbc_bowtieSamFilenameTxt = new GridBagConstraints();
 		gbc_bowtieSamFilenameTxt.anchor = GridBagConstraints.WEST;
 		gbc_bowtieSamFilenameTxt.insets = new Insets(0, 0, 5, 5);
@@ -1977,7 +2041,6 @@ public class MainFrame extends JFrame {
 		panel_4.add(bowtieSamFilenameTxt, gbc_bowtieSamFilenameTxt);
 		bowtieSamFilenameTxt.setColumns(15);
 		
-		JButton bowtieSamCreateBtn = new JButton("Create SAM file");
 		bowtieSamCreateBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -1988,14 +2051,19 @@ public class MainFrame extends JFrame {
 			}
 		});
 		GridBagConstraints gbc_bowtieSamCreateBtn = new GridBagConstraints();
+		gbc_bowtieSamCreateBtn.fill = GridBagConstraints.HORIZONTAL;
 		gbc_bowtieSamCreateBtn.gridx = 2;
 		gbc_bowtieSamCreateBtn.gridy = 5;
 		panel_4.add(bowtieSamCreateBtn, gbc_bowtieSamCreateBtn);
+		
+		JSeparator separator_11 = new JSeparator();
+		separator_11.setBounds(12, 99, 823, 2);
+		panel_1.add(separator_11);
 	}
 
 	private void BowtieCreateSam() throws IOException{
 		
-		String OSName = System.getProperty("os.name");
+		final String OSName = System.getProperty("os.name");
 		
 		File bowtie_index = null;
 		File bowtie_align = null;
@@ -2011,8 +2079,8 @@ public class MainFrame extends JFrame {
 			bowtie_index = new File("bowtie-bin\\win-64\\bowtie2-build");
 			bowtie_align = new File("bowtie-bin\\win-64\\bowtie2");*/
 		}else{
-			bowtie_index = new File("./linux/bowtie-bin/bowtie2-build");
-			bowtie_align = new File("./linux/bowtie-bin/bowtie2");
+			bowtie_index = new File("./bowtie-bin/linux/bowtie2-build");
+			bowtie_align = new File("./bowtie-bin/linux/bowtie2");
 		}
 		
 		String bowtie_align_options = "-q"; /* -L 18*/
@@ -2058,6 +2126,10 @@ public class MainFrame extends JFrame {
 			final String script_align = String.format("%s %s -x %s -U %s -S %s", bowtie_align.getAbsolutePath(), bowtie_align_options, index_file, fastQPath, sam_file);
 
 			JOptionPane.showMessageDialog(this, "Creating the SAM file might take a few minutes, please be patient!");
+			bowtieSamCreateBtn.setText("Please wait...");
+			bowtieSamCreateBtn.setEnabled(false);
+			final Icon tempIcon = bowtieSamCreateBtn.getIcon();
+			bowtieSamCreateBtn.setIcon(new ImageIcon(MainFrame.class.getResource("/resources/load.gif")));
 
 			new Thread(new Runnable() {
 				@Override
@@ -2101,6 +2173,10 @@ public class MainFrame extends JFrame {
 								process_exited = false;
 							}
 						}		
+
+						bowtieSamCreateBtn.setIcon(tempIcon);
+						bowtieSamCreateBtn.setText("Create SAM file");
+						bowtieSamCreateBtn.setEnabled(true);
 
 						JOptionPane.showMessageDialog(MainFrame.this, "SAM file created successfully!");
 					}catch(IOException e){
