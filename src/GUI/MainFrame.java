@@ -64,6 +64,11 @@ import essgenes.PlotData;
 import essgenes.PrepareFiles;
 import essgenes.ProjectInfo;
 import essgenes.StatisticsHelper;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Insets;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
@@ -152,6 +157,10 @@ public class MainFrame extends JFrame {
 	private JTextField maxNumInsTxt;
 	private Thread second_thread = null;
 	private JTextField removeUniqueInsertionsTxt;
+	private JTextField bowtieFastqTxt;
+	private JTextField bowtieFnaTxt;
+	private JTextField textField_1;
+	private JTextField textField_2;
 
 	/**
 	 * Create the frame.
@@ -1790,6 +1799,172 @@ public class MainFrame extends JFrame {
 		label_4.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		label_4.setBounds(10, 296, 30, 14);
 		panel_3.add(label_4);
+		
+		JPanel panel_1 = new JPanel();
+		tabbedPane.addTab("Bowtie", null, panel_1, null);
+		panel_1.setLayout(null);
+		
+		JPanel panel_2 = new JPanel();
+		panel_2.setBounds(12, 12, 801, 89);
+		panel_1.add(panel_2);
+		panel_2.setLayout(null);
+		
+		JXLabel lblNewLabel_2 = new JXLabel("New label");
+		lblNewLabel_2.setBounds(0, 0, 757, 72);
+		panel_2.add(lblNewLabel_2);
+		lblNewLabel_2.setText("Title goes here!");
+		lblNewLabel_2.setLineWrap(true);
+		
+		JPanel panel_4 = new JPanel();
+		panel_4.setBounds(12, 113, 799, 507);
+		panel_1.add(panel_4);
+		GridBagLayout gbl_panel_4 = new GridBagLayout();
+		gbl_panel_4.columnWidths = new int[]{0, 0, 0, 0};
+		gbl_panel_4.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
+		gbl_panel_4.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+		gbl_panel_4.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		panel_4.setLayout(gbl_panel_4);
+		
+		JLabel lblFastqFile = new JLabel("FastQ File");
+		GridBagConstraints gbc_lblFastqFile = new GridBagConstraints();
+		gbc_lblFastqFile.anchor = GridBagConstraints.WEST;
+		gbc_lblFastqFile.insets = new Insets(0, 0, 5, 5);
+		gbc_lblFastqFile.gridx = 0;
+		gbc_lblFastqFile.gridy = 0;
+		panel_4.add(lblFastqFile, gbc_lblFastqFile);
+		
+		bowtieFastqTxt = new JTextField();
+		bowtieFastqTxt.setEditable(false);
+		GridBagConstraints gbc_bowtieFastqTxt = new GridBagConstraints();
+		gbc_bowtieFastqTxt.insets = new Insets(0, 0, 5, 5);
+		gbc_bowtieFastqTxt.fill = GridBagConstraints.HORIZONTAL;
+		gbc_bowtieFastqTxt.gridx = 1;
+		gbc_bowtieFastqTxt.gridy = 0;
+		panel_4.add(bowtieFastqTxt, gbc_bowtieFastqTxt);
+		bowtieFastqTxt.setColumns(10);
+		
+		JButton bowtieFastqBrowse = new JButton("Browse");
+		bowtieFastqBrowse.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Path currentRelativePath = Paths.get("");
+				String location = currentRelativePath.toAbsolutePath().toString();
+				JFileChooser fileChooser = new JFileChooser(location);
+				fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+				fileChooser.setFileFilter(new FileNameExtensionFilter("FASTQ Files (.fastq)", "fastq"));
+				int result = fileChooser.showOpenDialog(MainFrame.this);
+
+				if (result == JFileChooser.APPROVE_OPTION){
+					bowtieFastqTxt.setText(fileChooser.getSelectedFile().getAbsolutePath());
+				}else{
+					return;
+				}
+			}
+		});
+		GridBagConstraints gbc_bowtieFastqBrowse = new GridBagConstraints();
+		gbc_bowtieFastqBrowse.fill = GridBagConstraints.HORIZONTAL;
+		gbc_bowtieFastqBrowse.insets = new Insets(0, 0, 5, 0);
+		gbc_bowtieFastqBrowse.gridx = 2;
+		gbc_bowtieFastqBrowse.gridy = 0;
+		panel_4.add(bowtieFastqBrowse, gbc_bowtieFastqBrowse);
+		
+		JLabel lblFna = new JLabel("FNA");
+		GridBagConstraints gbc_lblFna = new GridBagConstraints();
+		gbc_lblFna.anchor = GridBagConstraints.WEST;
+		gbc_lblFna.insets = new Insets(0, 0, 5, 5);
+		gbc_lblFna.gridx = 0;
+		gbc_lblFna.gridy = 1;
+		panel_4.add(lblFna, gbc_lblFna);
+		
+		bowtieFnaTxt = new JTextField();
+		bowtieFnaTxt.setEditable(false);
+		GridBagConstraints gbc_bowtieFnaTxt = new GridBagConstraints();
+		gbc_bowtieFnaTxt.insets = new Insets(0, 0, 5, 5);
+		gbc_bowtieFnaTxt.fill = GridBagConstraints.HORIZONTAL;
+		gbc_bowtieFnaTxt.gridx = 1;
+		gbc_bowtieFnaTxt.gridy = 1;
+		panel_4.add(bowtieFnaTxt, gbc_bowtieFnaTxt);
+		bowtieFnaTxt.setColumns(10);
+		
+		JButton bowtieFnaBrowse = new JButton("Browse");
+		bowtieFnaBrowse.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Path currentRelativePath = Paths.get("");
+				String location = currentRelativePath.toAbsolutePath().toString();
+				JFileChooser fileChooser = new JFileChooser(location);
+				fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+				fileChooser.setFileFilter(new FileNameExtensionFilter("FNA Files (.fna)", "fna"));
+				int result = fileChooser.showOpenDialog(MainFrame.this);
+
+				if (result == JFileChooser.APPROVE_OPTION){
+					bowtieFnaTxt.setText(fileChooser.getSelectedFile().getAbsolutePath());
+				}else{
+					return;
+				}
+			}
+		});
+		GridBagConstraints gbc_bowtieFnaBrowse = new GridBagConstraints();
+		gbc_bowtieFnaBrowse.fill = GridBagConstraints.HORIZONTAL;
+		gbc_bowtieFnaBrowse.insets = new Insets(0, 0, 5, 0);
+		gbc_bowtieFnaBrowse.gridx = 2;
+		gbc_bowtieFnaBrowse.gridy = 1;
+		panel_4.add(bowtieFnaBrowse, gbc_bowtieFnaBrowse);
+		
+		JButton bowtieFnaDownload = new JButton("Download");
+		GridBagConstraints gbc_bowtieFnaDownload = new GridBagConstraints();
+		gbc_bowtieFnaDownload.fill = GridBagConstraints.HORIZONTAL;
+		gbc_bowtieFnaDownload.insets = new Insets(0, 0, 5, 0);
+		gbc_bowtieFnaDownload.gridx = 2;
+		gbc_bowtieFnaDownload.gridy = 2;
+		panel_4.add(bowtieFnaDownload, gbc_bowtieFnaDownload);
+		
+		JLabel lblSamFile = new JLabel("SAM file location");
+		GridBagConstraints gbc_lblSamFile = new GridBagConstraints();
+		gbc_lblSamFile.anchor = GridBagConstraints.WEST;
+		gbc_lblSamFile.insets = new Insets(0, 0, 5, 5);
+		gbc_lblSamFile.gridx = 0;
+		gbc_lblSamFile.gridy = 3;
+		panel_4.add(lblSamFile, gbc_lblSamFile);
+		
+		textField_1 = new JTextField();
+		textField_1.setEditable(false);
+		GridBagConstraints gbc_textField_1 = new GridBagConstraints();
+		gbc_textField_1.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textField_1.insets = new Insets(0, 0, 5, 5);
+		gbc_textField_1.gridx = 1;
+		gbc_textField_1.gridy = 3;
+		panel_4.add(textField_1, gbc_textField_1);
+		textField_1.setColumns(10);
+		
+		JButton button = new JButton("Browse");
+		GridBagConstraints gbc_button = new GridBagConstraints();
+		gbc_button.fill = GridBagConstraints.BOTH;
+		gbc_button.insets = new Insets(0, 0, 5, 0);
+		gbc_button.gridx = 2;
+		gbc_button.gridy = 3;
+		panel_4.add(button, gbc_button);
+		
+		JLabel lblSamFilename = new JLabel("SAM filename");
+		GridBagConstraints gbc_lblSamFilename = new GridBagConstraints();
+		gbc_lblSamFilename.anchor = GridBagConstraints.WEST;
+		gbc_lblSamFilename.insets = new Insets(0, 0, 5, 5);
+		gbc_lblSamFilename.gridx = 0;
+		gbc_lblSamFilename.gridy = 4;
+		panel_4.add(lblSamFilename, gbc_lblSamFilename);
+		
+		textField_2 = new JTextField();
+		GridBagConstraints gbc_textField_2 = new GridBagConstraints();
+		gbc_textField_2.anchor = GridBagConstraints.WEST;
+		gbc_textField_2.insets = new Insets(0, 0, 5, 5);
+		gbc_textField_2.gridx = 1;
+		gbc_textField_2.gridy = 4;
+		panel_4.add(textField_2, gbc_textField_2);
+		textField_2.setColumns(20);
+		
+		JButton btnCreateSamFile = new JButton("Create SAM file");
+		GridBagConstraints gbc_btnCreateSamFile = new GridBagConstraints();
+		gbc_btnCreateSamFile.gridx = 2;
+		gbc_btnCreateSamFile.gridy = 5;
+		panel_4.add(btnCreateSamFile, gbc_btnCreateSamFile);
 	}
 
 	private void findOptimalWinLength(){
