@@ -64,6 +64,7 @@ import essgenes.PlotData;
 import essgenes.PrepareFiles;
 import essgenes.ProjectInfo;
 import essgenes.StatisticsHelper;
+
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.BorderLayout;
@@ -159,8 +160,8 @@ public class MainFrame extends JFrame {
 	private JTextField removeUniqueInsertionsTxt;
 	private JTextField bowtieFastqTxt;
 	private JTextField bowtieFnaTxt;
-	private JTextField textField_1;
-	private JTextField textField_2;
+	private JTextField bowtieSamLocTxt;
+	private JTextField bowtieSamFilenameTxt;
 
 	/**
 	 * Create the frame.
@@ -1834,6 +1835,7 @@ public class MainFrame extends JFrame {
 		panel_4.add(lblFastqFile, gbc_lblFastqFile);
 		
 		bowtieFastqTxt = new JTextField();
+		bowtieFastqTxt.setText("/home/sina/workspace/EssentialGenes/essential-genes-data/lib1.fastq");
 		bowtieFastqTxt.setEditable(false);
 		GridBagConstraints gbc_bowtieFastqTxt = new GridBagConstraints();
 		gbc_bowtieFastqTxt.insets = new Insets(0, 0, 5, 5);
@@ -1876,6 +1878,7 @@ public class MainFrame extends JFrame {
 		panel_4.add(lblFna, gbc_lblFna);
 		
 		bowtieFnaTxt = new JTextField();
+		bowtieFnaTxt.setText("/home/sina/workspace/EssentialGenes/essential-genes-data/NC_005791.fna");
 		bowtieFnaTxt.setEditable(false);
 		GridBagConstraints gbc_bowtieFnaTxt = new GridBagConstraints();
 		gbc_bowtieFnaTxt.insets = new Insets(0, 0, 5, 5);
@@ -1925,23 +1928,39 @@ public class MainFrame extends JFrame {
 		gbc_lblSamFile.gridy = 3;
 		panel_4.add(lblSamFile, gbc_lblSamFile);
 		
-		textField_1 = new JTextField();
-		textField_1.setEditable(false);
-		GridBagConstraints gbc_textField_1 = new GridBagConstraints();
-		gbc_textField_1.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_1.insets = new Insets(0, 0, 5, 5);
-		gbc_textField_1.gridx = 1;
-		gbc_textField_1.gridy = 3;
-		panel_4.add(textField_1, gbc_textField_1);
-		textField_1.setColumns(10);
+		bowtieSamLocTxt = new JTextField();
+		bowtieSamLocTxt.setText("/home/sina/Desktop");
+		bowtieSamLocTxt.setEditable(false);
+		GridBagConstraints gbc_bowtieSamLocTxt = new GridBagConstraints();
+		gbc_bowtieSamLocTxt.fill = GridBagConstraints.HORIZONTAL;
+		gbc_bowtieSamLocTxt.insets = new Insets(0, 0, 5, 5);
+		gbc_bowtieSamLocTxt.gridx = 1;
+		gbc_bowtieSamLocTxt.gridy = 3;
+		panel_4.add(bowtieSamLocTxt, gbc_bowtieSamLocTxt);
+		bowtieSamLocTxt.setColumns(10);
 		
-		JButton button = new JButton("Browse");
-		GridBagConstraints gbc_button = new GridBagConstraints();
-		gbc_button.fill = GridBagConstraints.BOTH;
-		gbc_button.insets = new Insets(0, 0, 5, 0);
-		gbc_button.gridx = 2;
-		gbc_button.gridy = 3;
-		panel_4.add(button, gbc_button);
+		JButton bowtieSamBrowseBtn = new JButton("Browse");
+		bowtieSamBrowseBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Path currentRelativePath = Paths.get("");
+				String location = currentRelativePath.toAbsolutePath().toString();
+				JFileChooser fileChooser = new JFileChooser(location);
+				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				int result = fileChooser.showOpenDialog(MainFrame.this);
+
+				if (result == JFileChooser.APPROVE_OPTION){
+					bowtieSamLocTxt.setText(fileChooser.getSelectedFile().getAbsolutePath());
+				}else{
+					return;
+				}
+			}
+		});
+		GridBagConstraints gbc_bowtieSamBrowseBtn = new GridBagConstraints();
+		gbc_bowtieSamBrowseBtn.fill = GridBagConstraints.BOTH;
+		gbc_bowtieSamBrowseBtn.insets = new Insets(0, 0, 5, 0);
+		gbc_bowtieSamBrowseBtn.gridx = 2;
+		gbc_bowtieSamBrowseBtn.gridy = 3;
+		panel_4.add(bowtieSamBrowseBtn, gbc_bowtieSamBrowseBtn);
 		
 		JLabel lblSamFilename = new JLabel("SAM filename");
 		GridBagConstraints gbc_lblSamFilename = new GridBagConstraints();
@@ -1951,22 +1970,116 @@ public class MainFrame extends JFrame {
 		gbc_lblSamFilename.gridy = 4;
 		panel_4.add(lblSamFilename, gbc_lblSamFilename);
 		
-		textField_2 = new JTextField();
-		GridBagConstraints gbc_textField_2 = new GridBagConstraints();
-		gbc_textField_2.anchor = GridBagConstraints.WEST;
-		gbc_textField_2.insets = new Insets(0, 0, 5, 5);
-		gbc_textField_2.gridx = 1;
-		gbc_textField_2.gridy = 4;
-		panel_4.add(textField_2, gbc_textField_2);
-		textField_2.setColumns(20);
+		bowtieSamFilenameTxt = new JTextField();
+		bowtieSamFilenameTxt.setText("test_index");
+		GridBagConstraints gbc_bowtieSamFilenameTxt = new GridBagConstraints();
+		gbc_bowtieSamFilenameTxt.anchor = GridBagConstraints.WEST;
+		gbc_bowtieSamFilenameTxt.insets = new Insets(0, 0, 5, 5);
+		gbc_bowtieSamFilenameTxt.gridx = 1;
+		gbc_bowtieSamFilenameTxt.gridy = 4;
+		panel_4.add(bowtieSamFilenameTxt, gbc_bowtieSamFilenameTxt);
+		bowtieSamFilenameTxt.setColumns(15);
 		
-		JButton btnCreateSamFile = new JButton("Create SAM file");
-		GridBagConstraints gbc_btnCreateSamFile = new GridBagConstraints();
-		gbc_btnCreateSamFile.gridx = 2;
-		gbc_btnCreateSamFile.gridy = 5;
-		panel_4.add(btnCreateSamFile, gbc_btnCreateSamFile);
+		JButton bowtieSamCreateBtn = new JButton("Create SAM file");
+		bowtieSamCreateBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					BowtieCreateSam();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		GridBagConstraints gbc_bowtieSamCreateBtn = new GridBagConstraints();
+		gbc_bowtieSamCreateBtn.gridx = 2;
+		gbc_bowtieSamCreateBtn.gridy = 5;
+		panel_4.add(bowtieSamCreateBtn, gbc_bowtieSamCreateBtn);
 	}
 
+	private void BowtieCreateSam() throws IOException{
+		
+		File bowtie_index = new File("./bowtie-bin/bowtie2-build");
+		File bowtie_align = new File("./bowtie-bin/bowtie2");
+		String bowtie_align_options = "-q"; /* -L 18*/
+		
+		if (bowtie_index.exists() && bowtie_align.exists()){
+			//Do the magic here! :)
+			
+			String fnaPath = bowtieFnaTxt.getText();
+			String fastQPath = bowtieFastqTxt.getText();
+			String samLoc = bowtieSamLocTxt.getText();
+			String samName = bowtieSamFilenameTxt.getText();
+			
+			if (fnaPath == null || fnaPath.equals("")){
+				JOptionPane.showMessageDialog(this, "Please fill out all the fields.");
+			}
+			
+			if (fastQPath == null || fastQPath.equals("")){
+				JOptionPane.showMessageDialog(this, "Please fill out all the fields.");
+			}
+			
+			if (samLoc == null || samLoc.equals("")){
+				JOptionPane.showMessageDialog(this, "Please fill out all the fields.");
+			}
+			
+			if (samName == null || samName.equals("")){
+				JOptionPane.showMessageDialog(this, "Please fill out all the fields.");
+			}
+			
+			if (!samLoc.endsWith(File.separator)){
+				samLoc = samLoc + File.separator; 
+			}
+			
+			String index_file = samLoc + samName + "_index";
+			String sam_file = samLoc + samName;
+			
+			final String script_index = String.format("%s %s %s", bowtie_index.getAbsolutePath(), fnaPath, index_file);
+			final String script_align = String.format("%s %s -x %s -U %s -S %s", bowtie_align.getAbsolutePath(), bowtie_align_options, index_file, fastQPath, sam_file);
+			
+			JOptionPane.showMessageDialog(this, "Creating the SAM file might take a few minutes, please be patient!");
+			
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try{
+						Process align_p = Runtime.getRuntime().exec(script_index);
+						
+						boolean process_exited = false;
+						while(!process_exited){
+							try{
+								System.out.println(align_p.exitValue());
+								process_exited = true;
+							}catch(Exception e){
+								process_exited = false;
+							}
+						}
+
+						Process index_p = Runtime.getRuntime().exec(script_align);
+						
+						process_exited = false;
+						while(!process_exited){
+							try{
+								System.out.println(index_p.exitValue());
+								process_exited = true;
+							}catch(Exception e){
+								process_exited = false;
+							}
+						}		
+						
+						JOptionPane.showMessageDialog(MainFrame.this, "SAM file created successfully!");
+					}catch(IOException e){
+						e.printStackTrace();
+					}
+				}
+			}).start();
+			
+		}else{
+			JOptionPane.showMessageDialog(null, "Bowtie binary files don't exist.\n"
+					+ "Please download bowtie2 binary files from \"http://bowtie-bio.sourceforge.net/bowtie2/index.shtml\""
+					+ "and put them into a folder called bowtie-bin right beside the Tn-SeqExplorer executable jar file.");
+		}
+	}
+	
 	private void findOptimalWinLength(){
 		if (countAllReadsRadio.isSelected()){
 			int res = JOptionPane.showConfirmDialog(MainFrame.this, "This feature cannot be used when counting all reads.\n"

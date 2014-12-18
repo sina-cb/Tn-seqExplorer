@@ -481,11 +481,11 @@ public class AddMoreIndices extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				JOptionPane.showMessageDialog(AddMoreIndices.this, ""
 						+ "This parameter automatically adjusts the end coordinates for all genes. To leave the gene end\n"
-						+ "coordinates as annotated, use zero. To shorten the gene at the 3� end by a specific number of\n"
+						+ "coordinates as annotated, use zero. To shorten the gene at the 3rd end by a specific number of\n"
 						+ "nucleotides use a negative number (for example, -50 will eliminate last 50 base pairs of each gene). The\n"
 						+ "value 50 or +50 would add 50 downstream nucleotides to the gene. Including the % sign will make the\n"
 						+ "adjustments relative to the gene length. For example, -20% will shorten the gene by 20% of its length at\n"
-						+ "the 3� end. Generaly, you may want to exclude the 3� end of the gene from the analysis because\n"
+						+ "the 3rd end. Generaly, you may want to exclude the 3rd end of the gene from the analysis because\n"
 						+ "transposon insertions near the end of the gene are less likely to be deletrious.");
 			}
 		});
@@ -704,11 +704,11 @@ public class AddMoreIndices extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				JOptionPane.showMessageDialog(AddMoreIndices.this, ""
 						+ "This parameter automatically adjusts the start coordinates for all genes. To leave the gene start\n"
-						+ "coordinates as annotated, use zero. To shorten the gene at the 5� end by a specific number of\n"
+						+ "coordinates as annotated, use zero. To shorten the gene at the 5th end by a specific number of\n"
 						+ "nucleotides use a negative number (for example, -50 will eliminate first 50 base pairs of each gene). The\n"
 						+ "value 50 or +50 would add 50 upstream nucleotides to the gene. Including the % sign will make the\n"
 						+ "adjustments relative to the gene length. For example, -5% will shorten the gene by 5% of its length at\n"
-						+ "the 5� end. Generally, you may want to exclude a short segment at the start of the gene to account for\n"
+						+ "the 5th end. Generally, you may want to exclude a short segment at the start of the gene to account for\n"
 						+ "possibly misannotated gene start sites.");
 			}
 		});
@@ -724,11 +724,11 @@ public class AddMoreIndices extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				JOptionPane.showMessageDialog(AddMoreIndices.this, ""
 						+ "This parameter automatically adjusts the end coordinates for all genes. To leave the gene end\n"
-						+ "coordinates as annotated, use zero. To shorten the gene at the 3� end by a specific number of\n"
+						+ "coordinates as annotated, use zero. To shorten the gene at the 3th end by a specific number of\n"
 						+ "nucleotides use a negative number (for example, -50 will eliminate last 50 base pairs of each gene). The\n"
 						+ "value 50 or +50 would add 50 downstream nucleotides to the gene. Including the % sign will make the\n"
 						+ "adjustments relative to the gene length. For example, -20% will shorten the gene by 20% of its length at\n"
-						+ "the 3� end. Generaly, you may want to exclude the 3� end of the gene from the analysis because\n"
+						+ "the 3th end. Generaly, you may want to exclude the 3th end of the gene from the analysis because\n"
 						+ "transposon insertions near the end of the gene are less likely to be deletrious.");
 			}
 		});
