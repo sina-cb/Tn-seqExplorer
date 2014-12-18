@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -64,12 +67,6 @@ import essgenes.PlotData;
 import essgenes.PrepareFiles;
 import essgenes.ProjectInfo;
 import essgenes.StatisticsHelper;
-
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Insets;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
@@ -1835,7 +1832,7 @@ public class MainFrame extends JFrame {
 		panel_4.add(lblFastqFile, gbc_lblFastqFile);
 		
 		bowtieFastqTxt = new JTextField();
-		bowtieFastqTxt.setText("/home/sina/workspace/EssentialGenes/essential-genes-data/lib1.fastq");
+		bowtieFastqTxt.setText("C:\\Users\\sina\\Desktop\\EssentialGenes\\essential-genes-data\\lib1.fastq");
 		bowtieFastqTxt.setEditable(false);
 		GridBagConstraints gbc_bowtieFastqTxt = new GridBagConstraints();
 		gbc_bowtieFastqTxt.insets = new Insets(0, 0, 5, 5);
@@ -1878,7 +1875,7 @@ public class MainFrame extends JFrame {
 		panel_4.add(lblFna, gbc_lblFna);
 		
 		bowtieFnaTxt = new JTextField();
-		bowtieFnaTxt.setText("/home/sina/workspace/EssentialGenes/essential-genes-data/NC_005791.fna");
+		bowtieFnaTxt.setText("C:\\Users\\sina\\Desktop\\EssentialGenes\\essential-genes-data\\NC_005791.fna");
 		bowtieFnaTxt.setEditable(false);
 		GridBagConstraints gbc_bowtieFnaTxt = new GridBagConstraints();
 		gbc_bowtieFnaTxt.insets = new Insets(0, 0, 5, 5);
@@ -1929,7 +1926,7 @@ public class MainFrame extends JFrame {
 		panel_4.add(lblSamFile, gbc_lblSamFile);
 		
 		bowtieSamLocTxt = new JTextField();
-		bowtieSamLocTxt.setText("/home/sina/Desktop");
+		bowtieSamLocTxt.setText("C:\\Users\\sina\\Desktop");
 		bowtieSamLocTxt.setEditable(false);
 		GridBagConstraints gbc_bowtieSamLocTxt = new GridBagConstraints();
 		gbc_bowtieSamLocTxt.fill = GridBagConstraints.HORIZONTAL;
@@ -1998,85 +1995,124 @@ public class MainFrame extends JFrame {
 
 	private void BowtieCreateSam() throws IOException{
 		
-		File bowtie_index = new File("./bowtie-bin/bowtie2-build");
-		File bowtie_align = new File("./bowtie-bin/bowtie2");
+		String OSName = System.getProperty("os.name");
+		
+		File bowtie_index = null;
+		File bowtie_align = null;
+		
+		if(OSName.contains("Windows") || OSName.contains("windows")){
+			JOptionPane.showMessageDialog(this, "Bowtie is not suported on Microsoft Windows, yet!");
+			return;
+			
+			/*JOptionPane.showMessageDialog(this, "Bowtie requires Perl and Python to execute. \n"
+					+ "Please make sure that perl and python are installed on your system and are\n"
+					+ "available in your environment path. Otherwise, this section of the program\n"
+					+ "will fail.");
+			bowtie_index = new File("bowtie-bin\\win-64\\bowtie2-build");
+			bowtie_align = new File("bowtie-bin\\win-64\\bowtie2");*/
+		}else{
+			bowtie_index = new File("./linux/bowtie-bin/bowtie2-build");
+			bowtie_align = new File("./linux/bowtie-bin/bowtie2");
+		}
+		
 		String bowtie_align_options = "-q"; /* -L 18*/
+
+		if (bowtie_align == null || bowtie_index == null){
+			JOptionPane.showMessageDialog(this, "Bowtie is not supported on this platform within Tn-SeqExplorer.\n"
+					+ "Please use either Microsoft Window (64bit) or any distribution of Linux operating systems.");
+			return;
+		}
 		
 		if (bowtie_index.exists() && bowtie_align.exists()){
 			//Do the magic here! :)
-			
+
 			String fnaPath = bowtieFnaTxt.getText();
 			String fastQPath = bowtieFastqTxt.getText();
 			String samLoc = bowtieSamLocTxt.getText();
 			String samName = bowtieSamFilenameTxt.getText();
-			
+
 			if (fnaPath == null || fnaPath.equals("")){
 				JOptionPane.showMessageDialog(this, "Please fill out all the fields.");
 			}
-			
+
 			if (fastQPath == null || fastQPath.equals("")){
 				JOptionPane.showMessageDialog(this, "Please fill out all the fields.");
 			}
-			
+
 			if (samLoc == null || samLoc.equals("")){
 				JOptionPane.showMessageDialog(this, "Please fill out all the fields.");
 			}
-			
+
 			if (samName == null || samName.equals("")){
 				JOptionPane.showMessageDialog(this, "Please fill out all the fields.");
 			}
-			
+
 			if (!samLoc.endsWith(File.separator)){
 				samLoc = samLoc + File.separator; 
 			}
-			
+
 			String index_file = samLoc + samName + "_index";
 			String sam_file = samLoc + samName;
-			
+
 			final String script_index = String.format("%s %s %s", bowtie_index.getAbsolutePath(), fnaPath, index_file);
 			final String script_align = String.format("%s %s -x %s -U %s -S %s", bowtie_align.getAbsolutePath(), bowtie_align_options, index_file, fastQPath, sam_file);
-			
+
 			JOptionPane.showMessageDialog(this, "Creating the SAM file might take a few minutes, please be patient!");
-			
+
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
 					try{
-						Process align_p = Runtime.getRuntime().exec(script_index);
+						Process index_p = null;
+						if(OSName.contains("Windows") || OSName.contains("windows")){
+							System.err.println(script_index);
+							File modifyPath = new File("bowtie-bin\\win-64\\modify_path.bat");
+							String temp = String.format("cmd /c echo OFF && start %s && perl %s", modifyPath.getAbsolutePath(), script_index);
+							System.err.println(temp);
+							index_p = Runtime.getRuntime().exec(temp);
+						}else{
+							index_p = Runtime.getRuntime().exec(script_index);
+						}
 						
 						boolean process_exited = false;
 						while(!process_exited){
 							try{
-								System.out.println(align_p.exitValue());
+								index_p.exitValue();
 								process_exited = true;
 							}catch(Exception e){
 								process_exited = false;
 							}
 						}
 
-						Process index_p = Runtime.getRuntime().exec(script_align);
-						
+						Process align_p = null;
+						if(OSName.contains("Windows") || OSName.contains("windows")){
+							System.err.println(script_align);
+							align_p = Runtime.getRuntime().exec("perl " + script_align);
+						}else{
+							align_p = Runtime.getRuntime().exec(script_align);
+						}
+
 						process_exited = false;
 						while(!process_exited){
 							try{
-								System.out.println(index_p.exitValue());
+								align_p.exitValue();
 								process_exited = true;
 							}catch(Exception e){
 								process_exited = false;
 							}
 						}		
-						
+
 						JOptionPane.showMessageDialog(MainFrame.this, "SAM file created successfully!");
 					}catch(IOException e){
 						e.printStackTrace();
 					}
 				}
 			}).start();
-			
+
 		}else{
 			JOptionPane.showMessageDialog(null, "Bowtie binary files don't exist.\n"
-					+ "Please download bowtie2 binary files from \"http://bowtie-bio.sourceforge.net/bowtie2/index.shtml\""
-					+ "and put them into a folder called bowtie-bin right beside the Tn-SeqExplorer executable jar file.");
+					+ "Please download bowtie2 binary files from \"http://bowtie-bio.sourceforge.net/bowtie2/index.shtml\"\n"
+					+ "and put them into a folder called bowtie-bin/linux/ right beside the Tn-SeqExplorer executable jar file.");
 		}
 	}
 	
