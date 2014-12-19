@@ -2048,7 +2048,7 @@ public class MainFrame extends JFrame {
 	private void BowtieCreateSam() throws IOException{
 
 		final String OSName = System.getProperty("os.name");
-
+		
 		File bowtie_index = null;
 		File bowtie_align = null;
 
@@ -2062,6 +2062,9 @@ public class MainFrame extends JFrame {
 					+ "will fail.");
 			bowtie_index = new File("bowtie-bin\\win-64\\bowtie2-build");
 			bowtie_align = new File("bowtie-bin\\win-64\\bowtie2");*/
+		}else if (OSName.toLowerCase().contains("mac")){
+			bowtie_index = new File("bowtie-bin/mac/bowtie2-build");
+			bowtie_align = new File("bowtie-bin/mac/bowtie2");
 		}else{
 			bowtie_index = new File("bowtie-bin/linux/bowtie2-build");
 			bowtie_align = new File("bowtie-bin/linux/bowtie2");
