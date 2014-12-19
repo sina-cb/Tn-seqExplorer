@@ -74,7 +74,7 @@ import essgenes.StatisticsHelper;
 public class MainFrame extends JFrame {
 	static int dx = 1;
 	public static final String ProgTitle = "Tn-seq explorer";
-	public static final String ProgVersion = "v1.3";
+	public static final String ProgVersion = "v1.4";
 
 	private JButton bowtieSamCreateBtn = new JButton("Create SAM file");
 	private boolean if_initialize_step_1 = true;
