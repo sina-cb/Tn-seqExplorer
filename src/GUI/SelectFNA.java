@@ -2,7 +2,6 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -18,10 +17,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -31,15 +33,14 @@ import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.io.CopyStreamAdapter;
 import org.apache.log4j.Logger;
 
-import Entities.ProjectInfo;
-import Utilities.Errors;
-import Utilities.FileHandler;
+import essgenes.ProjectInfo;
 
 public class SelectFNA extends JFrame {
 
@@ -61,7 +62,7 @@ public class SelectFNA extends JFrame {
 	/**
 	 * Create the dialog.
 	 */
-	public SelectFNA(ProjectInfo info, JFrame parent) {
+	public SelectFNA(ProjectInfo info, final JFrame parent, final JTextField textfield) {
 		setResizable(false);
 		this.info = info;
 		this.parent = parent;
@@ -111,7 +112,19 @@ public class SelectFNA extends JFrame {
 		contentPanel.add(gbkPathTxt);
 		browseBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				FileHandler.browseForInputFile(gbkPathTxt, "gbk", "Sequence File (*.gbk)", SelectFNA.this, SelectFNA.this.info);
+				Path currentRelativePath = Paths.get("");
+				String location = currentRelativePath.toAbsolutePath()
+						.toString();
+				JFileChooser fileChooser = new JFileChooser(location);
+				fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+				fileChooser.setFileFilter(new FileNameExtensionFilter("FASTQ Files (.fna)", "fna"));
+				int result = fileChooser.showOpenDialog(parent);
+
+				if(result == JFileChooser.APPROVE_OPTION){
+					SelectFNA.this.gbkPathTxt.setText(fileChooser.getSelectedFile().getAbsolutePath());
+				}else{
+					return;
+				}
 			}
 		});
 		
@@ -150,7 +163,6 @@ public class SelectFNA extends JFrame {
 								secondLevelCombo.addItem("Please Choose Your bacteria First");
 								ftp.disconnect();
 							} catch (IOException e) {
-								logger.error(Errors.IOERROR);
 								logger.error(e.getMessage());
 								return;
 							}
@@ -208,7 +220,7 @@ public class SelectFNA extends JFrame {
 										break;
 									}
 									
-									if (t.getName().endsWith(".gbk")) {
+									if (t.getName().endsWith(".fna")) {
 										String fileName = "";
 										String bacteriaName = "";
 										String lengthString = "";
@@ -297,8 +309,8 @@ public class SelectFNA extends JFrame {
 							fileName = fileName.substring(0, fileName.indexOf(":"));
 							for (FTPFile t : files) {
 								if (t.getName().contains(fileName)) {
-									if (t.getName().endsWith("gbk")) {
-										gbkTemp = new File(SelectFNA.this.info.getTempDirectory() + t.getName());
+									if (t.getName().endsWith("fna")) {
+										gbkTemp = new File(SelectFNA.this.info.getPath() + t.getName());
 										OutputStream fos = new FileOutputStream(gbkTemp);
 										final long fileSize = t.getSize();
 										CopyStreamAdapter csa = new CopyStreamAdapter() {
@@ -335,7 +347,6 @@ public class SelectFNA extends JFrame {
 							secondLevelCombo.setEnabled(true);
 
 						} catch (IOException e) {
-							logger.error(Errors.IOERROR);
 							logger.error(e.getMessage());
 							downloadBtn.setEnabled(true);
 							downloadBtn.setText("Try again");
@@ -367,12 +378,12 @@ public class SelectFNA extends JFrame {
 							return;
 						}
 						
-						SelectFNA.this.info.setSeqFile(gbkPathTxt.getText());
+						textfield.setText(gbkPathTxt.getText());
 						SelectFNA.this.setVisible(false);
 						SelectFNA.this.dispose();
 						
 						SelectFNA.this.parent.setVisible(true);
-						JOptionPane.showMessageDialog(SelectFNA.this.parent, "You can use \'Extract DNA sequences around the peaks\' now");
+						JOptionPane.showMessageDialog(SelectFNA.this.parent, "FNA file selected.");
 					}
 				});
 				okButton.setActionCommand("OK");
