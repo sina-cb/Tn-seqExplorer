@@ -321,7 +321,6 @@ public class SelectFNA extends JFrame {
 												int percent = (int) (totalBytesTransferred * 100 / (double) fileSize);
 												if (percent % 5 == 0) {
 													if (change) {
-														logger.debug("Downloaded " + percent);
 														change = false;
 														progressBar.setValue(percent);
 													}

@@ -1232,7 +1232,11 @@ public class MainFrame extends JFrame {
 
 		JXLabel samDescLbl = new JXLabel("New label");
 		samDescLbl.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		samDescLbl.setText("You can add and manage transposon insertion mutant libraries here. You need the .sam file from the Barrows-Wheeler aligner. (bwa, http://bio-bwa.sourceforge.net/) to add a library to your project. SAM stands for Sequence Alignment/Map format. It is a TAB-delimited text format file that contains the alignment of the sequence reads to the genome. If the Barrows-Wheeler Aligner is installed on this computer you may be able to run it from this application. To add new library, provide the name for the library, navigate to the .sam file using the 'Browse' button, and then click 'Extract'.");
+		samDescLbl.setText("You can add and manage transposon insertion mutant libraries here. You need the .sam file from the Burrows-Wheeler aligner. "
+				+ "(bwa, http://bio-bwa.sourceforge.net/) to add a library to your project. SAM stands for Sequence Alignment/Map format. It is a TAB-delimited "
+				+ "text format file that contains the alignment of the sequence reads to the genome. If the Burrows-Wheeler Aligner is installed on this computer "
+				+ "you may be able to run it from this application. To add new library, provide the name for the library, navigate to the .sam file using the 'Browse' "
+				+ "button, and then click 'Extract'.");
 		samDescLbl.setBounds(12, 11, 799, 94);
 		panelInitialize.add(samDescLbl);
 		samDescLbl.setLineWrap(true);
@@ -1822,8 +1826,10 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					createSamFile();
-				} catch (IOException | InterruptedException e1) {
+				} catch (InterruptedException e1) {
 					e1.printStackTrace();
+				} catch (IOException e2) {
+					e2.printStackTrace();
 				}
 			}
 		});
@@ -2377,8 +2383,11 @@ public class MainFrame extends JFrame {
 			File dir = new File(location);
 			Process child = Runtime.getRuntime().exec(cmd, null, dir);
 			child.waitFor();
-		} catch (IOException | InterruptedException e1) {
+		} catch (InterruptedException e1) {
 			logger.error(e1.getMessage());
+			return;
+		} catch(IOException e2){
+			logger.error(e2.getMessage());
 			return;
 		}
 	}
@@ -2413,8 +2422,11 @@ public class MainFrame extends JFrame {
 			File dir = new File(location);
 			Process child = Runtime.getRuntime().exec(cmd, null, dir);
 			child.waitFor();
-		} catch (IOException | InterruptedException e1) {
+		} catch (InterruptedException e1) {
 			logger.error(e1.getMessage());
+			return;
+		} catch(IOException e2){
+			logger.error(e2.getMessage());
 			return;
 		}
 	}
@@ -3475,7 +3487,7 @@ public class MainFrame extends JFrame {
 									+ "Possible reasons and solutions:\n"
 									+ "- The sequence length is incorrect. Verify the sequence length and if necessary correct it in the\n"
 									+ "'Main' tab.\n"
-									+ "- You have used a wrong DNA sequence when running the Barrows-WheelerAligner to locate\n"
+									+ "- You have used a wrong DNA sequence when running the Burrows-WheelerAligner to locate\n"
 									+ "the insertions and generate the .sam file. Run BWA with the correct sequence.\n"
 									+ "- Some of the input files are not formatted properly. Verify that all input files, including the\n\n"
 									+ "DNA sequence used for BWA, have the correct format."

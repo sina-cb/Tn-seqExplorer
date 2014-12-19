@@ -276,13 +276,13 @@ public class Compare extends JFrame {
 		int essentiality = Integer.parseInt(index1Txt.getText());
 		
 		String[] positionsString = position1Txt.getText().split(" ");
-		List<Integer> positions = new ArrayList<>();
+		List<Integer> positions = new ArrayList<Integer>();
 		for (String pos : positionsString){
 			positions.add(Integer.parseInt(pos));
 		}
 		
 		String[] otherString = otherColumnsTxt.getText().split(" ");
-		List<Integer> others = new ArrayList<>();
+		List<Integer> others = new ArrayList<Integer>();
 		for (String other : otherString){
 			others.add(Integer.parseInt(other));
 		}
@@ -292,7 +292,7 @@ public class Compare extends JFrame {
 			br.readLine();
 		}
 		
-		List<GeneHolder> genes1 = new ArrayList<>();
+		List<GeneHolder> genes1 = new ArrayList<GeneHolder>();
 		
 		String line = "";
 		line = br.readLine();
@@ -318,7 +318,7 @@ public class Compare extends JFrame {
 		essentiality = Integer.parseInt(index2Txt.getText());
 		
 		positionsString = position2Txt.getText().split(" ");
-		positions = new ArrayList<>();
+		positions = new ArrayList<Integer>();
 		for (String pos : positionsString){
 			positions.add(Integer.parseInt(pos));
 		}
@@ -329,12 +329,12 @@ public class Compare extends JFrame {
 		}
 		
 		otherString = otherColumns2Txt.getText().split(" ");
-		others = new ArrayList<>();
+		others = new ArrayList<Integer>();
 		for (String other : otherString){
 			others.add(Integer.parseInt(other));
 		}
 		
-		List<GeneHolder> genes2 = new ArrayList<>();
+		List<GeneHolder> genes2 = new ArrayList<GeneHolder>();
 		
 		line = br.readLine();
 		while (line != null){

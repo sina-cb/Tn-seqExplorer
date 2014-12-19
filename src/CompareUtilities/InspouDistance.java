@@ -495,8 +495,8 @@ public class InspouDistance {
 			String line = br.readLine();
 			line = br.readLine();
 
-			ArrayList<Double> xAxis = new ArrayList<>();
-			ArrayList<Double> yAxis = new ArrayList<>();
+			ArrayList<Double> xAxis = new ArrayList<Double>();
+			ArrayList<Double> yAxis = new ArrayList<Double>();
 
 			int i = 0;
 			int max = 500;
@@ -562,7 +562,7 @@ public class InspouDistance {
 		BufferedReader br = new BufferedReader(new FileReader(gbk));
 		String seqLine = br.readLine();
 		
-		ArrayList<Character> sequence = new ArrayList<>();
+		ArrayList<Character> sequence = new ArrayList<Character>();
 		
 		while (!seqLine.startsWith("ORIGIN")){
 			seqLine = br.readLine();

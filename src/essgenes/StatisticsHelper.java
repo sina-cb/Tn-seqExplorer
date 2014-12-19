@@ -163,8 +163,8 @@ public class StatisticsHelper {
 	}
 		
 	private static Pair<double[], double[]> removeZeros(double[] x, double[] y) {
-		List<Double> tempX = new ArrayList<>();
-		List<Double> tempY = new ArrayList<>();
+		List<Double> tempX = new ArrayList<Double>();
+		List<Double> tempY = new ArrayList<Double>();
 		
 		for (int i = 0; i < x.length; i++){
 			if (x[i] == 0){
@@ -374,7 +374,7 @@ public class StatisticsHelper {
 		
 		tempWinStep = 10 > (tempWinLen / 10) ? (tempWinLen / 10) : 10;
 		
-		return new Pair<>(tempWinLen, tempWinStep);
+		return new Pair<Integer, Integer>(tempWinLen, tempWinStep);
 	}
 	
 	private static Pair<double[], double[]> modifyData(double[] positions, double[] numberOfInsertions){
@@ -388,8 +388,8 @@ public class StatisticsHelper {
 			index++;
 		}
 		
-		Vector<Double> newPositions = new Vector<>();
-		Vector<Double> newNumOfInsertions = new Vector<>();
+		Vector<Double> newPositions = new Vector<Double>();
+		Vector<Double> newNumOfInsertions = new Vector<Double>();
 		
 		for (int i = 0; i < numberOfInsertions.length - index; i++){
 			newPositions.add(positions[i]);

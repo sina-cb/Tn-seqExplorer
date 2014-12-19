@@ -57,7 +57,7 @@ public class MyFileUtil {
 	public static ArrayList<String> tailNLines(File file, int linesCount) throws FileNotFoundException, IOException{
 		RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
 
-		ArrayList<String> result = new ArrayList<>();
+		ArrayList<String> result = new ArrayList<String>();
 
 		int lines = 0;
 		StringBuilder builder = new StringBuilder();

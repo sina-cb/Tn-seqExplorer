@@ -33,8 +33,8 @@ public class PrepareFiles {
 		File lib = new File(info.getPath() + libName + ".inspou");
 		BufferedReader br = new BufferedReader(new FileReader(lib));
 		
-		ArrayList<Integer> positions = new ArrayList<>();
-		ArrayList<Integer> numberOfReads = new ArrayList<>();
+		ArrayList<Integer> positions = new ArrayList<Integer>();
+		ArrayList<Integer> numberOfReads = new ArrayList<Integer>();
 		String line = br.readLine();
 		while (line != null){
 			int temp = Integer.parseInt(line.substring(0, line.indexOf("\t")));
@@ -45,7 +45,7 @@ public class PrepareFiles {
 			line = br.readLine();
 		}
 
-		ArrayList<Integer> starts = new ArrayList<>();
+		ArrayList<Integer> starts = new ArrayList<Integer>();
  		for (int i = 0; i < positions.get(positions.size() - 1); i += step){
 			int count = 0;
 			int num = 0;
@@ -75,7 +75,7 @@ public class PrepareFiles {
 			}
 		}
 		
-		ArrayList<String> boundaries = new ArrayList<>();
+		ArrayList<String> boundaries = new ArrayList<String>();
 		int count = 0;
 		for (int i = 0; i < starts.size(); i++){
 			count = 0;
@@ -247,15 +247,15 @@ public class PrepareFiles {
 		BufferedReader br = new BufferedReader(new FileReader(imgFile));
 		br.readLine();
 		
-		List<List<ImgFileInfo>> wholeImgFile = new ArrayList<>();
-		List<ImgFileInfo> imgLines = new ArrayList<>();
+		List<List<ImgFileInfo>> wholeImgFile = new ArrayList<List<ImgFileInfo>>();
+		List<ImgFileInfo> imgLines = new ArrayList<ImgFileInfo>();
 		String line = br.readLine();
 		while(line != null){
 			ImgFileInfo tempImgLine = new ImgFileInfo();
 			
 			if(line.compareTo("\t\t\t\t\t") == 0){
 				wholeImgFile.add(imgLines);
-				imgLines = new ArrayList<>();
+				imgLines = new ArrayList<ImgFileInfo>();
 				line = br.readLine();
 				continue;
 			}
@@ -288,7 +288,7 @@ public class PrepareFiles {
 		
 		br.close();
 		
-		List<String> scaffolds = new ArrayList<>();
+		List<String> scaffolds = new ArrayList<String>();
 		for (List<ImgFileInfo> arrayTemp : wholeImgFile){
 			for (ImgFileInfo t : arrayTemp){
 				if (t.source.compareTo("Scaffold") == 0){

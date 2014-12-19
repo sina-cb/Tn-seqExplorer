@@ -57,7 +57,7 @@ public class AddColumns {
 		File libFile = new File(info.getPath() + libName + ".inspou");
 		BufferedReader br = new BufferedReader(new FileReader(libFile));
 
-		ArrayList<Integer> insertions = new ArrayList<>();
+		ArrayList<Integer> insertions = new ArrayList<Integer>();
 		for (int i = 0; i < LSeq; i++){
 			insertions.add(0);
 		}
@@ -204,7 +204,7 @@ public class AddColumns {
 		File libFile = new File(info.getPath() + libName + ".inspou");
 		BufferedReader br = new BufferedReader(new FileReader(libFile));
 
-		ArrayList<Integer> insertions = new ArrayList<>();
+		ArrayList<Integer> insertions = new ArrayList<Integer>();
 		for (int i = 0; i < LSeq; i++){
 			insertions.add(0);
 		}
@@ -354,8 +354,8 @@ public class AddColumns {
 		File libFile = new File(info.getPath() + libName + ".inspou");
 		BufferedReader br = new BufferedReader(new FileReader(libFile));
 
-		ArrayList<Integer> insertions = new ArrayList<>();
-		ArrayList<Integer> numberOfReads = new ArrayList<>();
+		ArrayList<Integer> insertions = new ArrayList<Integer>();
+		ArrayList<Integer> numberOfReads = new ArrayList<Integer>();
 		String line = br.readLine();
 		while(line != null){
 			insertions.add(Integer.parseInt(line.substring(0, line.indexOf("\t"))));
@@ -371,7 +371,7 @@ public class AddColumns {
 		Thread thread = new Thread(pbu);
 		thread.start();
 
-		ArrayList<Window> windows = new ArrayList<>();
+		ArrayList<Window> windows = new ArrayList<Window>();
 		for (int i = 1; i <= seqLen; i += step){	
 			Window temp = new Window();
 			temp.start = i;
@@ -632,7 +632,7 @@ public class AddColumns {
 		File tableFile = new File(info.getPath() + tableName + ".table.xls"); //REPLACE
 		BufferedReader br = new BufferedReader(new FileReader(tableFile));
 
-		ArrayList<ArrayList<String>> data = new ArrayList<>();
+		ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
 
 		String line = br.readLine();
 		int lineCount = 0;
@@ -652,7 +652,7 @@ public class AddColumns {
 				return null;
 			}
 
-			ArrayList<String> row = new ArrayList<>();
+			ArrayList<String> row = new ArrayList<String>();
 
 			while(line.contains("\t")){
 				String temp = line.substring(0, line.indexOf("\t"));
@@ -770,7 +770,7 @@ public class AddColumns {
 	}
 
 	public static ArrayList<String> tabsForCompare(String line){
-		ArrayList<String> results = new ArrayList<>();
+		ArrayList<String> results = new ArrayList<String>();
 
 		while (line.contains("\t")){
 			String temp = line.substring(0, line.indexOf("\t"));

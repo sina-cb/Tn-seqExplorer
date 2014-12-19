@@ -122,8 +122,8 @@ public class PlotData {
 	public static JFreeChart anotherPlot(String libName, String title, ProjectInfo info, boolean onlyUniqueInsertions){
 
 		File input = new File(info.getPath() + libName + ".inspous");
-		ArrayList<Integer> counts_Y = new ArrayList<>();
-		ArrayList<Integer> positions_X = new ArrayList<>();
+		ArrayList<Integer> counts_Y = new ArrayList<Integer>();
+		ArrayList<Integer> positions_X = new ArrayList<Integer>();
 
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(input));
@@ -482,12 +482,12 @@ public class PlotData {
 			yAxisName = yAxisName + tabs.get(secondCol + 7) + ")";
 		}
 
-		ArrayList<Double> xAxis = new ArrayList<>();
-		ArrayList<Double> yAxis = new ArrayList<>();
+		ArrayList<Double> xAxis = new ArrayList<Double>();
+		ArrayList<Double> yAxis = new ArrayList<Double>();
 
 		//Reading Main Data and Process it
 		line = br.readLine();
-		ArrayList<String> geneInfo = new ArrayList<>();
+		ArrayList<String> geneInfo = new ArrayList<String>();
 		while(line != null){
 			tabs = AddColumns.tabsForCompare(line);
 

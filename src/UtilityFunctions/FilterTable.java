@@ -27,7 +27,7 @@ public class FilterTable {
 		}
 		
 		line = br.readLine();
-		ArrayList<String> knownEssentialsList = new ArrayList<>();
+		ArrayList<String> knownEssentialsList = new ArrayList<String>();
 		while(line != null){
 			for (int i = 0; i < 6; i++){
 				line = line.substring(line.indexOf("\t") + 1);
@@ -49,7 +49,7 @@ public class FilterTable {
 		}
 
 		line = br.readLine();
-		ArrayList<String> knownNonEssentialsList = new ArrayList<>();
+		ArrayList<String> knownNonEssentialsList = new ArrayList<String>();
 		while(line != null){
 			for (int i = 0; i < 6; i++){
 				line = line.substring(line.indexOf("\t") + 1);

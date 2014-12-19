@@ -86,8 +86,8 @@ public class AddMoreIndices extends JFrame {
 	private JTable compareTable;
 	private JScrollPane scrollPane = new JScrollPane();
 	private JTextField compareMaxInsTxt;
-	private JComboBox<String> columnOneCombo = new JComboBox<>();
-	private JComboBox<String> columnTwoCombo = new JComboBox<>();
+	private JComboBox<String> columnOneCombo = new JComboBox<String>();
+	private JComboBox<String> columnTwoCombo = new JComboBox<String>();
 	private JButton compareBtn = new JButton("Compare");
 	private JLabel compareWaitLbl = new JLabel("Please wait...");
 	private JCheckBox logPlotCheck = new JCheckBox("Logarithmic Plot");

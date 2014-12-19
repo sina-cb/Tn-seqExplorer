@@ -34,8 +34,8 @@ import essgenes.Messages;
 public class WorkspaceChooser extends JFrame {
 
 	private Logger logger = Logger.getLogger(WorkspaceChooser.class.getName());
-	private ArrayList<String> projectPaths = new ArrayList<>();
-	private ArrayList<String> projectNames = new ArrayList<>();
+	private ArrayList<String> projectPaths = new ArrayList<String>();
+	private ArrayList<String> projectNames = new ArrayList<String>();
 	private JComboBox<String> recentProjects = new JComboBox<String>();
 	private boolean isTrimed = false;
 
