@@ -2057,8 +2057,8 @@ public class MainFrame extends JFrame {
 			bowtie_index = new File("bowtie-bin\\win-64\\bowtie2-build");
 			bowtie_align = new File("bowtie-bin\\win-64\\bowtie2");*/
 		}else{
-			bowtie_index = new File("./bowtie-bin/linux/bowtie2-build");
-			bowtie_align = new File("./bowtie-bin/linux/bowtie2");
+			bowtie_index = new File("bowtie-bin/linux/bowtie2-build");
+			bowtie_align = new File("bowtie-bin/linux/bowtie2");
 		}
 
 		String bowtie_align_options = "-q"; /* -L 18*/
@@ -2079,18 +2079,22 @@ public class MainFrame extends JFrame {
 
 			if (fnaPath == null || fnaPath.equals("")){
 				JOptionPane.showMessageDialog(this, "Please fill out all the fields.");
+				return;
 			}
 
 			if (fastQPath == null || fastQPath.equals("")){
 				JOptionPane.showMessageDialog(this, "Please fill out all the fields.");
+				return;
 			}
 
 			if (samLoc == null || samLoc.equals("")){
 				JOptionPane.showMessageDialog(this, "Please fill out all the fields.");
+				return;
 			}
 
 			if (samName == null || samName.equals("")){
 				JOptionPane.showMessageDialog(this, "Please fill out all the fields.");
+				return;
 			}
 
 			if (!samLoc.endsWith(File.separator)){
