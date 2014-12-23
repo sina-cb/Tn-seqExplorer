@@ -162,6 +162,7 @@ public class MainFrame extends JFrame {
 	private JTextField bowtieSamLocTxt;
 	private JTextField bowtieSamFilenameTxt;
 	private JTextField fnaFilePath;
+	private JTextField bowtieMinScore;
 
 	/**
 	 * Create the frame.
@@ -1887,9 +1888,9 @@ public class MainFrame extends JFrame {
 		panel_1.add(panel_4);
 		GridBagLayout gbl_panel_4 = new GridBagLayout();
 		gbl_panel_4.columnWidths = new int[]{0, 0, 0, 0};
-		gbl_panel_4.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
+		gbl_panel_4.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
 		gbl_panel_4.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
-		gbl_panel_4.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel_4.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel_4.setLayout(gbl_panel_4);
 
 		JLabel lblFastqFile = new JLabel("FastQ File");
@@ -1967,12 +1968,49 @@ public class MainFrame extends JFrame {
 		gbc_bowtieFnaBrowse.gridy = 1;
 		panel_4.add(bowtieFnaBrowse, gbc_bowtieFnaBrowse);
 
+		JLabel lblMinimumScore = new JLabel("Minimum score");
+		GridBagConstraints gbc_lblMinimumScore = new GridBagConstraints();
+		gbc_lblMinimumScore.anchor = GridBagConstraints.WEST;
+		gbc_lblMinimumScore.insets = new Insets(0, 0, 5, 5);
+		gbc_lblMinimumScore.gridx = 0;
+		gbc_lblMinimumScore.gridy = 2;
+		panel_4.add(lblMinimumScore, gbc_lblMinimumScore);
+
+		bowtieMinScore = new JTextField();
+		bowtieMinScore.setText("L,-0.5,-0.5");
+		GridBagConstraints gbc_bowtieMinScore = new GridBagConstraints();
+		gbc_bowtieMinScore.anchor = GridBagConstraints.WEST;
+		gbc_bowtieMinScore.insets = new Insets(0, 0, 5, 5);
+		gbc_bowtieMinScore.gridx = 1;
+		gbc_bowtieMinScore.gridy = 2;
+		panel_4.add(bowtieMinScore, gbc_bowtieMinScore);
+		bowtieMinScore.setColumns(10);
+
+		JLabel label_12 = new JLabel("(?)");
+		label_12.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				//TODO: Fill this message here!
+				JOptionPane.showMessageDialog(MainFrame.this, "Help for minimum score goes here!");
+			}
+		});
+		label_12.setForeground(Color.BLUE);
+		GridBagConstraints gbc_label_12 = new GridBagConstraints();
+		gbc_label_12.anchor = GridBagConstraints.WEST;
+		gbc_label_12.insets = new Insets(0, 0, 5, 0);
+		gbc_label_12.gridx = 2;
+		gbc_label_12.gridy = 2;
+		panel_4.add(label_12, gbc_label_12);
+		label_12.setToolTipText("Click me!");
+		label_12.setForeground(Color.BLUE);
+		label_12.setFont(new Font("Tahoma", Font.PLAIN, 11));
+
 		JLabel lblSamFile = new JLabel("SAM file location");
 		GridBagConstraints gbc_lblSamFile = new GridBagConstraints();
 		gbc_lblSamFile.anchor = GridBagConstraints.WEST;
 		gbc_lblSamFile.insets = new Insets(0, 0, 5, 5);
 		gbc_lblSamFile.gridx = 0;
-		gbc_lblSamFile.gridy = 2;
+		gbc_lblSamFile.gridy = 3;
 		panel_4.add(lblSamFile, gbc_lblSamFile);
 
 		bowtieSamLocTxt = new JTextField();
@@ -1981,7 +2019,7 @@ public class MainFrame extends JFrame {
 		gbc_bowtieSamLocTxt.fill = GridBagConstraints.HORIZONTAL;
 		gbc_bowtieSamLocTxt.insets = new Insets(0, 0, 5, 5);
 		gbc_bowtieSamLocTxt.gridx = 1;
-		gbc_bowtieSamLocTxt.gridy = 2;
+		gbc_bowtieSamLocTxt.gridy = 3;
 		panel_4.add(bowtieSamLocTxt, gbc_bowtieSamLocTxt);
 		bowtieSamLocTxt.setColumns(10);
 
@@ -2005,7 +2043,7 @@ public class MainFrame extends JFrame {
 		gbc_bowtieSamBrowseBtn.fill = GridBagConstraints.BOTH;
 		gbc_bowtieSamBrowseBtn.insets = new Insets(0, 0, 5, 0);
 		gbc_bowtieSamBrowseBtn.gridx = 2;
-		gbc_bowtieSamBrowseBtn.gridy = 2;
+		gbc_bowtieSamBrowseBtn.gridy = 3;
 		panel_4.add(bowtieSamBrowseBtn, gbc_bowtieSamBrowseBtn);
 
 		JLabel lblSamFilename = new JLabel("SAM filename");
@@ -2013,7 +2051,7 @@ public class MainFrame extends JFrame {
 		gbc_lblSamFilename.anchor = GridBagConstraints.WEST;
 		gbc_lblSamFilename.insets = new Insets(0, 0, 5, 5);
 		gbc_lblSamFilename.gridx = 0;
-		gbc_lblSamFilename.gridy = 3;
+		gbc_lblSamFilename.gridy = 4;
 		panel_4.add(lblSamFilename, gbc_lblSamFilename);
 
 		bowtieSamFilenameTxt = new JTextField();
@@ -2021,7 +2059,7 @@ public class MainFrame extends JFrame {
 		gbc_bowtieSamFilenameTxt.anchor = GridBagConstraints.WEST;
 		gbc_bowtieSamFilenameTxt.insets = new Insets(0, 0, 5, 5);
 		gbc_bowtieSamFilenameTxt.gridx = 1;
-		gbc_bowtieSamFilenameTxt.gridy = 3;
+		gbc_bowtieSamFilenameTxt.gridy = 4;
 		panel_4.add(bowtieSamFilenameTxt, gbc_bowtieSamFilenameTxt);
 		bowtieSamFilenameTxt.setColumns(15);
 
@@ -2037,7 +2075,7 @@ public class MainFrame extends JFrame {
 		GridBagConstraints gbc_bowtieSamCreateBtn = new GridBagConstraints();
 		gbc_bowtieSamCreateBtn.fill = GridBagConstraints.HORIZONTAL;
 		gbc_bowtieSamCreateBtn.gridx = 2;
-		gbc_bowtieSamCreateBtn.gridy = 4;
+		gbc_bowtieSamCreateBtn.gridy = 5;
 		panel_4.add(bowtieSamCreateBtn, gbc_bowtieSamCreateBtn);
 
 		JSeparator separator_11 = new JSeparator();
@@ -2048,7 +2086,7 @@ public class MainFrame extends JFrame {
 	private void BowtieCreateSam() throws IOException{
 
 		final String OSName = System.getProperty("os.name");
-		
+
 		File bowtie_index = null;
 		File bowtie_align = null;
 
@@ -2070,7 +2108,7 @@ public class MainFrame extends JFrame {
 			bowtie_align = new File("bowtie-bin/linux/bowtie2");
 		}
 
-		String bowtie_align_options = "-q"; /* -L 18*/
+		String bowtie_align_options = "-q"; 
 
 		if (bowtie_align == null || bowtie_index == null){
 			JOptionPane.showMessageDialog(this, "Bowtie is not supported on this platform within Tn-SeqExplorer.\n"
@@ -2085,6 +2123,7 @@ public class MainFrame extends JFrame {
 			String fastQPath = bowtieFastqTxt.getText();
 			String samLoc = bowtieSamLocTxt.getText();
 			String samName = bowtieSamFilenameTxt.getText();
+			String minScore = bowtieMinScore.getText();
 
 			if (fnaPath == null || fnaPath.equals("")){
 				JOptionPane.showMessageDialog(this, "Please fill out all the fields.");
@@ -2104,6 +2143,12 @@ public class MainFrame extends JFrame {
 			if (samName == null || samName.equals("")){
 				JOptionPane.showMessageDialog(this, "Please fill out all the fields.");
 				return;
+			}
+
+			if (minScore == null || minScore.equals("")) {
+				minScore = "";
+			} else {
+				bowtie_align_options = String.format("%s --score-min %s", bowtie_align_options, minScore);
 			}
 
 			if (!samLoc.endsWith(File.separator)){
