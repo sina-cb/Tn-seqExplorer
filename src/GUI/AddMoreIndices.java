@@ -88,7 +88,7 @@ public class AddMoreIndices extends JFrame {
 	private JTextField compareMaxInsTxt;
 	private JComboBox<String> columnOneCombo = new JComboBox<String>();
 	private JComboBox<String> columnTwoCombo = new JComboBox<String>();
-	private JButton compareBtn = new JButton("Compare");
+	private JButton compareBtn = new JButton("Difference");
 	private JLabel compareWaitLbl = new JLabel("Please wait...");
 	private JCheckBox logPlotCheck = new JCheckBox("Logarithmic Plot");
 	private JRadioButton newDataUniqueInsertionRadio = new JRadioButton("Count only unique insertions");
@@ -762,7 +762,7 @@ public class AddMoreIndices extends JFrame {
 				compare();
 			}
 		});
-		compareBtn.setBounds(623, 407, 103, 23);
+		compareBtn.setBounds(616, 407, 110, 23);
 		compareScrollPanel.add(compareBtn);
 		
 		JLabel lblMaximumInsertions = new JLabel("Maximum insertions:");
@@ -812,7 +812,7 @@ public class AddMoreIndices extends JFrame {
 				plotColumns();
 			}
 		});
-		plotTwoColBtn.setBounds(515, 407, 103, 23);
+		plotTwoColBtn.setBounds(372, 407, 110, 23);
 		compareScrollPanel.add(plotTwoColBtn);
 		
 		logPlotCheck.setBounds(450, 220, 171, 23);
@@ -844,6 +844,15 @@ public class AddMoreIndices extends JFrame {
 		label_5.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		label_5.setBounds(605, 253, 88, 14);
 		compareScrollPanel.add(label_5);
+		
+		JButton btnRatio = new JButton("Ratio");
+		btnRatio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ratio();
+			}
+		});
+		btnRatio.setBounds(494, 406, 110, 25);
+		compareScrollPanel.add(btnRatio);
 	}
 
 	protected void plotDensities() {
@@ -999,6 +1008,63 @@ public class AddMoreIndices extends JFrame {
 		
 	}
 	
+	private void ratio(){
+		String firstCol = (String) columnOneCombo.getSelectedItem();
+		String secondCol = (String) columnTwoCombo.getSelectedItem();
+		
+		if (firstCol == null || firstCol.compareTo("") == 0){
+			JOptionPane.showMessageDialog(AddMoreIndices.this, "Please select columns to compare.");
+			return;
+		}
+		
+		if (secondCol == null || secondCol.compareTo("") == 0){
+			JOptionPane.showMessageDialog(AddMoreIndices.this, "Please select columns to compare.");
+			return;
+		}
+		
+		final int first = Integer.parseInt(firstCol);
+		final int second = Integer.parseInt(secondCol);
+		if (first == second){
+			JOptionPane.showMessageDialog(AddMoreIndices.this, "Please select different columns to compare.");
+			return;
+		}
+		
+		compareWaitLbl.setVisible(true);
+		compareBtn.setEnabled(false);
+		
+		(new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					double maxIns = 0;
+					if (compareMaxInsTxt.getText() != null && !compareMaxInsTxt.getText().equals("")){
+						maxIns = Double.parseDouble(compareMaxInsTxt.getText()); 
+					}
+					
+					if (AddColumns.compareColumnsRatio(tableName, first, second, maxIns, info).compareTo(Messages.successMsg) == 0){
+						JOptionPane.showMessageDialog(AddMoreIndices.this, "Data added");
+					}else{
+						JOptionPane.showMessageDialog(AddMoreIndices.this, "The data could not be written to the table.\n"
+								+ "Check to see if they are not in use by other programs!", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+					
+					compareWaitLbl.setVisible(false);
+					compareBtn.setEnabled(true);
+					initializeCompare();
+				} catch (IOException e) {
+					logger.error(e.getMessage());
+					return;
+				}catch (NumberFormatException e) {
+					JOptionPane.showMessageDialog(AddMoreIndices.this, "Please enter valid numbers for the highlighted fields.");
+					compareWaitLbl.setVisible(false);
+					compareBtn.setEnabled(true);
+					return;
+				}
+			}
+		})).start();
+	}
+	
 	private void compare(){
 		
 		String firstCol = (String) columnOneCombo.getSelectedItem();
@@ -1034,7 +1100,7 @@ public class AddMoreIndices extends JFrame {
 						maxIns = Double.parseDouble(compareMaxInsTxt.getText()); 
 					}
 					
-					if (AddColumns.compareColumns(tableName, first, second, maxIns, info).compareTo(Messages.successMsg) == 0){
+					if (AddColumns.compareColumnsDiff(tableName, first, second, maxIns, info).compareTo(Messages.successMsg) == 0){
 						JOptionPane.showMessageDialog(AddMoreIndices.this, "Data added");
 					}else{
 						JOptionPane.showMessageDialog(AddMoreIndices.this, "The data could not be written to the table.\n"

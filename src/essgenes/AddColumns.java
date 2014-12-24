@@ -711,8 +711,75 @@ public class AddColumns {
 		}
 	}
 
-	public static String compareColumns(String tableName, int firstColumn, int secondColumn, double maxIns, ProjectInfo info) throws IOException {
+	public static String compareColumnsRatio(String tableName, int firstColumn, int secondColumn, double maxIns, ProjectInfo info) throws IOException {
+		if (maxIns < 1){
+			maxIns = Double.MAX_VALUE;
+		}
+		
+		File tableFile = new File(info.getPath() + tableName + ".table.xls"); //REPLACE
+		BufferedReader br = new BufferedReader(new FileReader(tableFile));
 
+		File newTableFile = new File(info.getPath() + tableName + ".new");
+		BufferedWriter bw = new BufferedWriter(new FileWriter(newTableFile));
+
+		//Writing File Header at First
+		String line = br.readLine();
+		bw.write(line + "\t" + "\n");
+
+		line = br.readLine();
+		bw.write(line + "\t" + "\n");
+
+		line = br.readLine();
+		bw.write(line + "\t" + "\n");
+
+		line = br.readLine();
+		bw.write(line + "\t" + "Compare" + "\n");
+
+		line = br.readLine();
+		bw.write(line + "\t" + firstColumn + " _ " + secondColumn + "\n");
+
+		//Reading Main Data and Process it
+		line = br.readLine();
+		while(line != null){
+			String tempLine = new String(line);
+			ArrayList<String> tabs = tabsForCompare(line);
+
+			double one = Double.parseDouble(tabs.get(firstColumn + 7));
+			double two = Double.parseDouble(tabs.get(secondColumn + 7));
+
+			if (one > maxIns){
+				one = maxIns;
+			}
+
+			if (two > maxIns){
+				two = maxIns;
+			}
+			
+			String numb = String.format("%.5f", ((double) one / (double) two));
+
+			bw.write(tempLine + "\t" +  numb + "\n");
+
+			line = br.readLine();
+		}
+
+		bw.close();
+		br.close();
+
+		if (tableFile.delete()){
+			if(newTableFile.renameTo(tableFile)){
+				return Messages.successMsg;
+			}
+		}
+
+		return Messages.failMsg;
+	}
+	
+	public static String compareColumnsDiff(String tableName, int firstColumn, int secondColumn, double maxIns, ProjectInfo info) throws IOException {
+
+		if (maxIns < 1){
+			maxIns = Double.MAX_VALUE;
+		}		
+		
 		File tableFile = new File(info.getPath() + tableName + ".table.xls"); //REPLACE
 		BufferedReader br = new BufferedReader(new FileReader(tableFile));
 
