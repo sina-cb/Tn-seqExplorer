@@ -27,29 +27,29 @@ public class InspouDistance {
 	@SuppressWarnings("unused")
 	public void run() {
 
-		for (int i = 1; i < 13; i++){
-			String libName = String.format("lib%d-1", i);
+		for (int i = 1; i < 7; i++){
+			String libName = String.format("lib%d-0", i);
 
 			String extension = ".inspou";
-			File input = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\" + libName + extension);
+			File input = new File("/home/sina/Desktop/INSPOU/" + libName + extension);
 			//File gbkFile = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\" + "NC_003911.gbk");
-			File gbkFile = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\" + "NC_005791.gbk");
+			File gbkFile = new File("/home/sina/Desktop/INSPOU/" + "NC_002516.gbk");
 			Integer[] lengths = {30, 100, 300};
 
 			String extAll = " - all.xls"; 
-			File outputAll = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\results\\" + libName + extAll);
+			File outputAll = new File("/home/sina/Desktop/INSPOU/results/" + libName + extAll);
 
 			String extSame = " - same.xls"; 
-			File outputSame = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\results\\" + libName + extSame);
+			File outputSame = new File("/home/sina/Desktop/INSPOU/results/" + libName + extSame);
 
 			String extDiff = " - diff.xls"; 
-			File outputDiff = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\results\\" + libName + extDiff);
+			File outputDiff = new File("/home/sina/Desktop/INSPOU/results/" + libName + extDiff);
 			
 			String extDiffPlusMinus = " - diff (+ , -).xls"; 
-			File outputDiffPlusMinus = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\results\\" + libName + extDiffPlusMinus);
+			File outputDiffPlusMinus = new File("/home/sina/Desktop/INSPOU/results/" + libName + extDiffPlusMinus);
 			
 			String extDiffMinusPlus = " - diff (- , +).xls"; 
-			File outputDiffMinusPlus = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\results\\" + libName + extDiffMinusPlus);
+			File outputDiffMinusPlus = new File("/home/sina/Desktop/INSPOU/results/" + libName + extDiffMinusPlus);
 
 			processAll(input, outputAll, libName);
 			processSame(input, outputSame, libName);
@@ -72,9 +72,9 @@ public class InspouDistance {
 				}
 			}*/
 			
-			input = new File("C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\" + libName + extension);
+			input = new File("/home/sina/Desktop/INSPOU/" + libName + extension);
 			String windowInsertions = " - windows with %d insertions.xls";
-			String tempOutput = "C:\\Users\\sina\\Desktop\\Essential Genes\\data\\inspou\\results\\" + libName + windowInsertions;
+			String tempOutput = "/home/sina/Desktop/INSPOU/results/" + libName + windowInsertions;
 			processWindow(input, tempOutput);
 		}
 	}
