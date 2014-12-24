@@ -9,7 +9,7 @@ projects.dat
 .mtj.tmp/
 
 # Package Files #
-*.jar
+
 *.war
 *.ear
 
