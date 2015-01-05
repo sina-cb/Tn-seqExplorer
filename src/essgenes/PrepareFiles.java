@@ -540,6 +540,10 @@ public class PrepareFiles {
 		String inputPath = prepareOutputFilePath(samFilePath, outPath, ".inspou");
 		String outputPath = prepareOutputFilePath(samFilePath, outPath, ".inspous");
 
+		if ((new File(outputPath)).exists()){
+			outputPath = prepareOutputFilePath(samFilePath, outPath, "-temp.inspous");
+		}
+		
 		Comparator<String> comparator = new Comparator<String>() {
 			@Override
 			public int compare(String r1, String r2){
@@ -572,6 +576,10 @@ public class PrepareFiles {
 		String uniquePath = prepareOutputFilePath(samFilePath, outPath, ".inspou");
 		String tempPath = prepareOutputFilePath(samFilePath, outPath, ".tmp");
 
+		if ((new File(uniquePath).exists())){
+			uniquePath = prepareOutputFilePath(samFilePath, outPath, "-temp.inspou");
+		}
+		
 		File input = new File(sortedPath);
 		File tempFile = new File(tempPath);
 
@@ -677,6 +685,10 @@ public class PrepareFiles {
 		String unsortedPath = prepareOutputFilePath(samFilePath, outPath, ".inspo");
 		String sortedPath = prepareOutputFilePath(samFilePath, outPath, ".inspos");
 
+		if ((new File(sortedPath).exists())){
+			sortedPath = prepareOutputFilePath(samFilePath, outPath, "-temp.inspos");
+		}
+		
 		try{
 			Comparator<String> comparator = new Comparator<String>() {
 				@Override
@@ -784,6 +796,11 @@ public class PrepareFiles {
 
 		File input = new File(inFilePath);
 		File output = new File(outFilePath);
+		
+		if (output.exists()){
+			outFilePath = prepareOutputFilePath(inFilePath, outPath, "-temp.inspo");
+			output = new File(outFilePath);
+		}
 
 		BufferedReader br = null;
 		BufferedWriter bw = null;

@@ -31,6 +31,7 @@ import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Random;
 
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
@@ -361,6 +362,55 @@ public class MainFrame extends JFrame {
 						}
 
 						prepareGeneFile();
+
+						int answ = JOptionPane.showConfirmDialog(MainFrame.this, "Also download the .fna file (DNA sequence; required for read mapping with BWA or Bowtie2)?", 
+								"FNA File", JOptionPane.YES_NO_OPTION);
+
+						if (answ == JOptionPane.YES_OPTION){
+							downloadBtn.setText("Please wait...");
+							downloadBtn.setEnabled(false);
+							ftpFirstLevelCombo.setEnabled(false);
+							ftpSecondLevelCombo.setEnabled(false);
+
+							try {
+								ftp.abort();
+							} catch (IOException e1) {
+								e1.printStackTrace();
+							}
+							ftp = new FTPClient();
+							try {
+								ftp.connect("ftp.ncbi.nih.gov");
+								ftp.enterLocalPassiveMode();
+								ftp.login("anonymous", "");
+								String ftpDir = "/genomes/Bacteria/" + ftpFirstLevelCombo.getSelectedItem() + "/";
+								FTPFile[] files = ftp.listFiles(ftpDir);
+
+								for (FTPFile t : files){
+									String fileName = (String)ftpSecondLevelCombo.getSelectedItem();
+									fileName = fileName.substring(0, fileName.indexOf(":"));
+
+									if(t.getName().contains(fileName)){
+										if(t.getName().endsWith("fna")){
+											File pttTemp = new File(projectInfo.getPath() + t.getName());
+											FileOutputStream fos = new FileOutputStream(pttTemp);
+											ftp.retrieveFile(ftpDir + t.getName(), fos);
+											pttFileTxt.setText(pttTemp.getAbsolutePath());
+										}
+									}
+								}
+
+								downloadBtn.setText("Download");
+								downloadBtn.setEnabled(true);
+								ftpFirstLevelCombo.setEnabled(true);
+								ftpSecondLevelCombo.setEnabled(true);
+							} catch (IOException e) {
+								logger.error(e.getMessage());
+								return;
+							}
+
+						}else{
+
+						}
 					}
 				})).start();
 
@@ -888,6 +938,11 @@ public class MainFrame extends JFrame {
 					File oldFile = new File(samFilePathTxt.getText());
 					File newFile = new File(newPath);
 
+					if (newFile.exists()){
+						newPath = projectInfo.getPath() + PrepareFiles.prepareFileName(samFilePathTxt.getText(), "-temp.inspo");
+						newFile = new File(newPath);
+					}
+					
 					FileChannel destination;
 					FileChannel source;
 					try {
@@ -910,7 +965,7 @@ public class MainFrame extends JFrame {
 					}
 					loadingLbl.setBounds(22, 239, 30, 16);
 					loadingLbl.setVisible(true);
-					samFilePathTxt.setText(newPath);
+					samFilePathTxt.setText(newPath.replace("-temp", ""));
 					SortInsertions run = new SortInsertions(uniqueInsertionsLimit);
 					Thread runThread = new Thread(run);
 					runThread.start();
@@ -1233,11 +1288,11 @@ public class MainFrame extends JFrame {
 
 		JXLabel samDescLbl = new JXLabel("New label");
 		samDescLbl.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		samDescLbl.setText("You can add and manage transposon insertion mutant libraries here. You need the .sam file from the Burrows-Wheeler aligner. "
-				+ "(bwa, http://bio-bwa.sourceforge.net/) to add a library to your project. SAM stands for Sequence Alignment/Map format. It is a TAB-delimited "
-				+ "text format file that contains the alignment of the sequence reads to the genome. If the Burrows-Wheeler Aligner is installed on this computer "
-				+ "you may be able to run it from this application. To add new library, provide the name for the library, navigate to the .sam file using the 'Browse' "
-				+ "button, and then click 'Extract'.");
+		samDescLbl.setText("You can add and manage transposon insertion mutant libraries here. You need the .sam file from the Burrows-Wheeler aligner, Bowtie2, or "
+				+ "similar software. (bwa, bio-bwa.sourceforge.net; bowtie2, bowtie-bio.sourceforge.net/bowtie2) to add a library to your project. "
+				+ "SAM stands for Sequence Alignment/Map format. It is a TAB-delimited text format file that contains the alignment of the sequence reads to the genome. If "
+				+ "the Burrows-Wheeler Aligner is installed on this computer you may be able to run it from this application. To add new library, provide the name for the library"
+				+ ", navigate to the .sam file using the 'Browse' button, and then click 'Extract'.");
 		samDescLbl.setBounds(12, 11, 799, 94);
 		panelInitialize.add(samDescLbl);
 		samDescLbl.setLineWrap(true);
@@ -1645,13 +1700,6 @@ public class MainFrame extends JFrame {
 		panel_3.add(separator_8);
 		reloadProjectFromFile();
 		hasGeneFile = findGeneFile();
-		if(!hasSeqNum  || !hasGeneFile){
-			for (int i = 1; i < tabbedPane.getTabCount(); i++){
-				tabbedPane.setEnabledAt(i, false);
-			}
-		}else{
-			infoLbl.setVisible(false);
-		}
 
 		ButtonGroup bwaGroup = new ButtonGroup();
 		bwaGroup.add(alreadyInstalledRadio);
@@ -1869,7 +1917,7 @@ public class MainFrame extends JFrame {
 		});
 
 		JPanel panel_1 = new JPanel();
-		tabbedPane.addTab("Bowtie", null, panel_1, null);
+		tabbedPane.addTab("Bowtie2", null, panel_1, null);
 		panel_1.setLayout(null);
 
 		JPanel panel_2 = new JPanel();
@@ -1968,7 +2016,7 @@ public class MainFrame extends JFrame {
 		gbc_bowtieFnaBrowse.gridy = 1;
 		panel_4.add(bowtieFnaBrowse, gbc_bowtieFnaBrowse);
 
-		JLabel lblMinimumScore = new JLabel("Minimum score");
+		JLabel lblMinimumScore = new JLabel("Options");
 		GridBagConstraints gbc_lblMinimumScore = new GridBagConstraints();
 		gbc_lblMinimumScore.anchor = GridBagConstraints.WEST;
 		gbc_lblMinimumScore.insets = new Insets(0, 0, 5, 5);
@@ -1977,21 +2025,22 @@ public class MainFrame extends JFrame {
 		panel_4.add(lblMinimumScore, gbc_lblMinimumScore);
 
 		bowtieMinScore = new JTextField();
-		bowtieMinScore.setText("L,-0.5,-0.5");
+		bowtieMinScore.setText("-L 20 -N 0 --score-min L,-0.6,-0.6");
 		GridBagConstraints gbc_bowtieMinScore = new GridBagConstraints();
 		gbc_bowtieMinScore.anchor = GridBagConstraints.WEST;
 		gbc_bowtieMinScore.insets = new Insets(0, 0, 5, 5);
 		gbc_bowtieMinScore.gridx = 1;
 		gbc_bowtieMinScore.gridy = 2;
 		panel_4.add(bowtieMinScore, gbc_bowtieMinScore);
-		bowtieMinScore.setColumns(10);
+		bowtieMinScore.setColumns(25);
 
 		JLabel label_12 = new JLabel("(?)");
 		label_12.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				//TODO: Fill this message here!
-				JOptionPane.showMessageDialog(MainFrame.this, "Help for minimum score goes here!");
+				JOptionPane.showMessageDialog(MainFrame.this, "You can change the Bowtie2 options using this textbox.\n"
+						+ "For more details please visit: \"http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#options\"");
 			}
 		});
 		label_12.setForeground(Color.BLUE);
@@ -2081,6 +2130,14 @@ public class MainFrame extends JFrame {
 		JSeparator separator_11 = new JSeparator();
 		separator_11.setBounds(12, 99, 823, 2);
 		panel_1.add(separator_11);
+
+		if(!hasSeqNum  || !hasGeneFile){
+			for (int i = 1; i < tabbedPane.getTabCount(); i++){
+				tabbedPane.setEnabledAt(i, false);
+			}
+		}else{
+			infoLbl.setVisible(false);
+		}
 	}
 
 	private void BowtieCreateSam() throws IOException{
@@ -2148,7 +2205,7 @@ public class MainFrame extends JFrame {
 			if (minScore == null || minScore.equals("")) {
 				minScore = "";
 			} else {
-				bowtie_align_options = String.format("%s --score-min %s", bowtie_align_options, minScore);
+				bowtie_align_options = String.format("%s %s", bowtie_align_options, minScore);
 			}
 
 			if (!samLoc.endsWith(File.separator)){
@@ -3164,11 +3221,31 @@ public class MainFrame extends JFrame {
 		}else{
 			bwaInstallBtn.setEnabled(false);
 			alreadyInstalledRadio.setSelected(true);
+			
+			//Search for FNA
+			File folder = new File(projectInfo.getPath());
+			File[] listOfFiles = folder.listFiles();
+
+			for (int i = 0; i < listOfFiles.length; i++) {
+				if (listOfFiles[i].isFile() && listOfFiles[i].getName().endsWith(".fna")) {
+					fnaFilePath.setText(listOfFiles[i].getAbsolutePath());
+					break;
+				}
+			}
 		}
 	}
 
 	private void initializeBowtiePanel(){
+		//Search for FNA
+		File folder = new File(projectInfo.getPath());
+		File[] listOfFiles = folder.listFiles();
 
+		for (int i = 0; i < listOfFiles.length; i++) {
+			if (listOfFiles[i].isFile() && listOfFiles[i].getName().endsWith(".fna")) {
+				bowtieFnaTxt.setText(listOfFiles[i].getAbsolutePath());
+				break;
+			}
+		}
 	}
 
 	private void initiatePlotLibraryComboBox(){
@@ -3607,19 +3684,54 @@ public class MainFrame extends JFrame {
 				try{
 					bw = new BufferedWriter(new FileWriter(projectInfo.getFile(), true));
 
-					bw.write(PrepareFiles.prepareFileName(samFilePathTxt.getText(), ".inspo") + "\n");
-					bw.write(PrepareFiles.prepareFileName(samFilePathTxt.getText(), ".inspos") + "\n");
-					bw.write(PrepareFiles.prepareFileName(samFilePathTxt.getText(), ".inspou") + "\n");
-					bw.write(PrepareFiles.prepareFileName(samFilePathTxt.getText(), ".inspous") + "\n");
+					File folder = new File(projectInfo.getPath());
+					File[] listOfFiles = folder.listFiles();
+
+					boolean useTemp = false;
+					for (int i = 0; i < listOfFiles.length; i++) {
+						if (listOfFiles[i].isFile() && listOfFiles[i].getName().endsWith(".inspo")) {
+							if (listOfFiles[i].getAbsolutePath().contains("-temp.inspo")){
+								useTemp = true;
+							}
+						}
+					}
+					
+					if (useTemp){
+						bw.write(PrepareFiles.prepareFileName(samFilePathTxt.getText(), "-temp.inspo") + "\n");
+						bw.write(PrepareFiles.prepareFileName(samFilePathTxt.getText(), "-temp.inspos") + "\n");
+						bw.write(PrepareFiles.prepareFileName(samFilePathTxt.getText(), "-temp.inspou") + "\n");
+						bw.write(PrepareFiles.prepareFileName(samFilePathTxt.getText(), "-temp.inspous") + "\n");						
+					}else{
+						bw.write(PrepareFiles.prepareFileName(samFilePathTxt.getText(), ".inspo") + "\n");
+						bw.write(PrepareFiles.prepareFileName(samFilePathTxt.getText(), ".inspos") + "\n");
+						bw.write(PrepareFiles.prepareFileName(samFilePathTxt.getText(), ".inspou") + "\n");
+						bw.write(PrepareFiles.prepareFileName(samFilePathTxt.getText(), ".inspous") + "\n");
+					}
 
 					bw.close();
 
 					doneLbl4.setVisible(true);
 					loadingLbl.setVisible(false);
 
-					String libraryName = JOptionPane.showInputDialog(MainFrame.this, "Enter the library's name:", 
-							PrepareFiles.prepareFileName(samFilePathTxt.getText(), ""));
-					renameLibrary(libraryName, PrepareFiles.prepareFileName(samFilePathTxt.getText(), ""));
+					String libraryName = "";
+					
+					if (useTemp){
+						libraryName = JOptionPane.showInputDialog(MainFrame.this, "Enter the library's name:", 
+								PrepareFiles.prepareFileName(samFilePathTxt.getText(), "-temp"));
+						String selectedLib = PrepareFiles.prepareFileName(samFilePathTxt.getText(), "-temp");
+						
+						if (libraryName.endsWith("-temp")){
+							libraryName = PrepareFiles.prepareFileName(samFilePathTxt.getText(), "") + "-temp-" + (new Random().nextInt(1000));
+						}
+						
+						renameLibrary(libraryName, selectedLib);
+						
+					}else{
+						libraryName = JOptionPane.showInputDialog(MainFrame.this, "Enter the library's name:", 
+								PrepareFiles.prepareFileName(samFilePathTxt.getText(), ""));
+						
+						renameLibrary(libraryName, PrepareFiles.prepareFileName(samFilePathTxt.getText(), ""));
+					}
 
 					JOptionPane.showMessageDialog(MainFrame.this, "Library added to the project.");
 					libraryCountLbl.setText((Integer.parseInt(libraryCountLbl.getText()) + 1) + "");

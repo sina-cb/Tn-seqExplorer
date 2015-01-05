@@ -821,7 +821,8 @@ public class AddMoreIndices extends JFrame {
 		randomizePlotDataChk.setBounds(450, 248, 151, 23);
 		compareScrollPanel.add(randomizePlotDataChk);
 		
-		JXLabel lblNewLabel = new JXLabel("The 'Compare' adds a new column that shows the difference between the data in two previously created columns; the 'Plot' button plots data in two previously created columns.");
+		JXLabel lblNewLabel = new JXLabel("The 'Ratio' and 'Difference' buttons add a new column to the table that contains the ratio or difference of the values in two previously created; "
+				+ "the 'Plot' button plots data in two previously created columns.");
 		lblNewLabel.setBounds(10, 11, 716, 42);
 		lblNewLabel.setLineWrap(true);
 		compareScrollPanel.add(lblNewLabel);
