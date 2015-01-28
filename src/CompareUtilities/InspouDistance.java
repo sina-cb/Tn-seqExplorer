@@ -27,7 +27,7 @@ public class InspouDistance {
 	@SuppressWarnings("unused")
 	public void run() {
 
-		for (int i = 1; i < 7; i++){
+		for (int i = 1; i < 2; i++){
 			String libName = String.format("lib%d-0", i);
 
 			String extension = ".inspou";
@@ -463,6 +463,7 @@ public class InspouDistance {
 			saveChart(output, libname);
 		}catch(IOException e){
 			System.out.println("IOException");
+			e.printStackTrace();
 			output.delete();
 		}
 	}

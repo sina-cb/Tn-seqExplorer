@@ -314,6 +314,159 @@ public class AddColumns {
 
 		return Messages.failMsg;
 	}
+	
+	@SuppressWarnings("resource")
+	public static String calcInsertionDensityTA(String libName, String tableName, String adjustStartString, String adjustEndString, boolean ifUniqueInsertions, ProjectInfo info) throws IOException{
+
+		int adjustStart;
+		double adjustStartPercent;
+		int adjustEnd;
+		double adjustEndPercent;
+
+		if (adjustStartString.contains("%")){
+			if (!adjustEndString.contains("%")){
+				JOptionPane.showMessageDialog(null, "Both adjustment numbers should either be in percents or be absolute values.");
+				return "Both adjustment numbers should either be in percents or be absolute values.";
+			}
+			
+			adjustStart = 0;
+			adjustStartPercent = Integer.parseInt(adjustStartString.substring(0, adjustStartString.length() - 1)) / 100.0;
+			
+			adjustEnd = 0;
+			adjustEndPercent = Integer.parseInt(adjustEndString.substring(0, adjustEndString.length() - 1)) / 100.0;
+			
+			if (adjustEndPercent + adjustStartPercent >= 100){
+				JOptionPane.showMessageDialog(null, "Summation of Start and End adjustment percents cannot be greater than or equal to 100.");
+				return Messages.failMsg;
+			}
+		}else{
+			if (adjustEndString.contains("%")){
+				JOptionPane.showMessageDialog(null, "Both adjustment numbers should either be in percents or be absolute values.");
+				return "Both adjustment numbers should either be in percents or be absolute values.";
+			}
+			
+			adjustStart = Integer.parseInt(adjustStartString);
+			adjustStartPercent = 0.0;
+			
+			adjustEnd = Integer.parseInt(adjustEndString);
+			adjustEndPercent = 0.0;
+		}
+
+		int LSeq = info.getSequenceLen();
+		
+		File libFile = new File(info.getPath() + libName + ".inspou");
+		BufferedReader br = new BufferedReader(new FileReader(libFile));
+
+		ArrayList<Integer> insertions = new ArrayList<Integer>();
+		for (int i = 0; i < LSeq; i++){
+			insertions.add(0);
+		}
+
+		String line = br.readLine();
+		while(line != null){
+			int tempPos = Integer.parseInt(line.substring(0, line.indexOf("\t")));
+			line = line.substring(line.indexOf("\t") + 1);
+			line = line.substring(line.indexOf("\t") + 1);
+			int tempNum = Integer.parseInt(line);
+			if (tempPos > LSeq){
+				JOptionPane.showMessageDialog(null, "ERROR: insertion at position " + tempPos + " whereas chromosome length is " + LSeq + ".", "Error", JOptionPane.ERROR_MESSAGE);
+				return Messages.failMsg;
+			}
+
+			if (ifUniqueInsertions){
+				insertions.set(tempPos, insertions.get(tempPos) + 1);
+			}else{
+				insertions.set(tempPos, insertions.get(tempPos) + tempNum);
+			}
+			line = br.readLine();
+		}
+
+		br.close();
+		File tableFile = new File(info.getPath() + tableName + ".table.xls"); //REPLACE
+		br = new BufferedReader(new FileReader(tableFile));
+
+		File newTableFile = new File(info.getPath() + tableName + ".new");
+		BufferedWriter bw = new BufferedWriter(new FileWriter(newTableFile));
+
+		//Writing File Header at First
+		line = br.readLine();
+		bw.write(line + "\t" + "" + "\n");
+
+		line = br.readLine();
+		bw.write(line + "\t" + "" + "\n");
+
+		line = br.readLine();
+		if (ifUniqueInsertions){
+			bw.write(line + "\tunique_insertion_density: " + libName + "\n");
+		}else{
+			bw.write(line + "\tall_reads_density: " + libName + "\n");
+		}
+
+		line = br.readLine();
+		bw.write(line + "\t" + adjustStartString + "\n");
+
+		line = br.readLine();
+		bw.write(line + "\t" + adjustEndString + "\n");
+
+		//Reading Main Data and Process it
+		line = br.readLine();
+		while(line != null){
+			String tempLine = new String(line);
+			Tabs gene = new Tabs(tempLine);
+
+			int GeneL = gene.getStart_coord();
+			int GeneR = gene.getEnd_coord();
+
+			int start = gene.getStart_coord();
+			int end = gene.getEnd_coord();
+			int geneLen = end - start + 1;
+			if (gene.getStrand().compareTo("+") == 0){
+				start = GeneL - adjustStart;
+				end = GeneR + adjustEnd;
+				geneLen = end - start + 1;
+				start = (int) (GeneL - adjustStartPercent * geneLen);
+				end = (int) (GeneR + adjustEndPercent * geneLen);
+			}else if (gene.getStrand().compareTo("-") == 0){
+				start = GeneL - adjustEnd;
+				end = GeneR + adjustStart;
+				geneLen = end - start + 1;
+				start = (int) (GeneL - adjustEndPercent * geneLen);
+				end = (int) (GeneR + adjustStartPercent * geneLen);
+			}else{
+				logger.error("Gene strand is not + or -  ...  skipping end adjustments");
+			}
+
+			if  (Math.abs(adjustEnd) + Math.abs(adjustStart) < geneLen){
+				int count = 0;
+				for (int i = start; i <= end; i++){
+					count += insertions.get(i);
+				}
+
+				bw.write(line + "\t" + ((double)count / geneLen) + "\n");
+			}else{
+				bw.write(line + "\t" + Double.NaN + "\n");
+			}
+
+			line = br.readLine();
+		}
+
+		br.close();
+		bw.close();
+
+		if(tableFile.delete()){
+			if(newTableFile.renameTo(tableFile)){
+				return Messages.successMsg;
+			}
+		}else{
+			if(tableFile.delete()){
+				if(newTableFile.renameTo(tableFile)){
+					return Messages.successMsg;
+				}
+			}
+		}
+
+		return Messages.failMsg;
+	}
 
 	public static String add(String libName, String tableName, int windowLen, int step, String adjustStartString, String adjustEndString, int seqLen, boolean ifUniqueInsertions, JProgressBar progressBar, ProjectInfo info) throws IOException {
 

@@ -58,6 +58,7 @@ public class AddMoreIndices extends JFrame {
 	@SuppressWarnings("unused")
 	private JFrame parentFrame = null;
 
+	private JCheckBox densityNormalizeTAChk = new JCheckBox("Normalized to TA sites instead of gene length");
 	private JRadioButton step2UniqueRadio = new JRadioButton("Count only unique insertions");
 	private JRadioButton step2AllRadio = new JRadioButton("Count all sequence reads");
 	private JButton step2PlotBtn = new JButton("Plot");
@@ -596,18 +597,18 @@ public class AddMoreIndices extends JFrame {
 		panel_1.add(step2ErrorLbl);
 		
 		JSeparator separator = new JSeparator();
-		separator.setBounds(10, 187, 716, 2);
+		separator.setBounds(11, 267, 716, 2);
 		panel_1.add(separator);
 		
 		JLabel lblPlotDensity = new JXLabel("Plot density / number of insertions:");
-		lblPlotDensity.setBounds(10, 201, 716, 15);
+		lblPlotDensity.setBounds(11, 281, 716, 15);
 		panel_1.add(lblPlotDensity);
 		
 		JLabel lblChooseAColumn = new JLabel("Choose a column in the table:");
-		lblChooseAColumn.setBounds(10, 228, 281, 15);
+		lblChooseAColumn.setBounds(11, 308, 281, 15);
 		panel_1.add(lblChooseAColumn);
 		
-		step2ColumnCombo.setBounds(253, 223, 473, 24);
+		step2ColumnCombo.setBounds(254, 303, 473, 24);
 		panel_1.add(step2ColumnCombo);
 		
 		step2PlotBtn.addActionListener(new ActionListener() {
@@ -615,16 +616,16 @@ public class AddMoreIndices extends JFrame {
 				plotDensities();
 			}
 		});
-		step2PlotBtn.setBounds(637, 288, 89, 25);
+		step2PlotBtn.setBounds(638, 368, 89, 25);
 		panel_1.add(step2PlotBtn);
 		
 		JLabel lblAverageNumberOf = new JLabel("Smoothness");
-		lblAverageNumberOf.setBounds(9, 261, 234, 14);
+		lblAverageNumberOf.setBounds(10, 341, 234, 14);
 		panel_1.add(lblAverageNumberOf);
 		
 		step2AverageTxt = new JTextField();
 		step2AverageTxt.setText("20");
-		step2AverageTxt.setBounds(253, 258, 86, 20);
+		step2AverageTxt.setBounds(254, 338, 86, 20);
 		panel_1.add(step2AverageTxt);
 		step2AverageTxt.setColumns(10);
 		
@@ -640,8 +641,25 @@ public class AddMoreIndices extends JFrame {
 		label_16.setToolTipText("Click me!");
 		label_16.setForeground(Color.BLUE);
 		label_16.setFont(new Font("Dialog", Font.PLAIN, 11));
-		label_16.setBounds(350, 261, 88, 14);
+		label_16.setBounds(351, 341, 88, 14);
 		panel_1.add(label_16);
+		
+		densityNormalizeTAChk.setBounds(10, 141, 358, 23);
+		panel_1.add(densityNormalizeTAChk);
+		
+		JLabel label_17 = new JLabel("(?)");
+		label_17.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				JOptionPane.showMessageDialog(AddMoreIndices.this, "This is suitable for analysis of Mariner transposon libraries. Instead of number of reads/insertions per\n"
+						+ "gene length the program will record number of reads/insertions per TA site within the gene.");
+			}
+		});
+		label_17.setToolTipText("Click me!");
+		label_17.setForeground(Color.BLUE);
+		label_17.setFont(new Font("Dialog", Font.PLAIN, 11));
+		label_17.setBounds(371, 145, 88, 14);
+		panel_1.add(label_17);
 		
 		JPanel panel_3 = new JPanel();
 		tabbedPane.addTab("Add insertion counts", null, panel_3, null);
@@ -921,6 +939,7 @@ public class AddMoreIndices extends JFrame {
 		final String libraryName = (String) step2Combo.getSelectedItem(); 
 		final String adjStart = step2AdjustStart.getText();
 		final String adjEnd = step2AdjustEnd.getText();
+		final boolean normalizeTA = densityNormalizeTAChk.isSelected();
 		
 		countInsPleaseWaitLbl.setVisible(true);
 		countInsBtn.setEnabled(false);
@@ -930,9 +949,14 @@ public class AddMoreIndices extends JFrame {
 			@Override
 			public void run() {
 				try {
-					if (AddColumns.calcInsertionDensity(libraryName, tableName, adjStart, adjEnd, step2UniqueRadio.isSelected(), info).compareTo(Messages.successMsg) == 0){
-						JOptionPane.showMessageDialog(AddMoreIndices.this, "Data added");
-					}else{
+					if (!normalizeTA){
+						if (AddColumns.calcInsertionDensity(libraryName, tableName, adjStart, adjEnd, step2UniqueRadio.isSelected(), info).compareTo(Messages.successMsg) == 0)
+							JOptionPane.showMessageDialog(AddMoreIndices.this, "Data added");
+					}else if (normalizeTA){
+						if (AddColumns.calcInsertionDensityTA(libraryName, tableName, adjStart, adjEnd, step2UniqueRadio.isSelected(), info).compareTo(Messages.successMsg) == 0)
+							JOptionPane.showMessageDialog(AddMoreIndices.this, "Data added");
+					}
+					else{
 						JOptionPane.showMessageDialog(AddMoreIndices.this, "There was some problem, data was not added!!!", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 					
