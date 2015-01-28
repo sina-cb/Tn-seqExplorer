@@ -58,6 +58,7 @@ public class AddMoreIndices extends JFrame {
 	@SuppressWarnings("unused")
 	private JFrame parentFrame = null;
 
+	private JButton densityFNABtn = new JButton("Browse");
 	private JCheckBox densityNormalizeTAChk = new JCheckBox("Normalized to TA sites instead of gene length");
 	private JRadioButton step2UniqueRadio = new JRadioButton("Count only unique insertions");
 	private JRadioButton step2AllRadio = new JRadioButton("Count all sequence reads");
@@ -101,6 +102,7 @@ public class AddMoreIndices extends JFrame {
 	private JTextField step2AdjustStart;
 	private JTextField step2AdjustEnd;
 	private JTextField step2AverageTxt;
+	private JTextField densityFNATxt;
 	
 	/**
 	 * Create the frame.
@@ -585,7 +587,7 @@ public class AddMoreIndices extends JFrame {
 				calcInsertionDensity();
 			}
 		});
-		btnAdd.setBounds(637, 152, 89, 23);
+		btnAdd.setBounds(637, 205, 89, 23);
 		panel_1.add(btnAdd);
 		
 		step2WaitLbl.setIcon(new ImageIcon(AddMoreIndices.class.getResource("/resources/load.gif")));
@@ -597,18 +599,18 @@ public class AddMoreIndices extends JFrame {
 		panel_1.add(step2ErrorLbl);
 		
 		JSeparator separator = new JSeparator();
-		separator.setBounds(11, 267, 716, 2);
+		separator.setBounds(11, 251, 716, 2);
 		panel_1.add(separator);
 		
 		JLabel lblPlotDensity = new JXLabel("Plot density / number of insertions:");
-		lblPlotDensity.setBounds(11, 281, 716, 15);
+		lblPlotDensity.setBounds(11, 265, 716, 15);
 		panel_1.add(lblPlotDensity);
 		
 		JLabel lblChooseAColumn = new JLabel("Choose a column in the table:");
-		lblChooseAColumn.setBounds(11, 308, 281, 15);
+		lblChooseAColumn.setBounds(11, 292, 281, 15);
 		panel_1.add(lblChooseAColumn);
 		
-		step2ColumnCombo.setBounds(254, 303, 473, 24);
+		step2ColumnCombo.setBounds(254, 287, 473, 24);
 		panel_1.add(step2ColumnCombo);
 		
 		step2PlotBtn.addActionListener(new ActionListener() {
@@ -616,16 +618,16 @@ public class AddMoreIndices extends JFrame {
 				plotDensities();
 			}
 		});
-		step2PlotBtn.setBounds(638, 368, 89, 25);
+		step2PlotBtn.setBounds(638, 352, 89, 25);
 		panel_1.add(step2PlotBtn);
 		
 		JLabel lblAverageNumberOf = new JLabel("Smoothness");
-		lblAverageNumberOf.setBounds(10, 341, 234, 14);
+		lblAverageNumberOf.setBounds(10, 325, 234, 14);
 		panel_1.add(lblAverageNumberOf);
 		
 		step2AverageTxt = new JTextField();
 		step2AverageTxt.setText("20");
-		step2AverageTxt.setBounds(254, 338, 86, 20);
+		step2AverageTxt.setBounds(254, 322, 86, 20);
 		panel_1.add(step2AverageTxt);
 		step2AverageTxt.setColumns(10);
 		
@@ -641,8 +643,21 @@ public class AddMoreIndices extends JFrame {
 		label_16.setToolTipText("Click me!");
 		label_16.setForeground(Color.BLUE);
 		label_16.setFont(new Font("Dialog", Font.PLAIN, 11));
-		label_16.setBounds(351, 341, 88, 14);
+		label_16.setBounds(351, 325, 88, 14);
 		panel_1.add(label_16);
+		densityNormalizeTAChk.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if (densityNormalizeTAChk.isSelected()){
+					densityFNABtn.setEnabled(true);
+					densityFNATxt.setEnabled(true);
+				}else{
+					densityFNABtn.setEnabled(false);
+					densityFNATxt.setEnabled(false);
+				}
+			}
+		});
+
 		
 		densityNormalizeTAChk.setBounds(10, 141, 358, 23);
 		panel_1.add(densityNormalizeTAChk);
@@ -660,6 +675,29 @@ public class AddMoreIndices extends JFrame {
 		label_17.setFont(new Font("Dialog", Font.PLAIN, 11));
 		label_17.setBounds(371, 145, 88, 14);
 		panel_1.add(label_17);
+		
+		JLabel label_18 = new JLabel("Select the 'FNA' File:");
+		label_18.setBounds(10, 175, 98, 14);
+		panel_1.add(label_18);
+		
+		densityFNATxt = new JTextField();
+		densityFNATxt.setEnabled(false);
+		densityFNATxt.setEditable(false);
+		densityFNATxt.setColumns(10);
+		densityFNATxt.setBounds(118, 172, 509, 20);
+		panel_1.add(densityFNATxt);
+		densityFNABtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				@SuppressWarnings("unused")
+				SelectFNA fna = new SelectFNA(info, AddMoreIndices.this, densityFNATxt);
+				AddMoreIndices.this.setVisible(false);
+			}
+		});
+		densityFNABtn.setEnabled(false);
+		
+		densityFNABtn.setToolTipText("Select a FNA file");
+		densityFNABtn.setBounds(637, 171, 89, 23);
+		panel_1.add(densityFNABtn);
 		
 		JPanel panel_3 = new JPanel();
 		tabbedPane.addTab("Add insertion counts", null, panel_3, null);
@@ -939,7 +977,13 @@ public class AddMoreIndices extends JFrame {
 		final String libraryName = (String) step2Combo.getSelectedItem(); 
 		final String adjStart = step2AdjustStart.getText();
 		final String adjEnd = step2AdjustEnd.getText();
+		final String fnaPath = densityFNATxt.getText();
 		final boolean normalizeTA = densityNormalizeTAChk.isSelected();
+		
+		if (normalizeTA && (fnaPath.equals("") || fnaPath == null)){
+			JOptionPane.showMessageDialog(AddMoreIndices.this, "Please select the FNA file!");
+			return;
+		}
 		
 		countInsPleaseWaitLbl.setVisible(true);
 		countInsBtn.setEnabled(false);
@@ -953,7 +997,7 @@ public class AddMoreIndices extends JFrame {
 						if (AddColumns.calcInsertionDensity(libraryName, tableName, adjStart, adjEnd, step2UniqueRadio.isSelected(), info).compareTo(Messages.successMsg) == 0)
 							JOptionPane.showMessageDialog(AddMoreIndices.this, "Data added");
 					}else if (normalizeTA){
-						if (AddColumns.calcInsertionDensityTA(libraryName, tableName, adjStart, adjEnd, step2UniqueRadio.isSelected(), info).compareTo(Messages.successMsg) == 0)
+						if (AddColumns.calcInsertionDensityTA(libraryName, tableName, adjStart, adjEnd, step2UniqueRadio.isSelected(), fnaPath, info).compareTo(Messages.successMsg) == 0)
 							JOptionPane.showMessageDialog(AddMoreIndices.this, "Data added");
 					}
 					else{

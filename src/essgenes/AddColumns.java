@@ -316,8 +316,11 @@ public class AddColumns {
 	}
 	
 	@SuppressWarnings("resource")
-	public static String calcInsertionDensityTA(String libName, String tableName, String adjustStartString, String adjustEndString, boolean ifUniqueInsertions, ProjectInfo info) throws IOException{
+	public static String calcInsertionDensityTA(String libName, String tableName, String adjustStartString, String adjustEndString, boolean ifUniqueInsertions, String fnaPath, ProjectInfo info) throws IOException{
 
+		File fnaFile = new File(fnaPath);
+		BufferedReader fnaBr = new BufferedReader(new FileReader(fnaFile));
+		
 		int adjustStart;
 		double adjustStartPercent;
 		int adjustEnd;
@@ -442,6 +445,7 @@ public class AddColumns {
 					count += insertions.get(i);
 				}
 
+				JOptionPane.showMessageDialog(null, "Count TA Sites");
 				bw.write(line + "\t" + ((double)count / geneLen) + "\n");
 			}else{
 				bw.write(line + "\t" + Double.NaN + "\n");
@@ -452,6 +456,7 @@ public class AddColumns {
 
 		br.close();
 		bw.close();
+		fnaBr.close();
 
 		if(tableFile.delete()){
 			if(newTableFile.renameTo(tableFile)){
