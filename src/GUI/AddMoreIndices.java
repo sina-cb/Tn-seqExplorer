@@ -688,7 +688,6 @@ public class AddMoreIndices extends JFrame {
 		panel_1.add(densityFNATxt);
 		densityFNABtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				@SuppressWarnings("unused")
 				SelectFNA fna = new SelectFNA(info, AddMoreIndices.this, densityFNATxt);
 				
 				//Search for FNA
