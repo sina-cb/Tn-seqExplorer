@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
@@ -321,6 +322,27 @@ public class AddColumns {
 		File fnaFile = new File(fnaPath);
 		BufferedReader fnaBr = new BufferedReader(new FileReader(fnaFile));
 		
+		StringBuffer sb = new StringBuffer();
+		String fnaLine = fnaBr.readLine();
+		fnaLine = fnaBr.readLine();
+		
+		while(fnaLine != null){
+			sb.append(fnaLine);
+			fnaLine = fnaBr.readLine();
+		}
+		fnaBr.close();
+		
+		fnaLine = sb.toString();
+		
+		List<Integer> taSite = new ArrayList<Integer>();
+		for (int i = 0; i < fnaLine.length() - 1; i++){
+			if (fnaLine.charAt(i) == 'T' && fnaLine.charAt(i + 1) == 'A'){
+				taSite.add(1);
+			}else{
+				taSite.add(0);
+			}
+		}
+		
 		int adjustStart;
 		double adjustStartPercent;
 		int adjustEnd;
@@ -400,9 +422,9 @@ public class AddColumns {
 
 		line = br.readLine();
 		if (ifUniqueInsertions){
-			bw.write(line + "\tunique_insertion_density: " + libName + "\n");
+			bw.write(line + "\tunique_insertion_density_TA: " + libName + "\n");
 		}else{
-			bw.write(line + "\tall_reads_density: " + libName + "\n");
+			bw.write(line + "\tall_reads_density_TA: " + libName + "\n");
 		}
 
 		line = br.readLine();
@@ -441,12 +463,17 @@ public class AddColumns {
 
 			if  (Math.abs(adjustEnd) + Math.abs(adjustStart) < geneLen){
 				int count = 0;
+				int countTA = 0;
 				for (int i = start; i <= end; i++){
 					count += insertions.get(i);
+					countTA += taSite.get(i);
 				}
 
-				JOptionPane.showMessageDialog(null, "Count TA Sites");
-				bw.write(line + "\t" + ((double)count / geneLen) + "\n");
+				if (countTA == 0){
+					bw.write(line + "\t" + Double.NaN + "\n");
+				}else{
+					bw.write(line + "\t" + ((double)count / countTA) + "\n");
+				}
 			}else{
 				bw.write(line + "\t" + Double.NaN + "\n");
 			}

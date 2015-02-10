@@ -677,19 +677,31 @@ public class AddMoreIndices extends JFrame {
 		panel_1.add(label_17);
 		
 		JLabel label_18 = new JLabel("Select the 'FNA' File:");
-		label_18.setBounds(10, 175, 98, 14);
+		label_18.setBounds(10, 175, 164, 14);
 		panel_1.add(label_18);
 		
 		densityFNATxt = new JTextField();
 		densityFNATxt.setEnabled(false);
 		densityFNATxt.setEditable(false);
 		densityFNATxt.setColumns(10);
-		densityFNATxt.setBounds(118, 172, 509, 20);
+		densityFNATxt.setBounds(176, 172, 451, 20);
 		panel_1.add(densityFNATxt);
 		densityFNABtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				@SuppressWarnings("unused")
 				SelectFNA fna = new SelectFNA(info, AddMoreIndices.this, densityFNATxt);
+				
+				//Search for FNA
+				File folder = new File(AddMoreIndices.this.info.getPath());
+				File[] listOfFiles = folder.listFiles();
+
+				for (int i = 0; i < listOfFiles.length; i++) {
+					if (listOfFiles[i].isFile() && listOfFiles[i].getName().endsWith(".fna")) {
+						fna.setFNAPath(listOfFiles[i].getAbsolutePath());
+						break;
+					}
+				}
+				
 				AddMoreIndices.this.setVisible(false);
 			}
 		});

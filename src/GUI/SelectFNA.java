@@ -406,5 +406,9 @@ public class SelectFNA extends JFrame {
 		
 		setLocationRelativeTo(parent);
 	}
+	
+	public void setFNAPath(String fnaPath){
+		gbkPathTxt.setText(fnaPath);
+	}
 
 }
