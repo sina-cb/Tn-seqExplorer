@@ -49,7 +49,11 @@ public class PlotData {
 		String line = br.readLine();
 		while (line != null){
 			String[] splitted = line.split("\t");
-			densities.add(Double.parseDouble(splitted[columnIndex]));
+			if (splitted[columnIndex].compareTo("NaN") == 0){
+				densities.add(0.0);
+			}else{
+				densities.add(Double.parseDouble(splitted[columnIndex]));
+			}
 			line = br.readLine();
 		}
 		br.close();

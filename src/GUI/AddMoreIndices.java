@@ -1206,9 +1206,9 @@ public class AddMoreIndices extends JFrame {
 	
 	private void countIns(){
 		
-		final String libraryName = (String) addLibraryCombo.getSelectedItem(); 
-		final String adjStart = adjustStartTxt.getText();
-		final String adjEnd = adjustEndTxt.getText();
+		final String libraryName = (String) countInsLibCombo.getSelectedItem(); 
+		final String adjStart = countInsAdjStartTxt.getText();
+		final String adjEnd = countInsAdjEndTxt.getText();
 		
 		countInsPleaseWaitLbl.setVisible(true);
 		countInsBtn.setEnabled(false);
@@ -1228,6 +1228,7 @@ public class AddMoreIndices extends JFrame {
 					countInsBtn.setEnabled(true);
 				} catch (IOException e) {
 					logger.error(e.getMessage());
+					e.printStackTrace();
 					return;
 				}
 			}
