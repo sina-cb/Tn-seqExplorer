@@ -27,7 +27,9 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -2135,47 +2137,109 @@ public class MainFrame extends JFrame {
 	}
 
 	private void BowtieCreateSam() throws IOException{
-
 		final String OSName = System.getProperty("os.name");
 
-		String temp = System.getProperty("java.io.tmpdir");
-		if (!temp.endsWith(File.separator)){
-			temp = temp + File.separator;
-		}
-		
-		System.out.println(temp);
-		
 		String bowtie2_build = "bowtie2-build";
 		String bowtie2 = "bowtie2";
-		
-		if (OSName.toLowerCase().contains("win")){
-			bowtie2_build = bowtie2_build + ".exe";
-			bowtie2 = bowtie2 + ".exe";
-		}
-		
-		File bowtie_index = new File(temp + bowtie2_build);
-		File bowtie_align = new File(temp + bowtie2);
+
+		File bowtie_index = null;
+		File bowtie_align = null;
 
 		if(OSName.toLowerCase().contains("win")){
+			String tempPath = System.getProperty("java.io.tmpdir");
+			if (!tempPath.endsWith(File.separator)){
+				tempPath = tempPath + File.separator;
+			}
+
+			bowtie2_build = bowtie2_build + ".exe";
+			bowtie2 = bowtie2 + ".exe";
+
+			bowtie_index = new File(tempPath + bowtie2_build);
+			bowtie_align = new File(tempPath + bowtie2);
+
 			URL indexer = MainFrame.class.getResource("/resources/bowtie-bin/win-64/bowtie2-build-s.exe");
 			URL aligner = MainFrame.class.getResource("/resources/bowtie-bin/win-64/bowtie2-align-s.exe");
-			
+
 			FileUtils.copyURLToFile(indexer, bowtie_index);
 			FileUtils.copyURLToFile(aligner, bowtie_align);
 		}else if (OSName.toLowerCase().contains("mac")){
+			String tempPath = ""; 
+
+			bowtie_index = new File(tempPath + bowtie2_build);
+			bowtie_align = new File(tempPath + bowtie2);
+
 			URL indexer = MainFrame.class.getResource("/resources/bowtie-bin/mac/bowtie2-build");
 			URL aligner = MainFrame.class.getResource("/resources/bowtie-bin/mac/bowtie2");
-			
+
 			FileUtils.copyURLToFile(indexer, bowtie_index);
 			FileUtils.copyURLToFile(aligner, bowtie_align);
+
+			Runtime.getRuntime().exec("chmod 777 " + bowtie_index.getAbsolutePath());
+			Runtime.getRuntime().exec("chmod 777 " + bowtie_align.getAbsolutePath());
+
+			String name = "bowtie2-align-l";
+			File temp_f = new File(tempPath + name);
+			URL temp_u = MainFrame.class.getResource("/resources/bowtie-bin/mac/" + name);
+			FileUtils.copyURLToFile(temp_u, temp_f);
+			Runtime.getRuntime().exec("chmod 777 " + temp_f.getAbsolutePath());
+
+			name = "bowtie2-align-s";
+			temp_f = new File(tempPath + name);
+			temp_u = MainFrame.class.getResource("/resources/bowtie-bin/mac/" + name);
+			FileUtils.copyURLToFile(temp_u, temp_f);
+			Runtime.getRuntime().exec("chmod 777 " + temp_f.getAbsolutePath());
+
+			name = "bowtie2-build-l";
+			temp_f = new File(tempPath + name);
+			temp_u = MainFrame.class.getResource("/resources/bowtie-bin/mac/" + name);
+			FileUtils.copyURLToFile(temp_u, temp_f);
+			Runtime.getRuntime().exec("chmod 777 " + temp_f.getAbsolutePath());
+
+			name = "bowtie2-build-s";
+			temp_f = new File(tempPath + name);
+			temp_u = MainFrame.class.getResource("/resources/bowtie-bin/mac/" + name);
+			FileUtils.copyURLToFile(temp_u, temp_f);
+			Runtime.getRuntime().exec("chmod 777 " + temp_f.getAbsolutePath());
 		}else{
+			String tempPath = ""; 
+
+			bowtie_index = new File(tempPath + bowtie2_build);
+			bowtie_align = new File(tempPath + bowtie2);
+
 			URL indexer = MainFrame.class.getResource("/resources/bowtie-bin/linux/bowtie2-build");
 			URL aligner = MainFrame.class.getResource("/resources/bowtie-bin/linux/bowtie2");
-			
+
 			FileUtils.copyURLToFile(indexer, bowtie_index);
 			FileUtils.copyURLToFile(aligner, bowtie_align);
+
+			Runtime.getRuntime().exec("chmod 777 " + bowtie_index.getAbsolutePath());
+			Runtime.getRuntime().exec("chmod 777 " + bowtie_align.getAbsolutePath());
+
+			String name = "bowtie2-align-l";
+			File temp_f = new File(tempPath + name);
+			URL temp_u = MainFrame.class.getResource("/resources/bowtie-bin/linux/" + name);
+			FileUtils.copyURLToFile(temp_u, temp_f);
+			Runtime.getRuntime().exec("chmod 777 " + temp_f.getAbsolutePath());
+
+			name = "bowtie2-align-s";
+			temp_f = new File(tempPath + name);
+			temp_u = MainFrame.class.getResource("/resources/bowtie-bin/linux/" + name);
+			FileUtils.copyURLToFile(temp_u, temp_f);
+			Runtime.getRuntime().exec("chmod 777 " + temp_f.getAbsolutePath());
+
+			name = "bowtie2-build-l";
+			temp_f = new File(tempPath + name);
+			temp_u = MainFrame.class.getResource("/resources/bowtie-bin/linux/" + name);
+			FileUtils.copyURLToFile(temp_u, temp_f);
+			Runtime.getRuntime().exec("chmod 777 " + temp_f.getAbsolutePath());
+
+			name = "bowtie2-build-s";
+			temp_f = new File(tempPath + name);
+			temp_u = MainFrame.class.getResource("/resources/bowtie-bin/linux/" + name);
+			FileUtils.copyURLToFile(temp_u, temp_f);
+			Runtime.getRuntime().exec("chmod 777 " + temp_f.getAbsolutePath());
 		}
-	
+
 		String bowtie_align_options = "-q"; 
 
 		if (bowtie_align == null || bowtie_index == null){
@@ -2238,7 +2302,7 @@ public class MainFrame extends JFrame {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					try{
+					try{						
 						if (OSName.toLowerCase().contains("win")){
 							Process index_p = null;
 
@@ -2251,7 +2315,7 @@ public class MainFrame extends JFrame {
 							while (true) {
 								line = r.readLine();
 								if (line == null) { break; }
-//								System.out.println(line);
+								//								System.out.println(line);
 							}
 
 							try {
@@ -2259,7 +2323,7 @@ public class MainFrame extends JFrame {
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}
-							
+
 							builder = new ProcessBuilder("cmd.exe", "/c", script_align);
 							builder.redirectErrorStream(true);
 							index_p = builder.start();
@@ -2268,7 +2332,7 @@ public class MainFrame extends JFrame {
 							while (true) {
 								line = r.readLine();
 								if (line == null) { break; }
-//								System.out.println(line);
+								//								System.out.println(line);
 							}
 
 							try {
@@ -2282,8 +2346,8 @@ public class MainFrame extends JFrame {
 							bowtieSamCreateBtn.setEnabled(true);
 
 							JOptionPane.showMessageDialog(MainFrame.this, "SAM file created successfully!");
-							
-						}else{
+
+						}else{	
 							Process index_p = null;
 							index_p = Runtime.getRuntime().exec(script_index);
 
@@ -2298,6 +2362,7 @@ public class MainFrame extends JFrame {
 							}
 
 							Process align_p = null;
+							System.out.println(script_align);
 							align_p = Runtime.getRuntime().exec(script_align);
 
 							process_exited = false;
