@@ -2161,7 +2161,7 @@ public class MainFrame extends JFrame {
 			FileUtils.copyURLToFile(indexer, bowtie_index);
 			FileUtils.copyURLToFile(aligner, bowtie_align);
 		}else if (OSName.toLowerCase().contains("mac")){
-			String tempPath = ""; 
+			String tempPath = "bowtie-bin/"; 
 
 			bowtie_index = new File(tempPath + bowtie2_build);
 			bowtie_align = new File(tempPath + bowtie2);
@@ -2199,7 +2199,7 @@ public class MainFrame extends JFrame {
 			FileUtils.copyURLToFile(temp_u, temp_f);
 			Runtime.getRuntime().exec("chmod 777 " + temp_f.getAbsolutePath());
 		}else{
-			String tempPath = ""; 
+			String tempPath = "bowtie-bin/"; 
 
 			bowtie_index = new File(tempPath + bowtie2_build);
 			bowtie_align = new File(tempPath + bowtie2);
@@ -2314,7 +2314,6 @@ public class MainFrame extends JFrame {
 							while (true) {
 								line = r.readLine();
 								if (line == null) { break; }
-								//								System.out.println(line);
 							}
 
 							try {
@@ -2331,7 +2330,6 @@ public class MainFrame extends JFrame {
 							while (true) {
 								line = r.readLine();
 								if (line == null) { break; }
-								//								System.out.println(line);
 							}
 
 							try {
