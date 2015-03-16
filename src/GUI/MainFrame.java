@@ -27,6 +27,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
@@ -942,7 +943,7 @@ public class MainFrame extends JFrame {
 						newPath = projectInfo.getPath() + PrepareFiles.prepareFileName(samFilePathTxt.getText(), "-temp.inspo");
 						newFile = new File(newPath);
 					}
-					
+
 					FileChannel destination;
 					FileChannel source;
 					try {
@@ -1921,18 +1922,12 @@ public class MainFrame extends JFrame {
 		panel_1.setLayout(null);
 
 		JPanel panel_2 = new JPanel();
-		panel_2.setBounds(12, 12, 801, 75);
+		panel_2.setBounds(12, 12, 801, 25);
 		panel_1.add(panel_2);
 		panel_2.setLayout(null);
 
-		JXLabel lblNewLabel_2 = new JXLabel("New label");
-		lblNewLabel_2.setBounds(0, 0, 757, 72);
-		panel_2.add(lblNewLabel_2);
-		lblNewLabel_2.setText("Title goes here!");
-		lblNewLabel_2.setLineWrap(true);
-
 		JPanel panel_4 = new JPanel();
-		panel_4.setBounds(12, 113, 799, 192);
+		panel_4.setBounds(12, 63, 799, 192);
 		panel_1.add(panel_4);
 		GridBagLayout gbl_panel_4 = new GridBagLayout();
 		gbl_panel_4.columnWidths = new int[]{0, 0, 0, 0};
@@ -2128,7 +2123,7 @@ public class MainFrame extends JFrame {
 		panel_4.add(bowtieSamCreateBtn, gbc_bowtieSamCreateBtn);
 
 		JSeparator separator_11 = new JSeparator();
-		separator_11.setBounds(12, 99, 823, 2);
+		separator_11.setBounds(12, 48, 823, 2);
 		panel_1.add(separator_11);
 
 		if(!hasSeqNum  || !hasGeneFile){
@@ -2147,24 +2142,27 @@ public class MainFrame extends JFrame {
 		File bowtie_index = null;
 		File bowtie_align = null;
 
-		if(OSName.contains("Windows") || OSName.contains("windows")){
-			JOptionPane.showMessageDialog(this, "Bowtie is not suported on Microsoft Windows, yet!");
-			return;
-
-			/*JOptionPane.showMessageDialog(this, "Bowtie requires Perl and Python to execute. \n"
-					+ "Please make sure that perl and python are installed on your system and are\n"
-					+ "available in your environment path. Otherwise, this section of the program\n"
-					+ "will fail.");
-			bowtie_index = new File("bowtie-bin\\win-64\\bowtie2-build");
-			bowtie_align = new File("bowtie-bin\\win-64\\bowtie2");*/
+		URL indexer;
+		URL aligner;
+		
+		if(OSName.toLowerCase().contains("win")){
+			indexer = MainFrame.class.getResource("/resources/bowtie-bin/win-64/bowtie2-build-s.exe");
+			aligner = MainFrame.class.getResource("/resources/bowtie-bin/win-64/bowtie2-align-s.exe");
 		}else if (OSName.toLowerCase().contains("mac")){
-			bowtie_index = new File("bowtie-bin/mac/bowtie2-build");
-			bowtie_align = new File("bowtie-bin/mac/bowtie2");
+			indexer = MainFrame.class.getResource("/resources/bowtie-bin/mac/bowtie2-build");
+			aligner = MainFrame.class.getResource("/resources/bowtie-bin/mac/bowtie2");
 		}else{
-			bowtie_index = new File("bowtie-bin/linux/bowtie2-build");
-			bowtie_align = new File("bowtie-bin/linux/bowtie2");
+			indexer = MainFrame.class.getResource("/resources/bowtie-bin/linux/bowtie2-build");
+			aligner = MainFrame.class.getResource("/resources/bowtie-bin/linux/bowtie2");
 		}
 
+		try {
+			bowtie_index = new File(indexer.toURI());
+			bowtie_align = new File(aligner.toURI());
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		
 		String bowtie_align_options = "-q"; 
 
 		if (bowtie_align == null || bowtie_index == null){
@@ -2228,50 +2226,83 @@ public class MainFrame extends JFrame {
 				@Override
 				public void run() {
 					try{
-						Process index_p = null;
-						if(OSName.contains("Windows") || OSName.contains("windows")){
-							System.err.println(script_index);
-							File modifyPath = new File("bowtie-bin\\win-64\\modify_path.bat");
-							String temp = String.format("cmd /c echo OFF && start %s && perl %s", modifyPath.getAbsolutePath(), script_index);
-							System.err.println(temp);
-							index_p = Runtime.getRuntime().exec(temp);
+						if (OSName.toLowerCase().contains("win")){
+							Process index_p = null;
+
+							ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", script_index);
+							builder.redirectErrorStream(true);
+							index_p = builder.start();
+
+							BufferedReader r = new BufferedReader(new InputStreamReader(index_p.getInputStream()));
+							String line;
+							while (true) {
+								line = r.readLine();
+								if (line == null) { break; }
+//								System.out.println(line);
+							}
+
+							try {
+								index_p.waitFor();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							
+							builder = new ProcessBuilder("cmd.exe", "/c", script_align);
+							builder.redirectErrorStream(true);
+							index_p = builder.start();
+
+							r = new BufferedReader(new InputStreamReader(index_p.getInputStream()));
+							while (true) {
+								line = r.readLine();
+								if (line == null) { break; }
+//								System.out.println(line);
+							}
+
+							try {
+								index_p.waitFor();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+
+							bowtieSamCreateBtn.setIcon(tempIcon);
+							bowtieSamCreateBtn.setText("Create SAM file");
+							bowtieSamCreateBtn.setEnabled(true);
+
+							JOptionPane.showMessageDialog(MainFrame.this, "SAM file created successfully!");
+							
 						}else{
+							Process index_p = null;
 							index_p = Runtime.getRuntime().exec(script_index);
-						}
 
-						boolean process_exited = false;
-						while(!process_exited){
-							try{
-								index_p.exitValue();
-								process_exited = true;
-							}catch(Exception e){
-								process_exited = false;
+							boolean process_exited = false;
+							while(!process_exited){
+								try{
+									index_p.exitValue();
+									process_exited = true;
+								}catch(Exception e){
+									process_exited = false;
+								}
 							}
-						}
 
-						Process align_p = null;
-						if(OSName.contains("Windows") || OSName.contains("windows")){
-							System.err.println(script_align);
-							align_p = Runtime.getRuntime().exec("perl " + script_align);
-						}else{
+							Process align_p = null;
 							align_p = Runtime.getRuntime().exec(script_align);
+
+							process_exited = false;
+							while(!process_exited){
+								try{
+									align_p.exitValue();
+									process_exited = true;
+								}catch(Exception e){
+									process_exited = false;
+								}
+							}		
+
+							bowtieSamCreateBtn.setIcon(tempIcon);
+							bowtieSamCreateBtn.setText("Create SAM file");
+							bowtieSamCreateBtn.setEnabled(true);
+
+							JOptionPane.showMessageDialog(MainFrame.this, "SAM file created successfully!");
 						}
-
-						process_exited = false;
-						while(!process_exited){
-							try{
-								align_p.exitValue();
-								process_exited = true;
-							}catch(Exception e){
-								process_exited = false;
-							}
-						}		
-
-						bowtieSamCreateBtn.setIcon(tempIcon);
-						bowtieSamCreateBtn.setText("Create SAM file");
-						bowtieSamCreateBtn.setEnabled(true);
-
-						JOptionPane.showMessageDialog(MainFrame.this, "SAM file created successfully!");
 					}catch(IOException e){
 						e.printStackTrace();
 					}
@@ -3221,7 +3252,7 @@ public class MainFrame extends JFrame {
 		}else{
 			bwaInstallBtn.setEnabled(false);
 			alreadyInstalledRadio.setSelected(true);
-			
+
 			//Search for FNA
 			File folder = new File(projectInfo.getPath());
 			File[] listOfFiles = folder.listFiles();
@@ -3695,7 +3726,7 @@ public class MainFrame extends JFrame {
 							}
 						}
 					}
-					
+
 					if (useTemp){
 						bw.write(PrepareFiles.prepareFileName(samFilePathTxt.getText(), "-temp.inspo") + "\n");
 						bw.write(PrepareFiles.prepareFileName(samFilePathTxt.getText(), "-temp.inspos") + "\n");
@@ -3714,22 +3745,22 @@ public class MainFrame extends JFrame {
 					loadingLbl.setVisible(false);
 
 					String libraryName = "";
-					
+
 					if (useTemp){
 						libraryName = JOptionPane.showInputDialog(MainFrame.this, "Enter the library's name:", 
 								PrepareFiles.prepareFileName(samFilePathTxt.getText(), "-temp"));
 						String selectedLib = PrepareFiles.prepareFileName(samFilePathTxt.getText(), "-temp");
-						
+
 						if (libraryName.endsWith("-temp")){
 							libraryName = PrepareFiles.prepareFileName(samFilePathTxt.getText(), "") + "-temp-" + (new Random().nextInt(1000));
 						}
-						
+
 						renameLibrary(libraryName, selectedLib);
-						
+
 					}else{
 						libraryName = JOptionPane.showInputDialog(MainFrame.this, "Enter the library's name:", 
 								PrepareFiles.prepareFileName(samFilePathTxt.getText(), ""));
-						
+
 						renameLibrary(libraryName, PrepareFiles.prepareFileName(samFilePathTxt.getText(), ""));
 					}
 
