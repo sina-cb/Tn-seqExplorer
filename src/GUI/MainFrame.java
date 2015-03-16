@@ -27,9 +27,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -2293,7 +2291,8 @@ public class MainFrame extends JFrame {
 			final String script_index = String.format("%s %s %s", bowtie_index.getAbsolutePath(), fnaPath, index_file);
 			final String script_align = String.format("%s %s -x %s -U %s -S %s", bowtie_align.getAbsolutePath(), bowtie_align_options, index_file, fastQPath, sam_file);
 
-			JOptionPane.showMessageDialog(this, "Creating the SAM file might take a few minutes, please be patient!");
+			JOptionPane.showMessageDialog(this, "Creating the SAM file might take a few minutes, please be patient!\n\n "
+					+ "Just make sure that there is no Space character present in the FASTQ file's path.");
 			bowtieSamCreateBtn.setText("Please wait...");
 			bowtieSamCreateBtn.setEnabled(false);
 			final Icon tempIcon = bowtieSamCreateBtn.getIcon();
