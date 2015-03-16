@@ -2359,7 +2359,6 @@ public class MainFrame extends JFrame {
 							}
 
 							Process align_p = null;
-							System.out.println(script_align);
 							align_p = Runtime.getRuntime().exec(script_align);
 
 							process_exited = false;
