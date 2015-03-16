@@ -27,7 +27,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
@@ -2139,30 +2138,44 @@ public class MainFrame extends JFrame {
 
 		final String OSName = System.getProperty("os.name");
 
-		File bowtie_index = null;
-		File bowtie_align = null;
-
-		URL indexer;
-		URL aligner;
+		String temp = System.getProperty("java.io.tmpdir");
+		if (!temp.endsWith(File.separator)){
+			temp = temp + File.separator;
+		}
 		
+		System.out.println(temp);
+		
+		String bowtie2_build = "bowtie2-build";
+		String bowtie2 = "bowtie2";
+		
+		if (OSName.toLowerCase().contains("win")){
+			bowtie2_build = bowtie2_build + ".exe";
+			bowtie2 = bowtie2 + ".exe";
+		}
+		
+		File bowtie_index = new File(temp + bowtie2_build);
+		File bowtie_align = new File(temp + bowtie2);
+
 		if(OSName.toLowerCase().contains("win")){
-			indexer = MainFrame.class.getResource("/resources/bowtie-bin/win-64/bowtie2-build-s.exe");
-			aligner = MainFrame.class.getResource("/resources/bowtie-bin/win-64/bowtie2-align-s.exe");
+			URL indexer = MainFrame.class.getResource("/resources/bowtie-bin/win-64/bowtie2-build-s.exe");
+			URL aligner = MainFrame.class.getResource("/resources/bowtie-bin/win-64/bowtie2-align-s.exe");
+			
+			FileUtils.copyURLToFile(indexer, bowtie_index);
+			FileUtils.copyURLToFile(aligner, bowtie_align);
 		}else if (OSName.toLowerCase().contains("mac")){
-			indexer = MainFrame.class.getResource("/resources/bowtie-bin/mac/bowtie2-build");
-			aligner = MainFrame.class.getResource("/resources/bowtie-bin/mac/bowtie2");
+			URL indexer = MainFrame.class.getResource("/resources/bowtie-bin/mac/bowtie2-build");
+			URL aligner = MainFrame.class.getResource("/resources/bowtie-bin/mac/bowtie2");
+			
+			FileUtils.copyURLToFile(indexer, bowtie_index);
+			FileUtils.copyURLToFile(aligner, bowtie_align);
 		}else{
-			indexer = MainFrame.class.getResource("/resources/bowtie-bin/linux/bowtie2-build");
-			aligner = MainFrame.class.getResource("/resources/bowtie-bin/linux/bowtie2");
+			URL indexer = MainFrame.class.getResource("/resources/bowtie-bin/linux/bowtie2-build");
+			URL aligner = MainFrame.class.getResource("/resources/bowtie-bin/linux/bowtie2");
+			
+			FileUtils.copyURLToFile(indexer, bowtie_index);
+			FileUtils.copyURLToFile(aligner, bowtie_align);
 		}
-
-		try {
-			bowtie_index = new File(indexer.toURI());
-			bowtie_align = new File(aligner.toURI());
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-		
+	
 		String bowtie_align_options = "-q"; 
 
 		if (bowtie_align == null || bowtie_index == null){
