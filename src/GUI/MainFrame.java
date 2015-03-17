@@ -2287,6 +2287,9 @@ public class MainFrame extends JFrame {
 
 			final String script_index = String.format("%s \"%s\" \"%s\"", bowtie_index.getAbsolutePath(), fnaPath, index_file);
 			final String script_align = String.format("%s %s -x \"%s\" -U \"%s\" -S \"%s\"", bowtie_align.getAbsolutePath(), bowtie_align_options, index_file, fastQPath, sam_file);
+			
+			final String script_index_linux = String.format("%s %s %s", bowtie_index.getAbsolutePath(), fnaPath, index_file);
+			final String script_align_linux = String.format("%s %s -x %s -U %s -S %s", bowtie_align.getAbsolutePath(), bowtie_align_options, index_file, fastQPath, sam_file);
 
 			JOptionPane.showMessageDialog(this, "Creating the SAM file might take a few minutes, please be patient!\n\n "
 					+ "Just make sure that there is no Space character present in the FASTQ file's path.");
@@ -2399,7 +2402,7 @@ public class MainFrame extends JFrame {
 
 						}else{	
 							Process index_p = null;
-							index_p = Runtime.getRuntime().exec(script_index);
+							index_p = Runtime.getRuntime().exec(script_index_linux);
 
 							boolean process_exited = false;
 							while(!process_exited){
@@ -2412,7 +2415,7 @@ public class MainFrame extends JFrame {
 							}
 
 							Process align_p = null;
-							align_p = Runtime.getRuntime().exec(script_align);
+							align_p = Runtime.getRuntime().exec(script_align_linux);
 
 							process_exited = false;
 							while(!process_exited){
