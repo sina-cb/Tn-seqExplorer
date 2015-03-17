@@ -441,8 +441,7 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 
 				Path currentRelativePath = Paths.get("");
-				String location = currentRelativePath.toAbsolutePath()
-						.toString();
+				String location = currentRelativePath.toAbsolutePath().toString();
 				JFileChooser fileChooser = new JFileChooser(location);
 				fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 				fileChooser.setFileFilter(new FileNameExtensionFilter("PTT Files (.ptt)", "ptt"));
@@ -2247,8 +2246,6 @@ public class MainFrame extends JFrame {
 		}
 
 		if (bowtie_index.exists() && bowtie_align.exists()){
-			//Do the magic here! :)
-
 			String fnaPath = bowtieFnaTxt.getText();
 			String fastQPath = bowtieFastqTxt.getText();
 			String samLoc = bowtieSamLocTxt.getText();
@@ -2288,8 +2285,8 @@ public class MainFrame extends JFrame {
 			String index_file = samLoc + samName + "_index";
 			String sam_file = samLoc + samName + ".sam";
 
-			final String script_index = String.format("%s %s %s", bowtie_index.getAbsolutePath(), fnaPath, index_file);
-			final String script_align = String.format("%s %s -x %s -U %s -S %s", bowtie_align.getAbsolutePath(), bowtie_align_options, index_file, fastQPath, sam_file);
+			final String script_index = String.format("%s \"%s\" \"%s\"", bowtie_index.getAbsolutePath(), fnaPath, index_file);
+			final String script_align = String.format("%s %s -x \"%s\" -U \"%s\" -S \"%s\"", bowtie_align.getAbsolutePath(), bowtie_align_options, index_file, fastQPath, sam_file);
 
 			JOptionPane.showMessageDialog(this, "Creating the SAM file might take a few minutes, please be patient!\n\n "
 					+ "Just make sure that there is no Space character present in the FASTQ file's path.");
@@ -2303,6 +2300,12 @@ public class MainFrame extends JFrame {
 				public void run() {
 					try{						
 						if (OSName.toLowerCase().contains("win")){
+							boolean succes = true;
+							String msg = "SAM file created successfully!";
+
+							StringBuilder indexerMSG = new StringBuilder();
+							StringBuilder builderMSG = new StringBuilder();
+
 							Process index_p = null;
 
 							ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", script_index);
@@ -2314,6 +2317,14 @@ public class MainFrame extends JFrame {
 							while (true) {
 								line = r.readLine();
 								if (line == null) { break; }
+
+								indexerMSG.append(line + "\n");
+
+								if (line.toLowerCase().contains("error")){
+									succes = false;
+									msg = line;
+									break;
+								}
 							}
 
 							try {
@@ -2322,27 +2333,69 @@ public class MainFrame extends JFrame {
 								e.printStackTrace();
 							}
 
-							builder = new ProcessBuilder("cmd.exe", "/c", script_align);
-							builder.redirectErrorStream(true);
-							index_p = builder.start();
+							if (succes){
+								builder = new ProcessBuilder("cmd.exe", "/c", script_align);
+								builder.redirectErrorStream(true);
+								index_p = builder.start();
 
-							r = new BufferedReader(new InputStreamReader(index_p.getInputStream()));
-							while (true) {
-								line = r.readLine();
-								if (line == null) { break; }
-							}
+								r = new BufferedReader(new InputStreamReader(index_p.getInputStream()));
+								while (true) {
+									line = r.readLine();
+									if (line == null) { break; }
 
-							try {
-								index_p.waitFor();
-							} catch (InterruptedException e) {
-								e.printStackTrace();
+									builderMSG.append(line + "\n");
+
+									if (line.toLowerCase().contains("error")){
+										succes = false;
+										msg = line;
+										break;
+									}
+								}
+
+								try {
+									index_p.waitFor();
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
 							}
 
 							bowtieSamCreateBtn.setIcon(tempIcon);
 							bowtieSamCreateBtn.setText("Create SAM file");
 							bowtieSamCreateBtn.setEnabled(true);
 
-							JOptionPane.showMessageDialog(MainFrame.this, "SAM file created successfully!");
+							if (succes){
+								JOptionPane.showMessageDialog(MainFrame.this, msg);
+							}else{
+								String temp_msg = "SAM file creation faild due to the following error:\n" + msg + "\n\n Do you want to save the Bowtie2 outputs to a log file?";
+								int option = JOptionPane.showConfirmDialog(MainFrame.this, temp_msg, "Error", JOptionPane.YES_NO_OPTION);
+
+								if (option == JOptionPane.YES_OPTION){
+									Path currentRelativePath = Paths.get("");
+									String location = currentRelativePath.toAbsolutePath().toString();
+									JFileChooser fileChooser = new JFileChooser(location);
+									
+									int result = fileChooser.showSaveDialog(MainFrame.this);
+
+									if (result == JFileChooser.APPROVE_OPTION){
+										File output = fileChooser.getSelectedFile();
+										BufferedWriter bw = new BufferedWriter(new FileWriter(output));
+										
+										bw.write("========================\nIndexer log:\n\n");
+										bw.write(indexerMSG.toString());
+										
+										bw.write("\n\n========================\nBuilder log:\n\n");
+										bw.write(builderMSG.toString());
+										
+										bw.close();
+										
+										JOptionPane.showMessageDialog(MainFrame.this, "Log file saved in\n" + output.getAbsolutePath());
+										
+									}else{
+										JOptionPane.showMessageDialog(MainFrame.this, "Faild to save the log file.");
+										return;
+									}
+								}
+							}
 
 						}else{	
 							Process index_p = null;
@@ -2374,7 +2427,7 @@ public class MainFrame extends JFrame {
 							bowtieSamCreateBtn.setIcon(tempIcon);
 							bowtieSamCreateBtn.setText("Create SAM file");
 							bowtieSamCreateBtn.setEnabled(true);
-
+							
 							JOptionPane.showMessageDialog(MainFrame.this, "SAM file created successfully!");
 						}
 					}catch(IOException e){
