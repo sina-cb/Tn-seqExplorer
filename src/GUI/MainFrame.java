@@ -2307,6 +2307,31 @@ public class MainFrame extends JFrame {
 					String msg = "SAM file created!";
 					try{						
 						if (OSName.toLowerCase().contains("win")){
+
+							boolean if64 = false;
+							{
+								Process win_ver_check = null;
+								ProcessBuilder builder_temp = new ProcessBuilder("cmd.exe", "/c", "wmic os get osarchitecture");
+								builder_temp.redirectErrorStream(true);
+								win_ver_check = builder_temp.start();
+
+								BufferedReader r = new BufferedReader(new InputStreamReader(win_ver_check.getInputStream()));
+								String line;
+								while (true) {
+									line = r.readLine();
+									if (line == null) { break; }
+									if (line.toLowerCase().contains("64")){
+										if64 = true;
+										break;
+									}
+								}
+							}
+							
+							if (!if64){
+								JOptionPane.showMessageDialog(MainFrame.this, "Bowtie2 runs only on 32bits version of Windows");
+								return;
+							}
+
 							Process index_p = null;
 
 							ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", script_index);
