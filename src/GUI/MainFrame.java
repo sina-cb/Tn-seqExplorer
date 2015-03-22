@@ -518,7 +518,7 @@ public class MainFrame extends JFrame {
 				rntFileTxt.setEnabled(false);
 
 				ftpFirstLevelCombo.removeAllItems();
-				ftpFirstLevelCombo.addItem("Retrieving Bacterias List, Please Wait...");
+				ftpFirstLevelCombo.addItem("Retrieving genome information, Please Wait...");
 				ftpSecondLevelCombo.setEnabled(false);
 				downloadBtn.setEnabled(false);
 
@@ -2076,6 +2076,16 @@ public class MainFrame extends JFrame {
 
 				if (result == JFileChooser.APPROVE_OPTION){
 					bowtieSamLocTxt.setText(fileChooser.getSelectedFile().getAbsolutePath());
+					
+					File sam_loc = new File(projectInfo.getPath() + "sam_loc");
+					try{
+						BufferedWriter bw = new BufferedWriter(new FileWriter(sam_loc));
+						bw.write(fileChooser.getSelectedFile().getAbsolutePath());
+						bw.close();
+					}catch (IOException e){
+						e.printStackTrace();
+					}
+					
 				}else{
 					return;
 				}
@@ -2284,6 +2294,7 @@ public class MainFrame extends JFrame {
 
 			String index_file = samLoc + samName + "_index";
 			final String sam_file = samLoc + samName + ".sam";
+			final String location_temp = samLoc;
 
 			final String script_index = String.format("%s \"%s\" \"%s\"", bowtie_index.getAbsolutePath(), fnaPath, index_file);
 			final String script_align = String.format("%s %s -x \"%s\" -U \"%s\" -S \"%s\"", bowtie_align.getAbsolutePath(), bowtie_align_options, index_file, fastQPath, sam_file);
@@ -2292,7 +2303,7 @@ public class MainFrame extends JFrame {
 			final String script_align_linux = String.format("%s %s -x %s -U %s -S %s", bowtie_align.getAbsolutePath(), bowtie_align_options, index_file, fastQPath, sam_file);
 
 			JOptionPane.showMessageDialog(this, "Creating the SAM file might take a few minutes, please be patient!\n\n "
-					+ "Just make sure that there is no Space character present in the FASTQ file's path.");
+					+ "Make sure that there is no Space character present in the FASTQ file's path.");
 			bowtieSamCreateBtn.setText("Please wait...");
 			bowtieSamCreateBtn.setEnabled(false);
 			final Icon tempIcon = bowtieSamCreateBtn.getIcon();
@@ -2359,6 +2370,9 @@ public class MainFrame extends JFrame {
 							}
 
 						}else{	
+
+							///////////////////////////////////////////////////////////////////////////////
+
 							Process index_p = null;
 							index_p = Runtime.getRuntime().exec(script_index_linux);
 
@@ -2376,7 +2390,7 @@ public class MainFrame extends JFrame {
 									break;
 								}
 							}
-							
+
 							boolean process_exited = false;
 							while(!process_exited){
 								try{
@@ -2404,7 +2418,7 @@ public class MainFrame extends JFrame {
 									break;
 								}
 							}
-							
+
 							process_exited = false;
 							while(!process_exited){
 								try{
@@ -2424,17 +2438,17 @@ public class MainFrame extends JFrame {
 						success = false;
 						msg = "SAM file does not exist due to an unknown error.";
 					}
-					
+
 					if (sam_file_f.length() == 0){
 						success = false;
 						msg = "SAM file size is 0 due to an unknown error."; 
 					}
-					
+
 					try{
 						if (success){
 							JOptionPane.showMessageDialog(MainFrame.this, msg);
 						}else{
-							String temp_msg = "SAM file creation faild due to the following error:\n" + msg + "\n\n Do you want to save the Bowtie2 outputs to a log file?";
+							String temp_msg = "SAM file creation faild due to the following error:\n" + msg + "\n\n Do you want to save the Bowtie2 error log?";
 							int option = JOptionPane.showConfirmDialog(MainFrame.this, temp_msg, "Error", JOptionPane.YES_NO_OPTION);
 
 							if (option == JOptionPane.YES_OPTION){
@@ -2466,6 +2480,17 @@ public class MainFrame extends JFrame {
 						}
 					}catch(IOException e){
 						e.printStackTrace();
+					}
+
+					///// Delete TempFiles
+					File folder = new File(location_temp);
+					File[] listOfFiles = folder.listFiles();
+					for (int i = 0; i < listOfFiles.length; i++) {
+						if (listOfFiles[i].isFile()) {
+							if (listOfFiles[i].getName().toLowerCase().contains("_index") || listOfFiles[i].getName().toLowerCase().endsWith("bt2")){
+								listOfFiles[i].delete();
+							}	
+						}
 					}
 
 					bowtieSamCreateBtn.setIcon(tempIcon);
@@ -3442,6 +3467,30 @@ public class MainFrame extends JFrame {
 				bowtieFnaTxt.setText(listOfFiles[i].getAbsolutePath());
 				break;
 			}
+		}
+
+		try{
+			if (bowtieSamLocTxt.getText() == null || bowtieSamLocTxt.getText().equals("")){
+				folder = new File(projectInfo.getPath());
+				listOfFiles = folder.listFiles();
+
+				String line = "";
+				for (int i = 0; i < listOfFiles.length; i++) {
+					if (listOfFiles[i].isFile() && listOfFiles[i].getName().endsWith("sam_loc")) {
+						BufferedReader br = new BufferedReader(new FileReader(listOfFiles[i]));
+						line = br.readLine();
+						br.close();
+					} 
+				}
+
+				if (!line.equals("")){
+					bowtieSamLocTxt.setText(line);
+				}else{
+					bowtieSamLocTxt.setText(projectInfo.getPath());
+				}
+			}
+		}catch(IOException e){
+			e.printStackTrace();
 		}
 	}
 
