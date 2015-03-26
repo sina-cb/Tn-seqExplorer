@@ -2339,7 +2339,20 @@ public class MainFrame extends JFrame {
 							}
 							
 							if (!if64){
-								JOptionPane.showMessageDialog(MainFrame.this, "Bowtie2 runs only on 32bits version of Windows");
+								JOptionPane.showMessageDialog(MainFrame.this, "Bowtie2 runs only on 64 bits version of Windows");
+								File folder = new File(location_temp);
+								File[] listOfFiles = folder.listFiles();
+								for (int i = 0; i < listOfFiles.length; i++) {
+									if (listOfFiles[i].isFile()) {
+										if (listOfFiles[i].getName().toLowerCase().contains("_index") || listOfFiles[i].getName().toLowerCase().endsWith("bt2")){
+											listOfFiles[i].delete();
+										}	
+									}
+								}
+
+								bowtieSamCreateBtn.setIcon(tempIcon);
+								bowtieSamCreateBtn.setText("Create SAM file");
+								bowtieSamCreateBtn.setEnabled(true);
 								return;
 							}
 
