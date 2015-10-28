@@ -327,7 +327,7 @@ public class AddColumns {
 		fnaLine = fnaBr.readLine();
 		
 		while(fnaLine != null){
-			sb.append(fnaLine);
+			sb.append(fnaLine.toUpperCase());
 			fnaLine = fnaBr.readLine();
 		}
 		fnaBr.close();
@@ -336,7 +336,7 @@ public class AddColumns {
 		
 		List<Integer> taSite = new ArrayList<Integer>();
 		for (int i = 0; i < fnaLine.length() - 1; i++){
-			if (fnaLine.charAt(i) == 'T' && fnaLine.charAt(i + 1) == 'A'){
+			if ((fnaLine.charAt(i) == 'T' && fnaLine.charAt(i + 1) == 'A')){
 				taSite.add(1);
 			}else{
 				taSite.add(0);
