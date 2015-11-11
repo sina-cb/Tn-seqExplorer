@@ -912,6 +912,7 @@ public class MainFrame extends JFrame {
 		extractInsBtn.setToolTipText("Process and extract the SAM file");
 		extractInsBtn.setEnabled(false);
 		extractInsBtn.addActionListener(new ActionListener() {
+			@SuppressWarnings("resource")
 			public void actionPerformed(ActionEvent arg0) {
 				MainFrame.this.extractInsLbl.setForeground(Color.BLACK);
 				MainFrame.this.extractInsBtn.setEnabled(false);
