@@ -383,7 +383,7 @@ public class AddColumns {
 		BufferedReader br = new BufferedReader(new FileReader(libFile));
 
 		ArrayList<Integer> insertions = new ArrayList<Integer>();
-		for (int i = 0; i < LSeq; i++){
+		for (int i = 0; i <= LSeq; i++){
 			insertions.add(0);
 		}
 
