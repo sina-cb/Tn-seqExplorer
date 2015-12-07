@@ -152,7 +152,7 @@ public class SelectFNA extends JFrame {
 								ftp.connect("ftp.ncbi.nih.gov");
 								ftp.enterLocalPassiveMode();
 								ftp.login("anonymous", "");
-								FTPFile[] files = ftp.listFiles("/genomes/Bacteria/");
+								FTPFile[] files = ftp.listFiles("/genomes/archive/old_genbank/Bacteria/");
 
 								firstLevelCombo.removeAllItems();
 								for (FTPFile t : files) {
@@ -208,7 +208,7 @@ public class SelectFNA extends JFrame {
 								ftp.connect("ftp.ncbi.nih.gov");
 								ftp.enterLocalPassiveMode();
 								ftp.login("anonymous", "");
-								String ftpDir = "/genomes/Bacteria/" + firstLevelCombo.getSelectedItem() + "/";
+								String ftpDir = "/genomes/archive/old_genbank/Bacteria/" + firstLevelCombo.getSelectedItem() + "/";
 								FTPFile[] files = ftp.listFiles(ftpDir);
 								ftp.disconnect();
 
@@ -301,7 +301,7 @@ public class SelectFNA extends JFrame {
 							ftp.connect("ftp.ncbi.nih.gov");
 							ftp.enterLocalPassiveMode();
 							ftp.login("anonymous", "");
-							String ftpDir = "/genomes/Bacteria/" + firstLevelCombo.getSelectedItem() + "/";
+							String ftpDir = "/genomes/archive/old_genbank/Bacteria/" + firstLevelCombo.getSelectedItem() + "/";
 							FTPFile[] files = ftp.listFiles(ftpDir);
 
 							File gbkTemp = null;

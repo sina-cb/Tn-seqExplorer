@@ -328,7 +328,7 @@ public class MainFrame extends JFrame {
 							ftp.connect("ftp.ncbi.nih.gov");
 							ftp.enterLocalPassiveMode();
 							ftp.login("anonymous", "");
-							String ftpDir = "/genomes/Bacteria/" + ftpFirstLevelCombo.getSelectedItem() + "/";
+							String ftpDir = "/genomes/archive/old_genbank/Bacteria/" + ftpFirstLevelCombo.getSelectedItem() + "/";
 							FTPFile[] files = ftp.listFiles(ftpDir);
 
 							for (FTPFile t : files){
@@ -382,7 +382,7 @@ public class MainFrame extends JFrame {
 								ftp.connect("ftp.ncbi.nih.gov");
 								ftp.enterLocalPassiveMode();
 								ftp.login("anonymous", "");
-								String ftpDir = "/genomes/Bacteria/" + ftpFirstLevelCombo.getSelectedItem() + "/";
+								String ftpDir = "/genomes/archive/old_genbank/Bacteria/" + ftpFirstLevelCombo.getSelectedItem() + "/";
 								FTPFile[] files = ftp.listFiles(ftpDir);
 
 								for (FTPFile t : files){
@@ -537,7 +537,7 @@ public class MainFrame extends JFrame {
 							ftp.connect("ftp.ncbi.nih.gov");
 							ftp.enterLocalPassiveMode();
 							ftp.login("anonymous", "");
-							FTPFile[] files = ftp.listFiles("/genomes/Bacteria/");
+							FTPFile[] files = ftp.listFiles("/genomes/archive/old_genbank/Bacteria/");
 
 							ftpFirstLevelCombo.removeAllItems();
 							for(FTPFile t : files){
@@ -591,7 +591,7 @@ public class MainFrame extends JFrame {
 								ftp.connect("ftp.ncbi.nih.gov");
 								ftp.enterLocalPassiveMode();
 								ftp.login("anonymous", "");
-								String ftpDir = "/genomes/Bacteria/" + ftpFirstLevelCombo.getSelectedItem() + "/";
+								String ftpDir = "/genomes/archive/old_genbank/Bacteria/" + ftpFirstLevelCombo.getSelectedItem() + "/";
 								FTPFile[] files = ftp.listFiles(ftpDir);
 								ftp.disconnect();
 
@@ -798,7 +798,7 @@ public class MainFrame extends JFrame {
 			public void mouseClicked(MouseEvent arg0) {
 				JOptionPane.showMessageDialog(MainFrame.this, "This will guide you to finding the protein-coding (.ptt file) and RNA (.rnt file) gene\n"
 						+ "annotation at the FTP server of the National Center for Biotechnology Information\n"
-						+ "(ftp://ftp.ncbi.nih.gov/genomes/)");
+						+ "(ftp://ftp.ncbi.nih.gov/genomes/archive/old_genbank/Bacteria/)");
 			}
 		});
 		lblNeedHelp.setToolTipText("Click me!");
@@ -1858,7 +1858,7 @@ public class MainFrame extends JFrame {
 			public void mouseClicked(MouseEvent arg0) {
 				JOptionPane.showMessageDialog(MainFrame.this, "The FASTQ file contains your sequence reads and you should have received it from Illumina or the sequencing facility\n"
 						+ "you used. The FNA file contains the genomic DNA sequence in fastA format and you can download it for complete\n"
-						+ "prokaryotic genomes from the NCBI ftp server at ftp://ftp.ncbi.nih.gov/genomes/Bacteria/");
+						+ "prokaryotic genomes from the NCBI ftp server at ftp://ftp.ncbi.nih.gov/genomes/archive/old_genbank/Bacteria/");
 			}
 		});
 		label_4.setToolTipText("Click me!");
